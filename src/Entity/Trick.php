@@ -37,6 +37,9 @@ class Trick
     #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'tricks')]
     private Collection $groups;
 
+    #[ORM\Column]
+    private ?\DateTimeImmutable $createdAt = null;
+
     public function __construct()
     {
         $this->groups = new ArrayCollection();
@@ -139,6 +142,18 @@ class Trick
     public function removeGroup(Group $group): self
     {
         $this->groups->removeElement($group);
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }
