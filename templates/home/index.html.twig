@@ -20,12 +20,18 @@
                         <a class="nav-link" href="#">Tricks</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Sign-in</a>
-                    </li>				
+                        <a class="nav-link" href="{{ path('app_register') }}">Sign-in</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ path('app_login') }}">Log-in</a>
+                    </li>					
                 </ul>		  
             </div>
         </div>
     </nav>
+    {% for message in app.flashes('verify_email_success') %}
+        <div class="alert alert-success" role="alert">{{ message }}</div>
+    {% endfor %}
     <!-- Header-->
     <header class="bg-dark text-white py-5">
         <div class="container px-4 px-lg-5 my-5 text-center">
