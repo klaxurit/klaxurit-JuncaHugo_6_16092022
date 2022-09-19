@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "SnowTricks",
+  "short_name": "SnowTricks",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#fff",
+  "description": "A readable Hacker News app."
+}

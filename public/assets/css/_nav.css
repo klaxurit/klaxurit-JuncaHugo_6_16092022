@@ -1,0 +1,36 @@
+.primary {
+    background-color: #00204A;
+}
+
+/* unvisited link */
+.nav-item, a:link {
+    color: #00BBF0;
+}
+
+/* visited link */
+.nav-item a:visited {
+    color: #00BBF0;
+}
+
+/* mouse over link */
+.nav-item a:hover {
+    color: #00BBF0;
+    font-weight: 700;
+}
+
+/* selected link */
+.navbar-nav .nav-link.active{
+    color: #00BBF0;
+    font-weight: 700;
+}
+
+.navbar-brand {
+    font-family: 'Coiny', cursive;
+    font-size: 36px;
+    color: #00BBF0;
+    font-weight: 700;
+}
+
+.navbar-brand:focus, .navbar-brand:hover  {
+    color: #00BBF0;
+}

@@ -1,0 +1,11 @@
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    color: white;
+}
+
+.footer__icon {
+    color: white;
+}

@@ -1,0 +1,14 @@
+.header__snowtricks-title {
+    font-size: 6vw;
+}
+
+.header__snowtricks-font {
+    font-family: 'Coiny', cursive;
+    color: #00BBF0;
+}
+
+.header__snowtricks-lead {
+    margin-top: 2em;
+    letter-spacing: 0.1em;
+    font-size: 4vw;
+}
