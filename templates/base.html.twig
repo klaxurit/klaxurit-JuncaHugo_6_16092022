@@ -16,8 +16,11 @@
     </head>
     <body>
     {% include "_parts/_nav.html.twig" %}
-    {% include "_parts/_header.html.twig" %}
         {% block body %}
+        <div class="container mt-5 mb-5">
+        {% block main %}
+        {% endblock %}
+        </div>
         {% endblock %}
     {% include "_parts/_footer.html.twig" %}
     {# JS #}

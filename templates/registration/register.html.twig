@@ -1,17 +1,30 @@
 {% extends 'base.html.twig' %}
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/css/_main.css') }}">
+{% endblock %}
 
-{% block title %}SnowTricks - Register{% endblock %}
+{% block title %}SnowTricks - Register
+{% endblock %}
 
-{% block body %}
-    <h1>Register</h1>
+{% block main %}
+	<div class="container main">
+		<div class="d-flex flex-column justify-content-center">
+			<h1>Register</h1>
+			{{ form_start(registrationForm, {'method': 'POST'})}}
+			<div class="mb-3">
+				<label for="exampleInputEmail1" class="form-label">Email address</label>
+				{{ form_widget(registrationForm.email) }}
+				<div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+			</div>
+			<div class="mb-3">
+				<label for="exampleInputPassword1" class="form-label">Password</label>
+				{{ form_widget(registrationForm.plainPassword) }}
+			</div>
+			<div class="mb-3">
+				{{ form_widget(registrationForm.agreeTerms) }}
+			</div>
+			<button type="submit" class="btn btn-primary">Submit</button>
+			{{ form_end(registrationForm) }}
+		</div>
+	</div>
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-
-        <button type="submit" class="btn btn-sm btn-primary">Register</button>
-    {{ form_end(registrationForm) }}
 {% endblock %}
