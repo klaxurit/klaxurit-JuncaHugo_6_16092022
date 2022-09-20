@@ -1,52 +1,46 @@
 {% extends 'base.html.twig' %}
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/css/_main.css') }}">{% endblock %}
 
 {% block title %}Trick{% endblock %}
 
 {% block body %}
-<div class="container main">
-    <h1>Trick</h1>
+<div class="container main my-5">
+    <div class="text-end">
+        <a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="btn btn-m btn-primary"><i class="bi bi-pencil-fill"></i></a>
+        {{ include('trick/_delete_form.html.twig') }}
+    </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ trick.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ trick.name }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ trick.description }}</td>
-            </tr>
-            <tr>
-                <th>Picture</th>
-                <td>{{ trick.picture }}</td>
-            </tr>
-            <tr>
-                <th>Video</th>
-                <td>{{ trick.video }}</td>
-            </tr>
-            <tr>
-                <th>Picture_alt</th>
-                <td>{{ trick.pictureAlt }}</td>
-            </tr>
-            <tr>
-                <th>Slug</th>
-                <td>{{ trick.slug }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ trick.createdAt ? trick.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="d-flex flex-column justify-content-center">
+    <h1 class="text-center my-5">{{trick.name}}</h1>
+
+    <div class="text-center">
+        <a href="" class="btn btn-primary my-5">See medias</a>
+    </div>
+
+    <p class="text-justify">{{trick.description}}</p>
+
+    <div class="trick__groups text-center">
+        <span class="badge rounded-pill text-bg-primary">Flip</span>
+        <span class="badge rounded-pill text-bg-secondary">Slide</span>
+        <span class="badge rounded-pill text-bg-success">Grab</span>
+        <span class="badge rounded-pill text-bg-danger">Loop</span>
+        <span class="badge rounded-pill text-bg-warning">Indy</span>
+        <span class="badge rounded-pill text-bg-info">Air</span>
+        <span class="badge rounded-pill text-bg-light">Back</span>
+    </div>
+
+    <div class="trick__separator my-3">
+        <hr class="rounded">
+    </div>
+
+    {% include('trick/_comment.html.twig') %}
+    </div>
+    
 
     <a href="{{ path('app_trick_index') }}" class="btn btn-m btn-secondary">Back to list</a>
 
-    <a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="btn btn-m btn-primary">Edit</a>
 
-    {{ include('trick/_delete_form.html.twig') }}
+
+    
 </div>
 {% endblock %}

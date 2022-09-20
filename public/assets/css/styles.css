@@ -34,12 +34,3 @@ h4 {
     color: #005792;
 }
 
-.btn-primary {
-    background-color: #005792;
-    border-color: #D9FAFF;
-}
-
-.btn-primary:hover {
-    filter: brightness(1.5);
-}
-

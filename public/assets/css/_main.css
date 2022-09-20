@@ -1,5 +1,6 @@
 .main {
-    height: 65vh;
+    min-height: 65vh;
+    color: #51565a;
 }
 
 label {
@@ -8,4 +9,23 @@ label {
 
 h1 {
     color: #005792;
+}
+
+.btn-primary {
+    color: white;
+    background-color: #005792;
+    border-color: #D9FAFF;
+}
+
+.btn-primary {
+    color: white;
+}
+
+.btn-primary:hover {
+    filter: brightness(1.5);
+}
+
+hr.rounded {
+    border-top: 8px solid #bbb;
+    border-radius: 5px;
 }

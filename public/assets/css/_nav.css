@@ -3,7 +3,7 @@
 }
 
 /* unvisited link */
-.nav-item, a:link {
+.nav-item a:link {
     color: #00BBF0;
 }
 
