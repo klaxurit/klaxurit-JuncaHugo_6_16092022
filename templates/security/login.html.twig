@@ -20,7 +20,7 @@
 					<a href="{{ path('app_logout') }}">Logout</a>
 				</div>
 			{% else %}
-				<form method="post">
+				<form method="post" class="text-center text-md-start">
 					<label for="inputEmail">Email</label>
 					<input type="email" value="{{ last_username }}" name="email" id="inputEmail" class="form-control custom__field my-3" autocomplete="email" required autofocus>
 					<label for="inputPassword">Password</label>

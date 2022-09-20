@@ -10,12 +10,12 @@
 		<div class="d-flex flex-column justify-content-center">
 			<h1 class="my-5 text-center text-md-start">Register</h1>
 			{{ form_start(registrationForm, {'method': 'POST'})}}
-			<div class="mb-3">
+			<div class="mb-3 text-center text-md-start">
 				<label for="exampleInputEmail1" class="form-label">Email address</label>
 				{{ form_widget(registrationForm.email, {'attr': {'class': 'custom__field'}}) }}
 				<div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
 			</div>
-			<div class="mb-3">
+			<div class="mb-3 text-center text-md-start">
 				<label for="exampleInputPassword1" class="form-label">Password</label>
 				{{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'custom__field'}}) }}
 			</div>
