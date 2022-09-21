@@ -39,10 +39,12 @@
 					                    </label>
 					                </div>
 					            #}
-
-					<button class="btn btn-primary mt-3" type="submit">
-						Log in
-					</button>
+                    <div class="d-flex flex-row justify-content-between align-items-center">
+                        <button class="btn btn-primary mt-3" type="submit">
+                            Log in
+                        </button>
+                        <a href="{{ path('app_forgot_password_request') }}" class="small text-primary fw-bold mt-4">Forgot password?</a>
+                    </div>
 				</form>
 			{% endif %}
 		</div>
