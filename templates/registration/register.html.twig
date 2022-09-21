@@ -7,6 +7,9 @@
 
 {% block main %}
 	<div class="container main">
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
 		<div class="d-flex flex-column justify-content-center">
 			<h1 class="my-5 text-center text-md-start">Register</h1>
 			{{ form_start(registrationForm, {'method': 'POST'})}}
@@ -26,5 +29,4 @@
 			{{ form_end(registrationForm) }}
 		</div>
 	</div>
-
 {% endblock %}
