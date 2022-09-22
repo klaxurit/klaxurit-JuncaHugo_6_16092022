@@ -6,14 +6,13 @@
 {% block main %}
 <div class="container main">
     <h1>Trick index</h1>
-
+<div class="table-responsive">
     <table class="table">
         <thead>
             <tr>
                 <th>Id</th>
                 <th>Name</th>
                 <th>Description</th>
-                <th>Picture</th>
                 <th>Video</th>
                 <th>Picture_alt</th>
                 <th>Slug</th>
@@ -27,7 +26,6 @@
                 <td>{{ trick.id }}</td>
                 <td>{{ trick.name }}</td>
                 <td>{{ trick.description|u.truncate(20, '...') }}</td>
-                <td>{{ trick.picture }}</td>
                 <td>{{ trick.video }}</td>
                 <td>{{ trick.pictureAlt }}</td>
                 <td>{{ trick.slug }}</td>
@@ -44,6 +42,7 @@
         {% endfor %}
         </tbody>
     </table>
+</div>
 
     <a href="{{ path('app_trick_new') }}" class="btn btn-primary">Create new</a>
 </div>

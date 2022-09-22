@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\TrickRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TrickRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TrickRepository::class)]
 class Trick
@@ -23,9 +24,6 @@ class Trick
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $picture = null;
-
-    #[ORM\Column(length: 255)]
     private ?string $video = null;
 
     #[ORM\Column(length: 255)]
@@ -40,9 +38,19 @@ class Trick
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    // #[Assert\File(
+    //     maxSize: '1024k',
+    //     mimeTypes: ['image/jpeg', 'image/png', 'image/jpg'],
+    //     mimeTypesMessage: 'Please upload a valid image (.jpg, .jpeg, .png)',
+    // )]
+    #[ORM\OneToMany(mappedBy: 'tricks', targetEntity: Image::class, orphanRemoval: true, cascade: ['persist'])]
+    private Collection $images;
+
     public function __construct()
     {
         $this->groups = new ArrayCollection();
+        $this->images = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -70,18 +78,6 @@ class Trick
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getPicture(): ?string
-    {
-        return $this->picture;
-    }
-
-    public function setPicture(string $picture): self
-    {
-        $this->picture = $picture;
 
         return $this;
     }
@@ -154,6 +150,36 @@ class Trick
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Image>
+     */
+    public function getImages(): Collection
+    {
+        return $this->images;
+    }
+
+    public function addImage(Image $image): self
+    {
+        if (!$this->images->contains($image)) {
+            $this->images->add($image);
+            $image->setTricks($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->removeElement($image)) {
+            // set the owning side to null (unless already changed)
+            if ($image->getTricks() === $this) {
+                $image->setTricks(null);
+            }
+        }
 
         return $this;
     }

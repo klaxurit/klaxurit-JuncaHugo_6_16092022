@@ -7,17 +7,26 @@
         <label for="description" class="form-label">Description</label>
         {{ form_widget(trick.description) }}
     </div>
+    {% if app.request.attributes.get('_route') == 'app_trick_edit' %}
+        <h2>Images</h2>
+        {% for image in trick.images %}
+        <div>
+            <img src="{{ asset('/uploads/' ~ image.name) }}" alt="{{trick.pictureAlt}}" width="150">
+            <a href="{{ path('app_trick_delete_image', {id: image.id}) }}" class="btn btn-danger" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a>
+        </div>
+        {% endfor %}
+    {% endif %}
     <div class="mb-3">
-        <label for="picture" class="form-label">Picture</label>
-        {{ form_widget(trick.picture) }}
+        <label for="images" class="form-label">Images</label>
+        {{ form_widget(trick.images) }}
+    </div>
+    <div class="mb-3">
+        <label for="picture_alt" class="form-label">Images description</label>
+        {{ form_widget(trick.picture_alt) }}
     </div>
     <div class="mb-3">
         <label for="video" class="form-label">Video</label>
         {{ form_widget(trick.video) }}
-    </div>
-    <div class="mb-3">
-        <label for="picture_alt" class="form-label">Picture description</label>
-        {{ form_widget(trick.picture_alt) }}
     </div>
     <div class="mb-3">
         <label for="groups" class="form-label">Groups</label>

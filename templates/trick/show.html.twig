@@ -15,9 +15,14 @@
 
     <div class="text-center">
         <a href="" class="btn btn-primary my-5">See medias</a>
+        {% for image in trick.images %}
+        <div>
+            <img src="{{ asset('/uploads/' ~ image.name) }}" alt="{{trick.pictureAlt}}" width="250">
+        </div>
+        {% endfor %}
     </div>
 
-    <p class="text-justify">{{trick.description}}</p>
+    <p class="text-justify text-center mt-3">{{trick.description}}</p>
 
     <div class="trick__groups text-center">
         <span class="badge rounded-pill text-bg-primary">Flip</span>
