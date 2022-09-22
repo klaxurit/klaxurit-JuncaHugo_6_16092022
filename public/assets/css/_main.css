@@ -1,0 +1,47 @@
+.main {
+    min-height: 65vh;
+    color: #51565a;
+}
+
+label {
+    color: #005792;
+}
+
+h1 {
+    color: #005792;
+}
+
+.btn-primary {
+    color: white;
+    background-color: #005792;
+    border-color: #D9FAFF;
+}
+
+.btn-primary {
+    color: white;
+}
+
+.btn-primary:hover {
+    filter: brightness(1.5);
+}
+
+hr.rounded {
+    border-top: 8px solid #bbb;
+    border-radius: 5px;
+}
+
+.custom__field {
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 2px solid #bbb;
+    border-radius: 0;
+    background-color: #D9FAFF;
+}
+
+.custom__field:focus {
+    outline: none !important;
+    border-bottom: 2px solid #bbb;
+    box-shadow: none;
+    background-color: #D9FAFF;
+}

@@ -1,0 +1,27 @@
+{{ form_start(trick, {'method': 'POST'}) }}
+    <div class="mb-3">
+        <label for="name" class="form-label">Trick's name</label>
+        {{ form_widget(trick.name) }}
+    </div>
+    <div class="mb-3">
+        <label for="description" class="form-label">Description</label>
+        {{ form_widget(trick.description) }}
+    </div>
+    <div class="mb-3">
+        <label for="picture" class="form-label">Picture</label>
+        {{ form_widget(trick.picture) }}
+    </div>
+    <div class="mb-3">
+        <label for="video" class="form-label">Video</label>
+        {{ form_widget(trick.video) }}
+    </div>
+    <div class="mb-3">
+        <label for="picture_alt" class="form-label">Picture description</label>
+        {{ form_widget(trick.picture_alt) }}
+    </div>
+    <div class="mb-3">
+        <label for="groups" class="form-label">Groups</label>
+        {{ form_widget(trick.groups) }}
+    </div>
+    <button class="btn btn-primary mb-3">{{ button_label|default('Save') }}</button>
+{{ form_end(trick) }}

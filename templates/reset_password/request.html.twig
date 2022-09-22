@@ -1,22 +1,22 @@
 {% extends 'base.html.twig' %}
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/css/_main.css') }}">
+{% endblock %}
 
-{% block title %}Reset your password{% endblock %}
+{% block title %}SnowTricks - Forgotten password
+{% endblock %}
 
-{% block body %}
-    {% for flash_error in app.flashes('reset_password_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
-    <h1>Reset your password</h1>
-
-    {{ form_start(requestForm) }}
-        {{ form_row(requestForm.email) }}
-        <div>
-            <small>
-                Enter your email address and we will send you a
-                link to reset your password.
-            </small>
+{% block main %}
+<div class="container main">
+	<div class="d-flex flex-column justify-content-center">
+		<h1 class="my-5 text-center text-md-start">Enter your email</h1>
+        {{ form_start(requestForm) }}
+        <div class="mb-3 text-center text-md-start">
+            <label for="exampleInputEmail1" class="form-label">Email address</label>
+            {{ form_widget(requestForm.email, {'attr': {'class': 'custom__field'}}) }}
+            <div id="emailHelp" class="form-text">Enter your email address and we will send you a link to reset your password.</div>
         </div>
-
-        <button class="btn btn-primary">Send password reset email</button>
-    {{ form_end(requestForm) }}
+        <button type="submit" class="btn btn-primary">Send password reset email</button>
+        {{ form_end(requestForm) }}
+    </div>
+</div>
 {% endblock %}
