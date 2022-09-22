@@ -19,7 +19,6 @@ final class Version20220916123617 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE trick ADD created_at DATETIME NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE user ADD created_at DATETIME NULL COMMENT \'(DC2Type:datetime_immutable)\'');
         $this->addSql('ALTER TABLE user_message ADD created_at DATETIME NULL COMMENT \'(DC2Type:datetime_immutable)\'');
@@ -27,7 +26,6 @@ final class Version20220916123617 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE user_message DROP created_at');
         $this->addSql('ALTER TABLE trick DROP created_at');
         $this->addSql('ALTER TABLE user DROP created_at');
