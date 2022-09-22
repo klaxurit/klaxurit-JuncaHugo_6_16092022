@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -21,6 +22,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Assert\Email(
+        message: 'The email {{ value }} is not a valid email.',
+    )]
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
@@ -30,6 +34,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      */
+    #[Assert\Length(
+        min: 6,
+        minMessage: 'Your password must be at least {{ 6 }} characters long',
+    )]
     #[ORM\Column]
     private ?string $password = null;
 
