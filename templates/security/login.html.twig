@@ -33,7 +33,10 @@
                         <button class="btn btn-primary mt-3" type="submit">
                             Log in
                         </button>
-                        <a href="{{ path('app_forgot_password_request') }}" class="small text-primary fw-bold mt-4">Forgot password?</a>
+						<div>
+							<a href="{{ path('app_forgotten_password') }}" class="small text-primary fw-bold mt-4 me-4">Forgot password?</a>
+							<a href="{{ path('app_register') }}" class="small text-primary fw-bold mt-4"> Not registered?</a>
+						</div>
                     </div>
 				</form>
 			{% endif %}
