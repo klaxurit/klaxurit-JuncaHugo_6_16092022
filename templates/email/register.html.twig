@@ -1,0 +1,5 @@
+<h1>Activate your snowtrick's account</h1>
+<p>Hello {{ user.email }},</p>
+<p>Your registration on SnowTrick is not finished yet please click on the link below to verify your email.</p>
+<p><a href="{{ absolute_url(path('verify_user', {token: token})) }}">Link</a></p>
+<p>This link will expire in 3 hours</p>

@@ -45,7 +45,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $messages;
 
     #[ORM\Column(type: 'boolean')]
-    private $isVerified = false;
+    private $is_verified = false;
 
     public function __construct()
     {
@@ -171,14 +171,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function isVerified(): bool
+    public function getIsVerified(): ?bool
     {
-        return $this->isVerified;
+        return $this->is_verified;
     }
 
-    public function setIsVerified(bool $isVerified): self
+    public function setIsVerified(bool $is_verified): self
     {
-        $this->isVerified = $isVerified;
+        $this->is_verified = $is_verified;
 
         return $this;
     }
