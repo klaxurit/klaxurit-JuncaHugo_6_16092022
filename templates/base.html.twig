@@ -13,9 +13,21 @@
         <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
         {% block stylesheets %}{% endblock %}
         <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+        {# JS #}
+        <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+        {% block javascripts %}{% endblock %}
     </head>
     <body>
     {% include "_parts/_nav.html.twig" %}
+    {% if app.user and app.user.isVerified == false %}
+        <div class="alert alert-warning alert-dismissible mb-0" role="alert">
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert-message">
+                <strong>Your account is not activated</strong>, <a href="{{ path('resend_verif') }}">resend the activation link</a>.
+            </div>
+        </div>
+    {% endif %}
+    {% include "_parts/_flash.html.twig" %}
         {% block body %}
         <div class="container mt-5 mb-5">
         {% block main %}
@@ -23,8 +35,5 @@
         </div>
         {% endblock %}
     {% include "_parts/_footer.html.twig" %}
-    {# JS #}
-    <link rel="stylesheet" href="{{ asset('assets/js/bootstrap.bundle.js') }}">
-    {% block javascripts %}{% endblock %}
     </body>
 </html>
