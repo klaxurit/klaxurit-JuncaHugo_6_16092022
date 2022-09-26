@@ -9,9 +9,9 @@
     </div>
     {% if app.request.attributes.get('_route') == 'app_trick_edit' %}
         <h2>Images</h2>
-        {% for image in trick.images %}
+        {% for image in images %}
         <div>
-            <img src="{{ asset('/uploads/' ~ image.name) }}" alt="{{trick.pictureAlt}}" width="150">
+            <img src="{{ asset('/uploads/' ~ image.name) }}" alt="" width="150">
             <a href="{{ path('app_trick_delete_image', {id: image.id}) }}" class="btn btn-danger" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a>
         </div>
         {% endfor %}
