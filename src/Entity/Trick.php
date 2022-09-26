@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\TrickRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TrickRepository::class)]
 class Trick
@@ -27,9 +26,6 @@ class Trick
     private ?string $video = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $picture_alt = null;
-
-    #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
     #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'tricks')]
@@ -38,11 +34,6 @@ class Trick
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    // #[Assert\File(
-    //     maxSize: '1024k',
-    //     mimeTypes: ['image/jpeg', 'image/png', 'image/jpg'],
-    //     mimeTypesMessage: 'Please upload a valid image (.jpg, .jpeg, .png)',
-    // )]
     #[ORM\OneToMany(mappedBy: 'tricks', targetEntity: Image::class, orphanRemoval: true, cascade: ['persist'])]
     private Collection $images;
 
@@ -90,18 +81,6 @@ class Trick
     public function setVideo(string $video): self
     {
         $this->video = $video;
-
-        return $this;
-    }
-
-    public function getPictureAlt(): ?string
-    {
-        return $this->picture_alt;
-    }
-
-    public function setPictureAlt(string $picture_alt): self
-    {
-        $this->picture_alt = $picture_alt;
 
         return $this;
     }
