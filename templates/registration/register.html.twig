@@ -20,6 +20,11 @@
 				<div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
 			</div>
 			<div class="mb-3 text-center text-md-start">
+				<label for="InputUsername" class="form-label">Username</label>
+				{{ form_widget(registrationForm.username, {'attr': {'class': 'custom__field'}}) }}
+                {{ form_errors(registrationForm.username) }}
+			</div>
+			<div class="mb-3 text-center text-md-start">
 				<label for="InputPassword1" class="form-label">Password</label>
 				{{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'custom__field'}}) }}
                 {{ form_errors(registrationForm.plainPassword.first) }}
