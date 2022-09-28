@@ -27,7 +27,7 @@ class TrickType extends AbstractType
             ->add('video', TextType::class, [
                 'required' => false
             ])
-            ->add('picture_alt')
+            // ->add('picture_alt')
             ->add('groups', CollectionType::class, [
                 'entry_type'   => ChoiceType::class,
                 'entry_options'  => [

@@ -9,23 +9,25 @@ use App\Security\UserAuthenticator;
 use App\Service\JWTService;
 use App\Service\SendMailService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
-use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
 class RegistrationController extends AbstractController
 {
-
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, UserAuthenticatorInterface $userAuthenticator, UserAuthenticator $authenticator, EntityManagerInterface $entityManager, SendMailService $mail, JWTService $jwt): Response
-    {
+    public function register(
+        Request $request,
+        UserPasswordHasherInterface $userPasswordHasher,
+        UserAuthenticatorInterface $userAuthenticator,
+        UserAuthenticator $authenticator,
+        EntityManagerInterface $entityManager,
+        SendMailService $mail,
+        JWTService $jwt
+    ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $form->handleRequest($request);
@@ -62,11 +64,8 @@ class RegistrationController extends AbstractController
                 compact('user', 'token')
             );
 
-            return $userAuthenticator->authenticateUser(
-                $user,
-                $authenticator,
-                $request
-            );
+            $this->addFlash('success', 'Verification email sent, please check your email box.');
+            return $this->redirectToRoute('app_home');
         }
 
         return $this->render('registration/register.html.twig', [
@@ -78,7 +77,7 @@ class RegistrationController extends AbstractController
     public function verifyUser($token, JWTService $jwt, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
         // check is token is valid, not expired and not modified
-        if($jwt->isValid($token) && !$jwt->isExpired($token) && $jwt->check($token, $this->getParameter('app.jwtsecret'))){
+        if ($jwt->isValid($token) && !$jwt->isExpired($token) && $jwt->check($token, $this->getParameter('app.jwtsecret'))) {
             // get payload
             $payload = $jwt->getPayload($token);
 
@@ -86,13 +85,12 @@ class RegistrationController extends AbstractController
             $user = $userRepository->find($payload['user_id']);
 
             // check if user exist and doesnt have verify his account
-            if($user && !$user->getIsVerified()){
+            if ($user && !$user->getIsVerified()) {
                 $user->setIsVerified(true);
                 $entityManager->flush($user);
                 $this->addFlash('success', 'User\'s acount activated !');
                 return $this->redirectToRoute('app_home');
             }
-
         }
         // token's problem
         $this->addFlash('danger', 'Invalid token or expired');
@@ -104,12 +102,12 @@ class RegistrationController extends AbstractController
     {
         $user = $this->getUser();
 
-        if(!$user) {
+        if (!$user) {
             $this->addFlash('danger', 'You have to be logged to access this page.');
             return $this->redirectToRoute('app_login');
         }
 
-        if($user->getIsVerified()){
+        if ($user->getIsVerified()) {
             $this->addFlash('danger', 'This account is already activated.');
             return $this->redirectToRoute('app_home');
         }
