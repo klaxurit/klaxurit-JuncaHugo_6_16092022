@@ -7,6 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\TrickRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TrickRepository::class)]
 class Trick
@@ -23,9 +24,6 @@ class Trick
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $video = null;
-
-    #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
     #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'tricks')]
@@ -34,14 +32,20 @@ class Trick
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'tricks', targetEntity: Image::class, orphanRemoval: true, cascade: ['persist'])]
-    private Collection $images;
+    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, cascade: ['persist'])]
+    #[Assert\Valid]
+    private Collection $medias;
 
     public function __construct()
     {
         $this->groups = new ArrayCollection();
         $this->images = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
+        $this->medias = new ArrayCollection();
+    }
+
+    public function __toString() {
+        return $this->name;
     }
 
     public function getId(): ?int
@@ -69,18 +73,6 @@ class Trick
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getVideo(): ?string
-    {
-        return $this->video;
-    }
-
-    public function setVideo(string $video): self
-    {
-        $this->video = $video;
 
         return $this;
     }
@@ -134,29 +126,29 @@ class Trick
     }
 
     /**
-     * @return Collection<int, Image>
+     * @return Collection<int, Media>
      */
-    public function getImages(): Collection
+    public function getMedias(): Collection
     {
-        return $this->images;
+        return $this->medias;
     }
 
-    public function addImage(Image $image): self
+    public function addMedia(Media $media): self
     {
-        if (!$this->images->contains($image)) {
-            $this->images->add($image);
-            $image->setTricks($this);
+        if (!$this->medias->contains($media)) {
+            $this->medias->add($media);
+            $media->setTrick($this);
         }
 
         return $this;
     }
 
-    public function removeImage(Image $image): self
+    public function removeMedia(Media $media): self
     {
-        if ($this->images->removeElement($image)) {
+        if ($this->medias->removeElement($media)) {
             // set the owning side to null (unless already changed)
-            if ($image->getTricks() === $this) {
-                $image->setTricks(null);
+            if ($media->getTrick() === $this) {
+                $media->setTrick(null);
             }
         }
 

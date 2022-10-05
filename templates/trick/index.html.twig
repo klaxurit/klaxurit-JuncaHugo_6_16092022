@@ -13,8 +13,6 @@
                 <th>Id</th>
                 <th>Name</th>
                 <th>Description</th>
-                <th>Video</th>
-                {# <th>Picture_alt</th> #}
                 <th>Slug</th>
                 <th>CreatedAt</th>
                 <th>Actions</th>
@@ -26,7 +24,7 @@
                 <td>{{ trick.id }}</td>
                 <td>{{ trick.name }}</td>
                 <td>{{ trick.description|u.truncate(20, '...') }}</td>
-                <td>{{ trick.video }}</td>
+                {# <td>{{ trick.video }}</td> #}
                 {# <td>{{ trick.pictureAlt }}</td> #}
                 <td>{{ trick.slug }}</td>
                 <td>{{ trick.createdAt ? trick.createdAt|date('Y-m-d H:i:s') : '' }}</td>

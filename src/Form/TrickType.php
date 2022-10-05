@@ -3,11 +3,11 @@
 namespace App\Form;
 
 use App\Entity\Trick;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
@@ -18,15 +18,18 @@ class TrickType extends AbstractType
         $builder
             ->add('name')
             ->add('description')
-            ->add('images', FileType::class, [
-                'label' => false,
-                'multiple' => true,
-                'mapped' => false,
-                'required' => false
+            ->add('medias', CollectionType::class, [
+                'entry_type' => MediaType::class,
+                'by_reference' => false,
+                'allow_add' => true,
+                'allow_delete' => true
             ])
-            ->add('video', TextType::class, [
-                'required' => false
-            ])
+            // ->add('images', FileType::class, [
+            //     'label' => false,
+            //     'multiple' => true,
+            //     'mapped' => false,
+            //     'required' => false
+            // ])
             // ->add('picture_alt')
             ->add('groups', CollectionType::class, [
                 'entry_type'   => ChoiceType::class,
@@ -38,8 +41,7 @@ class TrickType extends AbstractType
                         'London'    => 'london',
                     ],
                 ],
-            ])
-            ->getForm();
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

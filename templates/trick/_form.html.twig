@@ -1,4 +1,5 @@
 {{ form_start(trick, {'method': 'POST'}) }}
+    {{ form_widget(trick._token) }}
     <div class="mb-3">
         <label for="name" class="form-label">Trick's name</label>
         {{ form_widget(trick.name) }}
@@ -7,30 +8,49 @@
         <label for="description" class="form-label">Description</label>
         {{ form_widget(trick.description) }}
     </div>
-    {% if app.request.attributes.get('_route') == 'app_trick_edit' %}
-        <h2>Images</h2>
-        {% for image in images %}
-        <div>
-            <img src="{{ asset('/uploads/' ~ image.name) }}" alt="" width="150">
-            <a href="{{ path('app_trick_delete_image', {id: image.id}) }}" class="btn btn-danger" data-delete data-token="{{ csrf_token('delete' ~ image.id) }}">Delete</a>
-        </div>
+    <div 
+        id="medias" 
+        class="mb-3" 
+        data-prototype="{{ include("trick/_media.html.twig", {form: trick.medias.vars.prototype})|e("html_attr") }}" 
+        data-index="{{ trick.medias|length > 0 ? trick.medias|last.vars.name + 1 : 0 }}"
+    >
+        {% for media in trick.medias %}
+            {{ include("trick/_media.html.twig", {form: media}) }}
         {% endfor %}
-    {% endif %}
-    <div class="mb-3">
-        <label for="images" class="form-label">Images</label>
-        {{ form_widget(trick.images) }}
     </div>
-    {# <div class="mb-3">
-        <label for="picture_alt" class="form-label">Images description</label>
-        {{ form_widget(trick.picture_alt) }}
-    </div> #}
-    <div class="mb-3">
-        <label for="video" class="form-label">Video</label>
-        {{ form_widget(trick.video) }}
-    </div>
+    <button type="button" class="btn btn-primary btn-new mb-3" data-collection="#medias">New media</button>
+    {{ form_errors(trick.medias) }}
     <div class="mb-3">
         <label for="groups" class="form-label">Groups</label>
         {{ form_widget(trick.groups) }}
     </div>
     <button class="btn btn-primary mb-3">{{ button_label|default('Save') }}</button>
-{{ form_end(trick) }}
+{{ form_end(trick, { render_rest: false }) }}
+{% block javascript %}
+<script>
+    const newItem = (e) => {
+        const collectionHolder = document.querySelector(e.currentTarget.dataset.collection);
+
+        const item = document.createElement("div");
+
+        item.innerHTML += collectionHolder
+            .dataset
+            .prototype
+            .replace(
+                /__name__/g, 
+                collectionHolder.dataset.index
+            );
+            item.querySelector(".btn-remove").addEventListener("click", () => item.remove());
+            collectionHolder.appendChild(item);
+            collectionHolder.dataset.index++;
+    };
+
+    document
+        .querySelectorAll('.btn-new')
+        .forEach(btn => btn.addEventListener("click", newItem));
+
+    document
+        .querySelectorAll('.btn-remove')
+        .forEach(btn => btn.addEventListener("click", (e) => e.currentTarget.closest(".item").remove()));
+</script>
+{% endblock %}
