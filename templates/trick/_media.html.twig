@@ -1,9 +1,21 @@
 <div class="item">
-{{form_row(form.fileName)}}
-{{form_row(form.type)}}
-{{form_row(form.url)}}
-{{form_row(form.alt)}}
-<div class="form-group">
-    <buton type="button" class="btn btn-danger btn-remove">Remove</buton>
-</div>
+	<div class="mb-3">
+		<label for="name" class="form-label">Media type</label>
+		{{form_widget(form.type)}}
+	</div>
+	<div id="image-upload" class="mb-3 d-none">
+		<label for="name" class="form-label">Upload image</label>
+		{{form_widget(form.image)}}
+	</div>
+	<div id="video-url" class="mb-3 d-none">
+		<label for="name" class="form-label">Video link</label>
+		{{form_widget(form.videoUrl)}}
+	</div>
+	<div class="mb-3">
+		<label for="name" class="form-label">Media description</label>
+		{{form_widget(form.alt)}}
+	</div>
+	<div class="form-group">
+		<buton type="button" class="btn btn-danger btn-remove">Remove</buton>
+	</div>
 </div>

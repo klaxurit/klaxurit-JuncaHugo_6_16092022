@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Image;
+use App\Entity\Media;
 use App\Entity\Trick;
 use App\Form\TrickType;
 use Doctrine\ORM\Mapping\Entity;
@@ -38,30 +39,32 @@ class TrickController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $trickSlug = $slugger->slug($form->get('name')->getData());
             $trick->setSlug($trickSlug);
+            dd($form->get('medias'));
+            if($form->get('medias')) {
+                // get media
+                $media = $form->get('medias')->getData();
+                
+                // generate new filename
+                $originalFilename = pathinfo($media->getClientOriginalName(), PATHINFO_FILENAME);
+                $safeFilename = $slugger->slug($originalFilename);
+                $newFilename = $safeFilename.'-'.uniqid().'.'.$media->guessExtension();
+                
+                try {
+                    // copy file in uploads folder
+                    $media->move($this->getParameter('images_directory'), $newFilename);
+                } catch (FileException $e) {
+                    $this->addFlash('danger', "Error on uploading file");
+                }
+                // stock file name in db
+                $media = new Media();
+                $media->setFileName($newFilename);
+                $trick->addMedia($media);
+            }
+            
             $entityManager->persist($trick);
             $entityManager->flush();
-        //     // get images
-        //     $images = $form->get('images')->getData();
 
-        //     // loop on images
-        //     foreach($images as $image){
-        //         // generate new filename
-        //         $originalFilename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
-        //         $safeFilename = $slugger->slug($originalFilename);
-        //         $newFilename = $safeFilename.'-'.uniqid().'.'.$image->guessExtension();
-
-        //         try {
-        //             // copy file in uploads folder
-        //             $image->move($this->getParameter('images_directory'), $newFilename);
-        //         } catch (FileException $e) {
-        //             dd($e);
-        //         }
-        //         // stock file name in db
-        //         $img = new Image();
-        //         $img->setName($newFilename);
-        //         $trick->addImage($img);
-        //     }
-            // $trickRepository->add($trick, true);
+            $trickRepository->add($trick, true);
 
             return $this->redirectToRoute('app_trick_index', [], Response::HTTP_SEE_OTHER);
         }

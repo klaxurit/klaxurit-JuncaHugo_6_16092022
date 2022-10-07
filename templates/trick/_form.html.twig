@@ -8,12 +8,7 @@
         <label for="description" class="form-label">Description</label>
         {{ form_widget(trick.description) }}
     </div>
-    <div 
-        id="medias" 
-        class="mb-3" 
-        data-prototype="{{ include("trick/_media.html.twig", {form: trick.medias.vars.prototype})|e("html_attr") }}" 
-        data-index="{{ trick.medias|length > 0 ? trick.medias|last.vars.name + 1 : 0 }}"
-    >
+    <div id="medias" class="mb-3" data-prototype="{{ include("trick/_media.html.twig", {form: trick.medias.vars.prototype})|e("html_attr") }}" data-index="{{ trick.medias|length > 0 ? trick.medias|last.vars.name + 1 : 0 }}">
         {% for media in trick.medias %}
             {{ include("trick/_media.html.twig", {form: media}) }}
         {% endfor %}
@@ -26,31 +21,7 @@
     </div>
     <button class="btn btn-primary mb-3">{{ button_label|default('Save') }}</button>
 {{ form_end(trick, { render_rest: false }) }}
+
 {% block javascript %}
-<script>
-    const newItem = (e) => {
-        const collectionHolder = document.querySelector(e.currentTarget.dataset.collection);
-
-        const item = document.createElement("div");
-
-        item.innerHTML += collectionHolder
-            .dataset
-            .prototype
-            .replace(
-                /__name__/g, 
-                collectionHolder.dataset.index
-            );
-            item.querySelector(".btn-remove").addEventListener("click", () => item.remove());
-            collectionHolder.appendChild(item);
-            collectionHolder.dataset.index++;
-    };
-
-    document
-        .querySelectorAll('.btn-new')
-        .forEach(btn => btn.addEventListener("click", newItem));
-
-    document
-        .querySelectorAll('.btn-remove')
-        .forEach(btn => btn.addEventListener("click", (e) => e.currentTarget.closest(".item").remove()));
-</script>
+    <script src="{{ asset('assets/js/media.js') }}" type="text/javascript"></script>
 {% endblock %}
