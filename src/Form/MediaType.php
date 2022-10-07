@@ -40,10 +40,7 @@ class MediaType extends AbstractType
                     'rows' => 5,
                 ],
             ])
-            ->add('url')
-            ->add('fileName')
             ->add('alt')
-            ->add('trick')
         ;
     }
 
