@@ -47,11 +47,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: 'boolean')]
     private $is_verified = false;
 
-    #[ORM\Column(type: 'string', length: 100)]
-    private $resetToken = null;
-
     #[ORM\Column(length: 255, unique: true)]
     private string $username;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $resetToken = null;
 
     public function __construct()
     {
@@ -181,18 +181,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         
         return $this;
     }
-    
-    public function getResetToken(): ?string
-    {
-        return $this->resetToken;
-    }
-    
-    public function setResetToken(?string $resetToken):self
-    {
-        $this->resetToken = $resetToken;
-        
-        return $this;
-    }
 
     public function getUsername(): string
     {
@@ -203,6 +191,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->username = $username;
         
+        return $this;
+    }
+
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }
+
+    public function setResetToken(?string $resetToken): self
+    {
+        $this->resetToken = $resetToken;
+
         return $this;
     }
 }
