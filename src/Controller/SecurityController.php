@@ -2,20 +2,21 @@
 
 namespace App\Controller;
 
-use App\Form\ResetPasswordRequestType;
+use App\Service\JWTService;
 use App\Form\ResetPasswordType;
-use App\Repository\UserRepository;
 use App\Service\SendMailService;
-use Doctrine\ORM\EntityManager;
+use App\Repository\UserRepository;
+use App\Form\ResetPasswordRequestType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Form\ResendEmailVerifRequestType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 
 class SecurityController extends AbstractController
 {
@@ -96,6 +97,80 @@ class SecurityController extends AbstractController
 
         return $this->render('security/reset_password_request.html.twig', [
             'requestPassForm' => $form->createView()
+        ]);
+    }
+
+    #[Route(path: '/resend-email-verif', name:'app_resend_email_verif')]
+    public function resendEmailVerif(
+        Request $request, 
+        UserRepository $userRepository,
+        TokenGeneratorInterface $tokenGeneratorInterface,
+        EntityManagerInterface $entityManagerInterface,
+        JWTService $jwt,
+        SendMailService $mail
+    ): Response
+    {
+        $form = $this->createForm(ResendEmailVerifRequestType::class);
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            // get the user by email
+            $user = $userRepository->findOneByEmail($form->get('email')->getData());
+
+            if ($user->getIsVerified()) {
+                $this->addFlash('danger', 'This account is already activated.');
+                return $this->redirectToRoute('app_home');
+            }
+            
+            
+            if($user) {
+                // create header
+                $header = [
+                    'typ' => 'JWT',
+                    'alg' => 'HS256'
+                ];
+                // create payload
+                $payload = [
+                    'user_id' => $user->getId()
+                ];
+                // generate user's JWT
+                $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
+                // check if we have an user
+
+                // try {
+                //     $entityManagerInterface->persist($user);
+                //     $entityManagerInterface->flush();
+                // } catch(\Exception $e) {
+                //     $this->addFlash('danger', 'A problem has occurred.');
+                //     return $this->redirectToRoute('app_login');
+                // }
+
+                try {
+                    // send email verification
+                    $mail->send(
+                        'no-reply@snowtrick.net',
+                        $user->getEmail(),
+                        'Email verification from snowtrick\'s account',
+                        'register',
+                        compact('user', 'token')
+                    );
+                } catch(\Exception $e) {
+                    $this->addFlash('danger', 'A problem has occurred during email sending.');
+                    return $this->redirectToRoute('app_login');
+                }
+
+                $this->addFlash('success', 'Email sent!');
+                return $this->redirectToRoute('app_login');
+
+            }
+            // $user = null
+            $this->addFlash('danger', 'A problem has occurred.');
+            return $this->redirectToRoute('app_login');
+        }
+
+        return $this->render('security/resend_verif_email.html.twig', [
+            'requestEmailVerif' => $form->createView()
         ]);
     }
 
