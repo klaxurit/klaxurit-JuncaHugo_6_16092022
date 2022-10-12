@@ -25,8 +25,9 @@ class Media
     #[ORM\Column(length: 255)]
     private ?string $alt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'medias')]
-    private Trick $trick;
+    #[ORM\ManyToOne(inversedBy: 'media')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Trick $trick_id = null;
 
     public function getId(): int
     {
@@ -81,14 +82,14 @@ class Media
         return $this;
     }
 
-    public function getTrick(): Trick
+    public function getTrickId(): ?Trick
     {
-        return $this->trick;
+        return $this->trick_id;
     }
 
-    public function setTrick(Trick $trick): self
+    public function setTrickId(?Trick $trick_id): self
     {
-        $this->trick = $trick;
+        $this->trick_id = $trick_id;
 
         return $this;
     }
