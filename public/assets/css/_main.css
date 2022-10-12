@@ -3,6 +3,11 @@
     color: #51565a;
 }
 
+.snow-text {
+    font-size: 1.2em;
+    font-family: 'Coiny', cursive;
+}
+
 label {
     color: #005792;
 }
