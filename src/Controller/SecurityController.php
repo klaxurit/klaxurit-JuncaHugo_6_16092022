@@ -104,7 +104,6 @@ class SecurityController extends AbstractController
     public function resendEmailVerif(
         Request $request, 
         UserRepository $userRepository,
-        TokenGeneratorInterface $tokenGeneratorInterface,
         EntityManagerInterface $entityManagerInterface,
         JWTService $jwt,
         SendMailService $mail
@@ -123,7 +122,6 @@ class SecurityController extends AbstractController
                 return $this->redirectToRoute('app_home');
             }
             
-            
             if($user) {
                 // create header
                 $header = [
@@ -136,15 +134,6 @@ class SecurityController extends AbstractController
                 ];
                 // generate user's JWT
                 $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
-                // check if we have an user
-
-                // try {
-                //     $entityManagerInterface->persist($user);
-                //     $entityManagerInterface->flush();
-                // } catch(\Exception $e) {
-                //     $this->addFlash('danger', 'A problem has occurred.');
-                //     return $this->redirectToRoute('app_login');
-                // }
 
                 try {
                     // send email verification
@@ -159,16 +148,13 @@ class SecurityController extends AbstractController
                     $this->addFlash('danger', 'A problem has occurred during email sending.');
                     return $this->redirectToRoute('app_login');
                 }
-
                 $this->addFlash('success', 'Email sent!');
-                return $this->redirectToRoute('app_login');
-
+                return $this->redirectToRoute('app_home');
             }
             // $user = null
             $this->addFlash('danger', 'A problem has occurred.');
             return $this->redirectToRoute('app_login');
         }
-
         return $this->render('security/resend_verif_email.html.twig', [
             'requestEmailVerif' => $form->createView()
         ]);

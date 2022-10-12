@@ -44,11 +44,6 @@ class UserAuthenticator extends AbstractLoginFormAuthenticator
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $user = $this->security->getUser();
-        if(!$user->getIsVerified()){
-            throw new AccountNotVerifiedAuthenticationException();
-            // dd("ici");
-        }
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }
