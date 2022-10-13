@@ -19,6 +19,7 @@
         <label for="groups" class="form-label">Groups</label>
         {{ form_widget(trick.groups) }}
     </div>
+    {# {{ form_widget(trick.save) }} #}
     <button class="btn btn-primary mb-3">{{ button_label|default('Save') }}</button>
 {{ form_end(trick, { render_rest: false }) }}
 

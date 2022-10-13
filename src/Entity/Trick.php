@@ -32,17 +32,12 @@ class Trick
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, cascade: ['persist'])]
-    #[Assert\Valid]
+    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, orphanRemoval: true, cascade:['persist'])]
     private Collection $medias;
-
-    #[ORM\OneToMany(mappedBy: 'trick_id', targetEntity: Media::class, orphanRemoval: true)]
-    private Collection $media;
 
     public function __construct()
     {
         $this->groups = new ArrayCollection();
-        $this->images = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->medias = new ArrayCollection();
         $this->media = new ArrayCollection();
@@ -153,36 +148,6 @@ class Trick
             // set the owning side to null (unless already changed)
             if ($media->getTrick() === $this) {
                 $media->setTrick(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Media>
-     */
-    public function getMedia(): Collection
-    {
-        return $this->media;
-    }
-
-    public function addMedium(Media $medium): self
-    {
-        if (!$this->media->contains($medium)) {
-            $this->media->add($medium);
-            $medium->setTrickId($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMedium(Media $medium): self
-    {
-        if ($this->media->removeElement($medium)) {
-            // set the owning side to null (unless already changed)
-            if ($medium->getTrickId() === $this) {
-                $medium->setTrickId(null);
             }
         }
 

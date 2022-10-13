@@ -6,7 +6,6 @@ use App\Entity\Image;
 use App\Entity\Media;
 use App\Entity\Trick;
 use App\Form\TrickType;
-use Doctrine\ORM\Mapping\Entity;
 use App\Repository\ImageRepository;
 use App\Repository\TrickRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -39,11 +38,11 @@ class TrickController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $trickSlug = $slugger->slug($form->get('name')->getData());
             $trick->setSlug($trickSlug);
-            dd($form->get('medias'));
-            if($form->get('medias')) {
+            // dd($form->get('medias'));
+            if(!$form->get('medias')) {
                 // get media
-                $media = $form->get('medias')->getData();
-                
+                $medias = $form->get('medias')->getData();
+            foreach ($medias as $media) {
                 // generate new filename
                 $originalFilename = pathinfo($media->getClientOriginalName(), PATHINFO_FILENAME);
                 $safeFilename = $slugger->slug($originalFilename);
@@ -56,14 +55,17 @@ class TrickController extends AbstractController
                     $this->addFlash('danger', "Error on uploading file");
                 }
                 // stock file name in db
+                // dd($newFilename);
                 $media = new Media();
                 $media->setFileName($newFilename);
+                $media->setUrl($newFilename);
                 $trick->addMedia($media);
-            }
-            
-            $entityManager->persist($trick);
-            $entityManager->flush();
 
+                $entityManager->persist($trick);
+                $entityManager->flush();
+                }
+                
+            }
             $trickRepository->add($trick, true);
 
             return $this->redirectToRoute('app_trick_index', [], Response::HTTP_SEE_OTHER);
