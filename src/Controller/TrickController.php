@@ -39,7 +39,7 @@ class TrickController extends AbstractController
             $trickSlug = $slugger->slug($form->get('name')->getData());
             $trick->setSlug($trickSlug);
             // dd($form->get('medias'));
-            if(!$form->get('medias')) {
+            if($form->get('medias')) {
                 // get media
                 $medias = $form->get('medias')->getData();
             foreach ($medias as $media) {
