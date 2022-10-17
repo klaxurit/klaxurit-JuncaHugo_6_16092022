@@ -89,7 +89,7 @@ class RegistrationController extends AbstractController
                 $user->setIsVerified(true);
                 $entityManager->flush($user);
                 $this->addFlash('success', 'User\'s acount activated !');
-                return $this->redirectToRoute('app_home');
+                return $this->redirectToRoute('app_login');
             }
         }
         // token's problem

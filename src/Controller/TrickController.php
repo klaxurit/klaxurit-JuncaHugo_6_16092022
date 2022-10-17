@@ -14,8 +14,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 #[Route('/trick')]
 class TrickController extends AbstractController
@@ -38,31 +39,30 @@ class TrickController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $trickSlug = $slugger->slug($form->get('name')->getData());
             $trick->setSlug($trickSlug);
-            // dd($form->get('medias'));
-            if($form->get('medias')) {
-                // get media
-                $medias = $form->get('medias')->getData();
-            foreach ($medias as $media) {
-                // generate new filename
-                $originalFilename = pathinfo($media->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = $safeFilename.'-'.uniqid().'.'.$media->guessExtension();
-                
-                try {
-                    // copy file in uploads folder
-                    $media->move($this->getParameter('images_directory'), $newFilename);
-                } catch (FileException $e) {
-                    $this->addFlash('danger', "Error on uploading file");
-                }
-                // stock file name in db
-                // dd($newFilename);
-                $media = new Media();
-                $media->setFileName($newFilename);
-                $media->setUrl($newFilename);
-                $trick->addMedia($media);
 
-                $entityManager->persist($trick);
-                $entityManager->flush();
+            if($form->get('medias')) {
+
+                // get media
+                foreach ($form->get('medias') as $media){
+                    $trickImg = $media->get('image')->getData();
+                    $originalFilename = pathinfo($trickImg->getClientOriginalName(), PATHINFO_FILENAME);
+                    $safeFilename = $slugger->slug($originalFilename);
+                    $newFilename = $safeFilename.'-'.uniqid().'.'.$trickImg->guessExtension();
+                    
+                    try {
+                        // copy file in uploads folder
+                        $trickImg->move($this->getParameter('images_directory'), $newFilename);
+                    } catch (FileException $e) {
+                        $this->addFlash('danger', "Error on uploading file");
+                    }
+                    // stock file name in db
+                    $trickImg = new Media();
+                    $trickImg->setFileName($newFilename);
+                    $trickImg->setUrl($newFilename);
+                    $trick->addMedia($trickImg);
+    
+                    $entityManager->persist($trick);
+                    $entityManager->flush();
                 }
                 
             }

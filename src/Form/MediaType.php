@@ -2,10 +2,10 @@
 
 namespace App\Form;
 
-use App\Entity\Image;
 use App\Entity\Media;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use App\EventSubscriber\AddATrickFormSubscriber;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -53,8 +53,10 @@ class MediaType extends AbstractType
             ->add('alt', TextType::class,
             [
                 'required' => false,
-            ])
-        ;
+            ]
+            )
+            // ->addEventSubscriber(new AddATrickFormSubscriber())
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
