@@ -11,6 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints\Image as ConstraintsImage;
 
 class MediaType extends AbstractType
@@ -29,34 +31,7 @@ class MediaType extends AbstractType
                 ],
                 'expanded' => true,
             ])
-            ->add('image', FileType::class, [
-                'label'       => false,
-                'mapped'      => false,
-                'required'    => false,
-                'constraints' => [
-                    new ConstraintsImage([
-                        'maxSize' => '2M',
-                        'maxSizeMessage' => 'The file size cannot exceed {{ limit }} {{ suffix }}',
-                    ])
-                ]
-            ])
-            ->add('videoUrl', TextareaType::class, [
-                'required'    => false,
-                'mapped'      => false,
-                'label'       => false,
-                'attr' => [
-                    'placeholder' => 'Enter the video iframe',
-                    'cols' => 30,
-                    'rows' => 5,
-                ],
-            ])
-            ->add('alt', TextType::class,
-            [
-                'required' => false,
-            ]
-            )
-            // ->addEventSubscriber(new AddATrickFormSubscriber())
-            ;
+            ->addEventSubscriber(new AddATrickFormSubscriber());
     }
 
     public function configureOptions(OptionsResolver $resolver): void

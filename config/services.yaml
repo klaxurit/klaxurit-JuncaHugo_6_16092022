@@ -22,5 +22,8 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
 
+    App\Service\UploaderHelper:
+        arguments:
+            $targetDirectory: '%kernel.project_dir%/public/uploads'
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

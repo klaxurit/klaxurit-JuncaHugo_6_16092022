@@ -5,10 +5,12 @@ window.onload = () => {
             selector.addEventListener('change', (e) => {
                 if (e.currentTarget.value === 'Image') {
                     item.querySelector('#image-upload').classList.remove('d-none')
+                    item.querySelector('#image-alt').classList.remove('d-none')
                     item.querySelector('#video-url').classList.add('d-none') 
                 } else if (e.currentTarget.value === 'Video') {
                     item.querySelector('#video-url').classList.remove('d-none')
                     item.querySelector('#image-upload').classList.add('d-none')
+                    item.querySelector('#image-alt').classList.add('d-none')
                 }
             })
         })

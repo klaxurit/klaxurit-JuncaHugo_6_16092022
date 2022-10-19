@@ -35,12 +35,15 @@ class Trick
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, orphanRemoval: true, cascade:['persist'])]
     private Collection $medias;
 
+    // #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, orphanRemoval: true, cascade:['persist'])]
+    // private Collection $medias;
+
     public function __construct()
     {
         $this->groups = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->medias = new ArrayCollection();
-        $this->media = new ArrayCollection();
+        // $this->media = new ArrayCollection();
     }
 
     public function __toString() {
@@ -124,6 +127,36 @@ class Trick
         return $this;
     }
 
+    // /**
+    //  * @return Collection<int, Media>
+    //  */
+    // public function getMedias(): Collection
+    // {
+    //     return $this->medias;
+    // }
+
+    // public function addMedia(Media $media): self
+    // {
+    //     if (!$this->medias->contains($media)) {
+    //         $this->medias->add($media);
+    //         $media->setTrick($this);
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeMedia(Media $media): self
+    // {
+    //     if ($this->medias->removeElement($media)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($media->getTrick() === $this) {
+    //             $media->setTrick(null);
+    //         }
+    //     }
+
+    //     return $this;
+    // }
+
     /**
      * @return Collection<int, Media>
      */
@@ -135,7 +168,7 @@ class Trick
     public function addMedia(Media $media): self
     {
         if (!$this->medias->contains($media)) {
-            $this->medias->add($media);
+            $this->medias[] = $media;
             $media->setTrick($this);
         }
 
@@ -144,7 +177,8 @@ class Trick
 
     public function removeMedia(Media $media): self
     {
-        if ($this->medias->removeElement($media)) {
+        if ($this->medias->contains($media)) {
+            $this->medias->removeElement($media);
             // set the owning side to null (unless already changed)
             if ($media->getTrick() === $this) {
                 $media->setTrick(null);

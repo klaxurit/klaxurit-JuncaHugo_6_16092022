@@ -2,12 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Image;
 use App\Entity\Media;
 use App\Entity\Trick;
 use App\Form\TrickType;
-use App\Repository\ImageRepository;
 use App\Repository\TrickRepository;
+use App\Service\UploaderHelper;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -30,7 +29,13 @@ class TrickController extends AbstractController
     }
 
     #[Route('/new', name: 'app_trick_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, TrickRepository $trickRepository, SluggerInterface $slugger): Response
+    public function new(
+        Request $request, 
+        EntityManagerInterface $entityManager, 
+        TrickRepository $trickRepository, 
+        SluggerInterface $slugger,
+        UploaderHelper $uploadedFile
+        ): Response
     {
         $trick = new Trick();
         $form = $this->createForm(TrickType::class, $trick);
@@ -43,30 +48,38 @@ class TrickController extends AbstractController
             if($form->get('medias')) {
 
                 // get media
-                foreach ($form->get('medias') as $media){
-                    $trickImg = $media->get('image')->getData();
-                    $originalFilename = pathinfo($trickImg->getClientOriginalName(), PATHINFO_FILENAME);
-                    $safeFilename = $slugger->slug($originalFilename);
-                    $newFilename = $safeFilename.'-'.uniqid().'.'.$trickImg->guessExtension();
-                    
-                    try {
-                        // copy file in uploads folder
-                        $trickImg->move($this->getParameter('images_directory'), $newFilename);
-                    } catch (FileException $e) {
-                        $this->addFlash('danger', "Error on uploading file");
+                foreach ($form->get('medias') as $mediaForm){
+                    if($mediaForm->get('type')->getData() === "Video") {
+                        $trickVideo = $mediaForm->get('url')->getData();
+                        $media = new Media();
+                        $media->setType($mediaForm->get('type')->getData());
+                        $media->setUrl($trickVideo);
+                        $trick->addMedia($media);
+                    } else {
+                        $trickImg = $mediaForm->get('image')->getData();
+                        try {
+                            $filePath = $uploadedFile->uploadTrickImage($trickImg);
+                            // dd($filePath);
+                        } catch (FileException $e) {
+                            $this->addFlash('danger', "Error on uploading file");
+                        }
+                        // stock file name in db
+                        $media = new Media();
+                        $media->setFileName($filePath);
+                        $media->setType($mediaForm->get('type')->getData());
+                        $media->setAlt($mediaForm->get('alt')->getData());
+                        $trick->addMedia($media);
                     }
-                    // stock file name in db
-                    $trickImg = new Media();
-                    $trickImg->setFileName($newFilename);
-                    $trickImg->setUrl($newFilename);
-                    $trick->addMedia($trickImg);
-    
-                    $entityManager->persist($trick);
-                    $entityManager->flush();
+                    // dd($trickMedia);
+                    
+                    // $entityManager->persist($trickMedia);
                 }
+                // dd($media);
+                $entityManager->persist($trick);
+                $entityManager->flush();
                 
             }
-            $trickRepository->add($trick, true);
+            // $trickRepository->add($trick, true);
 
             return $this->redirectToRoute('app_trick_index', [], Response::HTTP_SEE_OTHER);
         }

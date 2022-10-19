@@ -16,17 +16,20 @@ class Media
     #[ORM\Column(length: 255)]
     private ?string $type = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $url = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $fileName = null;
-
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $alt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'medias', targetEntity: Trick::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    // #[ORM\ManyToOne(inversedBy: 'medias', targetEntity: Trick::class)]
+    // #[ORM\JoinColumn(nullable: false)]
+    // private ?Trick $trick = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $url = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $fileName = null;
+
+    #[ORM\ManyToOne(inversedBy: 'medias')]
     private ?Trick $trick = null;
 
     public function getId(): int
@@ -46,12 +49,24 @@ class Media
         return $this;
     }
 
+    public function getAlt(): ?string
+    {
+        return $this->alt;
+    }
+
+    public function setAlt(string $alt): self
+    {
+        $this->alt = $alt;
+
+        return $this;
+    }
+
     public function getUrl(): ?string
     {
         return $this->url;
     }
 
-    public function setUrl(string $url): self
+    public function setUrl(?string $url): self
     {
         $this->url = $url;
 
@@ -63,21 +78,9 @@ class Media
         return $this->fileName;
     }
 
-    public function setFileName(string $fileName): self
+    public function setFileName(?string $fileName): self
     {
         $this->fileName = $fileName;
-
-        return $this;
-    }
-
-    public function getAlt(): ?string
-    {
-        return $this->alt;
-    }
-
-    public function setAlt(string $alt): self
-    {
-        $this->alt = $alt;
 
         return $this;
     }
