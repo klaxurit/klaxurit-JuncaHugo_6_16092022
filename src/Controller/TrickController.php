@@ -44,40 +44,29 @@ class TrickController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $trickSlug = $slugger->slug($form->get('name')->getData());
             $trick->setSlug($trickSlug);
-
+            
             if($form->get('medias')) {
-
                 // get media
                 foreach ($form->get('medias') as $mediaForm){
-                    if($mediaForm->get('type')->getData() === "Video") {
-                        $trickVideo = $mediaForm->get('url')->getData();
-                        $media = new Media();
-                        $media->setType($mediaForm->get('type')->getData());
-                        $media->setUrl($trickVideo);
-                        $trick->addMedia($media);
-                    } else {
+                    if($mediaForm->get('type')->getData() === "Image") {
                         $trickImg = $mediaForm->get('image')->getData();
+
                         try {
                             $filePath = $uploadedFile->uploadTrickImage($trickImg);
-                            // dd($filePath);
                         } catch (FileException $e) {
                             $this->addFlash('danger', "Error on uploading file");
                         }
-                        // stock file name in db
-                        $media = new Media();
-                        $media->setFileName($filePath);
-                        $media->setType($mediaForm->get('type')->getData());
-                        $media->setAlt($mediaForm->get('alt')->getData());
-                        $trick->addMedia($media);
+
+                        // get the array form the class
+                        foreach ($trick->getMedias()->getIterator() as $media) {
+                            if ($media->getFileName() ===  $trickImg->getClientOriginalName()) {
+                                $media->setFileName($filePath);
+                            }
+                        }
                     }
-                    // dd($trickMedia);
-                    
-                    // $entityManager->persist($trickMedia);
                 }
-                // dd($media);
                 $entityManager->persist($trick);
                 $entityManager->flush();
-                
             }
             // $trickRepository->add($trick, true);
 

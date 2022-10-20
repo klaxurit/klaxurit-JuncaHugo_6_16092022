@@ -31,6 +31,29 @@ class MediaType extends AbstractType
                 ],
                 'expanded' => true,
             ])
+            ->add('image', FileType::class, [
+                'label'       => false,
+                'mapped'      => false,
+                'required'    => false,
+                'constraints' => [
+                    new ConstraintsImage([
+                        'maxSize' => '2M',
+                        'maxSizeMessage' => 'The file size cannot exceed {{ limit }} {{ suffix }}',
+                    ])
+                ]
+            ])
+            ->add('url', TextareaType::class, [
+                'required'    => false,
+                'label'       => false,
+                'attr' => [
+                    'placeholder' => 'Enter the video iframe',
+                    'cols' => 30,
+                    'rows' => 5,
+                ],
+            ])
+            ->add('alt', TextType::class, [
+                'required' => false,
+            ])
             ->addEventSubscriber(new AddATrickFormSubscriber());
     }
 
