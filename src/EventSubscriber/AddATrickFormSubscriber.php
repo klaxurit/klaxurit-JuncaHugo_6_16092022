@@ -21,6 +21,7 @@ class AddATrickFormSubscriber implements EventSubscriberInterface
 
     public function preSubmitData(FormEvent $event): void
     {
+        dd("mort");
         $form = $event->getForm();
         $data = $event->getData();
 
@@ -29,9 +30,22 @@ class AddATrickFormSubscriber implements EventSubscriberInterface
         }
 
         if ($data['type'] === 'Video') {
-            unset($data['image']);
-            unset($data['alt']);
+            // dd("video");
             $form->add('url', TextareaType::class, [
+                'required'    => true,
+                'label'       => false,
+                'attr' => [
+                    'placeholder' => 'Enter the video iframe',
+                    'cols' => 30,
+                    'rows' => 5,
+                ],
+            ]);
+            // $event->setData($data);
+            // dd($data);
+            return;
+        } else {
+            dd("image");
+            $form->remove('url', TextareaType::class, [
                 'required'    => false,
                 'label'       => false,
                 'attr' => [
@@ -40,38 +54,12 @@ class AddATrickFormSubscriber implements EventSubscriberInterface
                     'rows' => 5,
                 ],
             ]);
-            $event->setData($data);
-            // dd($data);
-            return;
-        } else {
-            unset($data['url']);
-            $form->add(
-                'alt',
-                TextType::class,
-                [
-                    'required' => false,
-                ]
-            );
-            $form->add(
-                'image',
-                FileType::class,
-                [
-                    'label'       => false,
-                    'mapped'      => false,
-                    'required'    => false,
-                    'constraints' => [
-                        new ConstraintsImage([
-                            'maxSize' => '2M',
-                            'maxSizeMessage' => 'The file size cannot exceed {{ limit }} {{ suffix }}',
-                        ])
-                    ]
-                ]
-            );
+            
 
             $data['fileName'] = $data['image']->getClientOriginalName();
             $form->add('fileName', TextType::class);
 
-            $event->setData($data);
+            // $event->setData($data);
             return;
         }
     }
