@@ -88,7 +88,14 @@ class TrickController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Trick $trick, EntityManagerInterface $entityManager, TrickRepository $trickRepository, SluggerInterface $slugger): Response
+    public function edit(
+            Request $request, 
+            Trick $trick, 
+            EntityManagerInterface $entityManager, 
+            TrickRepository $trickRepository, 
+            UploaderHelper $uploadedFile,
+            SluggerInterface $slugger
+        ): Response
     {
         $form = $this->createForm(TrickType::class, $trick);
         $form->handleRequest($request);
@@ -96,33 +103,33 @@ class TrickController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $trickSlug = $slugger->slug($form->get('name')->getData());
             $trick->setSlug($trickSlug);
-            $entityManager->flush();
-            // // get images
-            // $images = $form->get('images')->getData();
+            
+            if($form->get('medias')) {
+                // get media
+                foreach ($form->get('medias') as $mediaForm){
+                    if($mediaForm->get('type')->getData() === "Image") {
+                        $trickImg = $mediaForm->get('image')->getData();
 
-            // // loop on images
-            // foreach($images as $image){
-            //     // generate new filename
-            //     $originalFilename = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME);
-            //     $safeFilename = $slugger->slug($originalFilename);
-            //     $newFilename = $safeFilename.'-'.uniqid().'.'.$image->guessExtension();
+                        try {
+                            $filePath = $uploadedFile->uploadTrickImage($trickImg);
+                        } catch (FileException $e) {
+                            $this->addFlash('danger', "Error on uploading file");
+                        }
 
-            //     try {
-            //         // copy file in uploads folder
-            //         $image->move($this->getParameter('images_directory'), $newFilename);
-            //     } catch (FileException $e) {
-            //         dd($e);
-            //     }
-            //     // stock file name in db
-            //     $img = new Image();
-            //     $img->setName($newFilename);
-            //     $trickSlug = $slugger->slug($form->get('name')->getData());
-            //     $trick->setSlug($trickSlug);
-            //     $trick->addImage($img);
-            // }
+                        // get the array form the class
+                        foreach ($trick->getMedias()->getIterator() as $media) {
+                            if ($media->getFileName() ===  $trickImg->getClientOriginalName()) {
+                                $media->setFileName($filePath);
+                            }
+                        }
+                    }
+                }
+                $entityManager->persist($trick);
+                $entityManager->flush();
+            }
             // $trickRepository->add($trick, true);
 
-            // return $this->redirectToRoute('app_trick_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_trick_index', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('trick/edit.html.twig', [

@@ -1,3 +1,13 @@
+		{% if app.request.attributes.get('_route') == 'app_trick_edit' %}
+			{# {% for media in trick.medias %} #}
+		<pre>
+			{{ dump("coucou") }}
+		</pre>
+			{# {% if media.type is same as("Image") %}
+				<img src="{{ asset('/assets/upload' ~ media.fileName)}}" alt="">
+			{% endif %} #}
+			{# {% endfor %} #}
+		{% endif %}
 <div class="item">
 	<div class="mb-3">
 		<label for="name" class="form-label">Media type</label>
