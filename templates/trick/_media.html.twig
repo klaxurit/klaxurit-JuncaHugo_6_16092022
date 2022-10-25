@@ -15,7 +15,10 @@
 	</div>
 	<div id="image-upload" class="mb-3 d-none">
 		<label for="name" class="form-label">Upload image</label>
+		{% if form.image is null %}
+		{% else %}
 		{{form_widget(form.image)}}
+		{% endif %}
 	</div>
 	<div id="video-url" class="mb-3 d-none">
 		<label for="name" class="form-label">Video link</label>

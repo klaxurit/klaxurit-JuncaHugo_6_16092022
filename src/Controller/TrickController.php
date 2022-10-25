@@ -16,6 +16,7 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/trick')]
 class TrickController extends AbstractController
@@ -34,7 +35,7 @@ class TrickController extends AbstractController
         EntityManagerInterface $entityManager, 
         TrickRepository $trickRepository, 
         SluggerInterface $slugger,
-        UploaderHelper $uploadedFile
+        UploaderHelper $uploadedFile,
         ): Response
     {
         $trick = new Trick();

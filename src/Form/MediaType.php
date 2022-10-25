@@ -3,16 +3,17 @@
 namespace App\Form;
 
 use App\Entity\Media;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use App\EventSubscriber\AddATrickFormSubscriber;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Validator\Constraints\Image as ConstraintsImage;
 
 class MediaType extends AbstractType
@@ -34,7 +35,7 @@ class MediaType extends AbstractType
             ->add('image', FileType::class, [
                 'label'       => false,
                 'mapped'      => false,
-                'required'    => true,
+                'required'    => false,
                 'constraints' => [
                     new ConstraintsImage([
                         'maxSize' => '2M',
@@ -42,8 +43,11 @@ class MediaType extends AbstractType
                     ])
                 ]
             ])
+            ->add('alt', TextType::class, [
+                'required' => false,
+            ])
             ->add('url', TextareaType::class, [
-                'required'    => true,
+                'required'    => false,
                 'label'       => false,
                 'attr' => [
                     'placeholder' => 'Enter the video iframe',
@@ -51,16 +55,23 @@ class MediaType extends AbstractType
                     'rows' => 5,
                 ],
             ])
-            ->add('alt', TextType::class, [
-                'required' => true,
-            ])
-            ->addEventSubscriber(new AddATrickFormSubscriber());
+            ->addEventSubscriber(new AddATrickFormSubscriber())
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Media::class,
+            'validation_groups' => function (FormInterface $form) {
+                $data = $form->getData();
+
+                if (Media::VIDEO == $data->getType()) {
+                    return ['video'];
+                }
+
+                return ['image'];
+            },
         ]);
     }
 }

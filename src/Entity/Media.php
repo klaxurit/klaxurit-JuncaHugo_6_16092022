@@ -2,12 +2,16 @@
 
 namespace App\Entity;
 
-use App\Repository\MediaRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\MediaRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
 class Media
 {
+    public const IMAGE = 'Image';
+    public const VIDEO = 'Video';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -17,13 +21,11 @@ class Media
     private ?string $type = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotBlank(groups: ['image'])]
     private ?string $alt = null;
 
-    // #[ORM\ManyToOne(inversedBy: 'medias', targetEntity: Trick::class)]
-    // #[ORM\JoinColumn(nullable: false)]
-    // private ?Trick $trick = null;
-
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\NotNull(groups: ['video'])]
     private ?string $url = null;
 
     #[ORM\Column(length: 255, nullable: true)]
