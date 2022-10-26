@@ -5,7 +5,6 @@ window.onload = () => {
             selector.addEventListener('change', (e) => {
                 if (e.currentTarget.value === 'Image') {
                     item.querySelector('#image-upload').classList.remove('d-none')
-                    item.querySelector('#image-upload input').setAttribute('required', true)
                     item.querySelector('#image-alt').classList.remove('d-none')
                     item.querySelector('#video-url').classList.add('d-none') 
                 } else if (e.currentTarget.value === 'Video') {

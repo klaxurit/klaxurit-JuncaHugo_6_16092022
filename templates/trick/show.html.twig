@@ -15,23 +15,21 @@
 
     <div class="text-center">
         <a href="" class="btn btn-primary my-5">See medias</a>
-        {% for image in trick.images %}
-        <div>
-            <img src="{{ asset('/uploads/' ~ image.name) }}" alt="" width="250">
-        </div>
+        <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-4 justify-content-center">
+        {% for media in trick.medias %}
+            <div class="col mb-5">
+                <img class="rounded" src="{{ asset('/uploads/' ~ media.fileName) }}" alt="" width="250">
+            </div>
         {% endfor %}
+        </div>
     </div>
 
     <p class="text-justify text-center mt-3">{{trick.description}}</p>
 
     <div class="trick__groups text-center">
-        <span class="badge rounded-pill text-bg-primary">Flip</span>
-        <span class="badge rounded-pill text-bg-secondary">Slide</span>
-        <span class="badge rounded-pill text-bg-success">Grab</span>
-        <span class="badge rounded-pill text-bg-danger">Loop</span>
-        <span class="badge rounded-pill text-bg-warning">Indy</span>
-        <span class="badge rounded-pill text-bg-info">Air</span>
-        <span class="badge rounded-pill text-bg-light">Back</span>
+    {% for group in trick.groups %}
+        <span class="badge rounded-pill text-bg-primary">{{group.name}}</span>
+    {% endfor %}
     </div>
 
     <div class="trick__separator my-3">

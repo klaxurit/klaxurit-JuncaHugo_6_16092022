@@ -20,11 +20,8 @@
                 <div class="card h-100">
                     <!-- Trick image-->
                     <a href="{{ path('app_trick_show', {'id': trick.id}) }}">
-                    {% for media in trick.medias|filter(media=> media.type is same as("Image")) %}
-                            {# <pre>
-                                {{ dump(media) }}
-                            </pre> #}
-                            <img class="card-img-top" src="{{asset('/uploads/' ~ media.fileName)}}" alt="..." />
+                    {% for media in trick.medias|filter(media=> media.type is same as("Image"))|slice(0, 1) %}
+                        <img class="card-img-top" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" />
                     {% endfor %}
                     </a>
                     <!-- Trick details-->

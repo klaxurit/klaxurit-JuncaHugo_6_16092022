@@ -2,18 +2,19 @@
 
 namespace App\Controller;
 
+use App\Entity\Media;
 use App\Entity\Trick;
 use App\Form\TrickType;
-use App\Repository\TrickRepository;
 use App\Service\UploaderHelper;
+use App\Repository\TrickRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 #[Route('/trick')]
 class TrickController extends AbstractController
@@ -42,7 +43,7 @@ class TrickController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $trickSlug = $slugger->slug($form->get('name')->getData());
             $trick->setSlug($trickSlug);
-            
+
             if($form->get('medias')) {
                 // get media
                 foreach ($form->get('medias') as $mediaForm){
@@ -52,23 +53,25 @@ class TrickController extends AbstractController
                         try {
                             $filePath = $uploadedFile->uploadTrickImage($trickImg);
                             // get the array form the class
-                            foreach ($trick->getMedias()->getIterator() as $media) {
-                                $media->setFileName($filePath);
-                            }
                         } catch (FileException $e) {
                             $this->addFlash('danger', "Error on uploading file");
                         }
-                        
-                        // get the array form the class
-                        // voir pk ça
-                        // foreach ($trick->getMedias()->getIterator() as $media) {
-                        //     if ($media->getFileName() ===  $trickImg->getClientOriginalName()) {
-                        //         $media->setFileName($filePath);
-                        //     }
-                        // }
 
+                        // stock file name in db
+                        $media = new Media();
+                        $media->setType("Image");
+                        $media->setFileName($filePath);
+                        $media->setAlt($mediaForm->get('alt')->getData());
+                        $trick->addMedia($media);  
+                    }else{
+                        $media = new Media();
+                        $media->setType("Video");
+                        $media->setUrl($mediaForm->get('url')->getData());
+                        $trick->addMedia($media);
                     }
                 }
+                $trick->addGroup($form->get('groups')->getData());
+                // dd($trick);
                 $entityManager->persist($trick);
                 $entityManager->flush();
             }

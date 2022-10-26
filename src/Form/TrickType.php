@@ -28,6 +28,7 @@ class TrickType extends AbstractType
             ])
             ->add('medias', CollectionType::class, [
                 'entry_type'   => MediaType::class,
+                'mapped' => false,
                 'by_reference' => false,
                 'allow_add'    => true,
                 'allow_delete' => true

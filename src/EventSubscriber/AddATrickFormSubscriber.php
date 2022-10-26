@@ -37,6 +37,7 @@ class AddATrickFormSubscriber implements EventSubscriberInterface
         } else {
             $data['fileName'] = $data['image']->getClientOriginalName();
             $form->add('fileName', TextType::class);
+            // dump($form->getData());
             return;
         }
     }

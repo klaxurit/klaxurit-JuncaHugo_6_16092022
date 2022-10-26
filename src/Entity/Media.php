@@ -21,14 +21,15 @@ class Media
     private ?string $type = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\NotBlank(groups: ['image'])]
+    // #[Assert\NotBlank(groups: ['image'])]
     private ?string $alt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\NotBlank(groups: ['video'])]
+    // #[Assert\NotBlank(groups: ['video'])]
     private ?string $url = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    // #[Assert\NotBlank(groups: ['image'])]
     private ?string $fileName = null;
 
     #[ORM\ManyToOne(inversedBy: 'medias')]
