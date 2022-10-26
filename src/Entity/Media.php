@@ -25,7 +25,7 @@ class Media
     private ?string $alt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\NotNull(groups: ['video'])]
+    #[Assert\NotBlank(groups: ['video'])]
     private ?string $url = null;
 
     #[ORM\Column(length: 255, nullable: true)]

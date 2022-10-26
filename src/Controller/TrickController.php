@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Media;
 use App\Entity\Trick;
 use App\Form\TrickType;
 use App\Repository\TrickRepository;
@@ -14,9 +13,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[Route('/trick')]
 class TrickController extends AbstractController
@@ -51,19 +48,25 @@ class TrickController extends AbstractController
                 foreach ($form->get('medias') as $mediaForm){
                     if($mediaForm->get('type')->getData() === "Image") {
                         $trickImg = $mediaForm->get('image')->getData();
-
+                        
                         try {
                             $filePath = $uploadedFile->uploadTrickImage($trickImg);
+                            // get the array form the class
+                            foreach ($trick->getMedias()->getIterator() as $media) {
+                                $media->setFileName($filePath);
+                            }
                         } catch (FileException $e) {
                             $this->addFlash('danger', "Error on uploading file");
                         }
-
+                        
                         // get the array form the class
-                        foreach ($trick->getMedias()->getIterator() as $media) {
-                            if ($media->getFileName() ===  $trickImg->getClientOriginalName()) {
-                                $media->setFileName($filePath);
-                            }
-                        }
+                        // voir pk ça
+                        // foreach ($trick->getMedias()->getIterator() as $media) {
+                        //     if ($media->getFileName() ===  $trickImg->getClientOriginalName()) {
+                        //         $media->setFileName($filePath);
+                        //     }
+                        // }
+
                     }
                 }
                 $entityManager->persist($trick);
@@ -71,7 +74,7 @@ class TrickController extends AbstractController
             }
             // $trickRepository->add($trick, true);
 
-            return $this->redirectToRoute('app_trick_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('trick/new.html.twig', [
