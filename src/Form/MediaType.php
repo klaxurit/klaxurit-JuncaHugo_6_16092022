@@ -32,6 +32,13 @@ class MediaType extends AbstractType
                     'Image' => ['class' => 'btn-type'],
                     'Video' => ['class' => 'btn-type'],
                 ],
+                'constraints' => [
+                    new NotBlank(
+                        [
+                            'message' => 'Please select a type of media.'
+                        ]
+                    )
+                ],
                 'expanded' => true,
             ])
             ->add('image', FileType::class, [

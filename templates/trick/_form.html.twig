@@ -9,6 +9,7 @@
     <div class="mb-3">
         <label for="description" class="form-label">Description</label>
         {{ form_widget(trick.description) }}
+        {{ form_errors(trick.description) }}
     </div>
     <div id="medias" class="mb-3" data-prototype="{{ include("trick/_media.html.twig", {form: trick.medias.vars.prototype})|e("html_attr") }}" data-index="{{ trick.medias|length > 0 ? trick.medias|last.vars.name + 1 : 0 }}">
         {% for media in trick.medias %}
@@ -20,6 +21,7 @@
     <div class="mb-3">
         <label for="groups" class="form-label">Groups</label>
         {{ form_widget(trick.groups) }}
+        {{ form_errors(trick.groups) }}
     </div>
     {# {{ form_widget(trick.save) }} #}
     <button class="btn btn-primary mb-3">{{ button_label|default('Save') }}</button>

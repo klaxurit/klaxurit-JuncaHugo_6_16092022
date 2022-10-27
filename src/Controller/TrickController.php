@@ -77,7 +77,6 @@ class TrickController extends AbstractController
             // $trickRepository->add($trick, true);
             return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
-        // dd($form->getErrors());
         
         return $this->render('trick/new.html.twig', [
             'trick' => $form->createView(),
