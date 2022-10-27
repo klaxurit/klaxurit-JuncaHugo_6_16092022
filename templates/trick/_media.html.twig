@@ -1,14 +1,11 @@
-		{% if app.request.attributes.get('_route') == 'app_trick_edit' %}
+		{# {% if app.request.attributes.get('_route') == 'app_trick_edit' %} #}
 			{# {% for media in trick.medias %} #}
-		<pre>
-			{{ dump("coucou") }}
-		</pre>
 			{# {% if media.type is same as("Image") %}
 				<img src="{{ asset('/assets/upload' ~ media.fileName)}}" alt="">
 			{% endif %} #}
 			{# {% endfor %} #}
-		{% endif %}
-<div class="item">
+		{# {% endif %} #}
+<div class="item form-media">
 	<div class="mb-3">
 		<label for="name" class="form-label">Media type</label>
 		{{form_widget(form.type)}}
@@ -23,10 +20,12 @@
 	<div id="video-url" class="mb-3 d-none">
 		<label for="name" class="form-label">Video link</label>
 		{{form_widget(form.url)}}
+		{{form_errors(form.url)}}
 	</div>
 	<div id="image-alt" class="mb-3 d-none">
 		<label for="name" class="form-label">Media description</label>
 		{{form_widget(form.alt)}}
+		{{form_errors(form.alt)}}
 	</div>
 	<div class="form-group">
 		<buton type="button" class="btn btn-danger btn-remove">Remove</buton>

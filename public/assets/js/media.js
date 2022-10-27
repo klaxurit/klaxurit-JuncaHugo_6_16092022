@@ -13,6 +13,17 @@ window.onload = () => {
                     item.querySelector('#image-alt').classList.add('d-none')
                 }
             })
+
+            if (selector.value === 'Image' && selector.checked) {
+                item.querySelector('#image-upload').classList.remove('d-none')
+                item.querySelector('#image-alt').classList.remove('d-none')
+                item.querySelector('#video-url').classList.add('d-none') 
+            } else if (selector.value === 'Video' && selector.checked) {
+                item.querySelector('#video-url').classList.remove('d-none')
+                item.querySelector('#image-upload').classList.add('d-none')
+                item.querySelector('#image-alt').classList.add('d-none')
+            }
+            console.log(selector.checked, selector.value)
         })
     }
 
@@ -42,5 +53,9 @@ window.onload = () => {
         .querySelectorAll('.btn-remove')
         .forEach(btn => btn.addEventListener("click", (e) => e.currentTarget.closest(".item").remove()));
 
-    
+    document
+        .querySelectorAll('.form-media')
+        .forEach(formCtrl => {
+            initMediaTypeSelector(formCtrl)
+        })
 }

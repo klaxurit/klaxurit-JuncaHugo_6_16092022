@@ -56,7 +56,7 @@ class TrickController extends AbstractController
                         } catch (FileException $e) {
                             $this->addFlash('danger', "Error on uploading file");
                         }
-
+                        
                         // stock file name in db
                         $media = new Media();
                         $media->setType("Image");
@@ -71,18 +71,17 @@ class TrickController extends AbstractController
                     }
                 }
                 $trick->addGroup($form->get('groups')->getData());
-                // dd($trick);
                 $entityManager->persist($trick);
                 $entityManager->flush();
             }
             // $trickRepository->add($trick, true);
-
             return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
-
+        // dd($form->getErrors());
+        
         return $this->render('trick/new.html.twig', [
             'trick' => $form->createView(),
-            'controller_name' => 'TrickController',
+            'controller_name' => 'TrickController'
         ]);
     }
 
@@ -110,33 +109,40 @@ class TrickController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $trickSlug = $slugger->slug($form->get('name')->getData());
             $trick->setSlug($trickSlug);
-            
+
             if($form->get('medias')) {
                 // get media
                 foreach ($form->get('medias') as $mediaForm){
                     if($mediaForm->get('type')->getData() === "Image") {
                         $trickImg = $mediaForm->get('image')->getData();
-
+                        
                         try {
                             $filePath = $uploadedFile->uploadTrickImage($trickImg);
+                            // get the array form the class
                         } catch (FileException $e) {
                             $this->addFlash('danger', "Error on uploading file");
                         }
 
-                        // get the array form the class
-                        foreach ($trick->getMedias()->getIterator() as $media) {
-                            if ($media->getFileName() ===  $trickImg->getClientOriginalName()) {
-                                $media->setFileName($filePath);
-                            }
-                        }
+                        // stock file name in db
+                        $media = new Media();
+                        $media->setType("Image");
+                        $media->setFileName($filePath);
+                        $media->setAlt($mediaForm->get('alt')->getData());
+                        $trick->addMedia($media);  
+                    }else{
+                        $media = new Media();
+                        $media->setType("Video");
+                        $media->setUrl($mediaForm->get('url')->getData());
+                        $trick->addMedia($media);
                     }
                 }
+                $trick->addGroup($form->get('groups')->getData());
                 $entityManager->persist($trick);
                 $entityManager->flush();
             }
             // $trickRepository->add($trick, true);
 
-            return $this->redirectToRoute('app_trick_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->render('trick/edit.html.twig', [

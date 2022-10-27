@@ -1,0 +1,23 @@
+{% for trick in tricks %}
+    <div class="col mb-5">
+        <div class="card h-100">
+            <!-- Trick image-->
+            <a href="{{ path('app_trick_show', {'id': trick.id}) }}">
+            {% for media in trick.medias|filter(media=> media.type is same as("Image"))|slice(0, 1) %}
+                <img class="card-img-top" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" />
+            {% endfor %}
+            </a>
+            <!-- Trick details-->
+            <div class="card-body p-3 d-flex flex-row align-items-center justify-content-between">
+                <div class="text-start m-0">
+                    <!-- Trick name-->
+                    <h4 class="snow-text">{{ trick.name }}</h4>
+                </div>
+                <div class="trick__actions">
+                    <a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="trick__actions-button"><i class="bi bi-pencil-fill"></i></a>
+                    <a href="" class="ms-2 trick__actions-button"><i class="bi bi-trash-fill"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}

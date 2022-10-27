@@ -29,7 +29,6 @@ class Media
     private ?string $url = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    // #[Assert\NotBlank(groups: ['image'])]
     private ?string $fileName = null;
 
     #[ORM\ManyToOne(inversedBy: 'medias')]

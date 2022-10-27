@@ -9,12 +9,14 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use App\EventSubscriber\AddATrickFormSubscriber;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints\NotNull;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Validator\Constraints\Image as ConstraintsImage;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class MediaType extends AbstractType
 {
@@ -45,10 +47,26 @@ class MediaType extends AbstractType
             ])
             ->add('alt', TextType::class, [
                 'required' => false,
+                'constraints' => [
+                    new NotBlank(
+                        [
+                            'groups' => ['image', 'Default'],
+                            'message' => 'Alt field cannot be blank. Please enter a valid alt.'
+                        ]
+                    )
+                ],
             ])
             ->add('url', TextareaType::class, [
                 'required'    => false,
                 'label'       => false,
+                'constraints' => [
+                    new NotBlank(
+                        [
+                            'groups' => ['video', 'Default'],
+                            'message' => 'Url field cannot be blank. Please enter a valid url.'
+                        ]
+                    )
+                ],
                 'attr' => [
                     'placeholder' => 'Enter the video iframe',
                     'cols' => 30,
@@ -56,7 +74,7 @@ class MediaType extends AbstractType
                 ],
             ])
             // ->addEventSubscriber(new AddATrickFormSubscriber())
-        ;
+        ->getForm();
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -65,11 +83,9 @@ class MediaType extends AbstractType
             'data_class' => Media::class,
             'validation_groups' => function (FormInterface $form) {
                 $data = $form->getData();
-
                 if (Media::VIDEO == $data->getType()) {
                     return ['video'];
                 }
-
                 return ['image'];
             },
         ]);
