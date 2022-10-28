@@ -15,7 +15,7 @@
                 </div>
                 <div class="trick__actions">
                     <a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="trick__actions-button"><i class="bi bi-pencil-fill"></i></a>
-                    <a href="" class="ms-2 trick__actions-button"><i class="bi bi-trash-fill"></i></a>
+                    <a onClick="javascript: return confirm('Please confirm trick deletion');" href="{{ path('app_trick_delete', {'id': trick.id}) }}" class="ms-2 trick__actions-button"><i class="bi bi-trash-fill"></i></a>
                 </div>
             </div>
         </div>

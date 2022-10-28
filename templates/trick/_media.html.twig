@@ -1,10 +1,3 @@
-		{# {% if app.request.attributes.get('_route') == 'app_trick_edit' %} #}
-			{# {% for media in trick.medias %} #}
-			{# {% if media.type is same as("Image") %}
-				<img src="{{ asset('/assets/upload' ~ media.fileName)}}" alt="">
-			{% endif %} #}
-			{# {% endfor %} #}
-		{# {% endif %} #}
 <div class="item form-media">
 	<div class="mb-3">
 		<label for="name" class="form-label">Media type</label>
@@ -13,10 +6,7 @@
 	</div>
 	<div id="image-upload" class="mb-3 d-none">
 		<label for="name" class="form-label">Upload image</label>
-		{% if form.image is null %}
-		{% else %}
 		{{form_widget(form.image)}}
-		{% endif %}
 	</div>
 	<div id="video-url" class="mb-3 d-none">
 		<label for="name" class="form-label">Video link</label>

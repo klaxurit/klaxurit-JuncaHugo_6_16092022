@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Media;
 use App\Entity\Trick;
 use App\Form\TrickType;
+use App\Repository\MediaRepository;
 use App\Service\UploaderHelper;
 use App\Repository\TrickRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -79,7 +80,7 @@ class TrickController extends AbstractController
         }
         
         return $this->render('trick/new.html.twig', [
-            'trick' => $form->createView(),
+            'trickForm' => $form->createView(),
             'controller_name' => 'TrickController'
         ]);
     }
@@ -145,35 +146,43 @@ class TrickController extends AbstractController
         }
 
         return $this->render('trick/edit.html.twig', [
-            'trick' => $form->createView(),
+            'trickForm' => $form->createView(),
+            'trick' => $trick,
             'controller_name' => 'TrickController',
         ]);
     }
 
-    #[Route('/{id}', name: 'app_trick_delete', methods: ['POST'])]
-    public function delete(Request $request, Trick $trick, TrickRepository $trickRepository): Response
+    #[Route('/delete/{id}', name: 'app_trick_delete', methods: ['DELETE', 'GET'])]
+    public function delete(Trick $trick, TrickRepository $trickRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$trick->getId(), $request->request->get('_token'))) {
-            $trickRepository->remove($trick, true);
-        }
+        $trickRepository->remove($trick, true);
+        $this->addFlash('success', "Trick deleted");
 
-        return $this->redirectToRoute('app_trick_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/delete/image/{id}', name: 'app_trick_delete_image', methods: ['DELETE'])]
-    public function deleteImage(Image $image, Request $request, ImageRepository $imageRepository){
+    #[Route('/delete/media/{id}', name: 'app_trick_delete_media', methods: ['DELETE'])]
+    public function deleteMedia(Media $media, Request $request, MediaRepository $mediaRepository){
         $data = json_decode($request->getContent(), true);
         
         // check if token is valid
-        if($this->isCsrfTokenValid('delete'.$image->getId(), $data['_token'])){
-            // get image name
-            $imageName = $image->getName();
-            // delete image
-            unlink($this->getParameter('images_directory').'/'.$imageName);
-            // delete from db
-            $imageRepository->remove($image, true);
+        if($this->isCsrfTokenValid('delete'.$media->getId(), $data['_token'])){
+            // get image name or url
+            if($media->getType() === Media::VIDEO) {
+                $mediaName = $media->getUrl();
 
-            return new JsonResponse(['success' => 1]);
+                $mediaRepository->remove($media, true);
+
+                return new JsonResponse(['success' => 1]);
+            } else {
+                $mediaName = $media->getFileName();
+                // delete image
+                unlink($this->getParameter('images_directory').'/'.$mediaName);
+                // delete from db
+                $mediaRepository->remove($media, true);
+    
+                return new JsonResponse(['success' => 1]);
+            }
         } else {
             return new JsonResponse(['error' => 'Token Invalid'], 400);
         }
