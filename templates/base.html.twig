@@ -13,9 +13,13 @@
         <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
         {% block stylesheets %}{% endblock %}
         <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+        {# JS #}
+        <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
+        {% block javascripts %}{% endblock %}
     </head>
     <body>
     {% include "_parts/_nav.html.twig" %}
+    {% include "_parts/_flash.html.twig" %}
         {% block body %}
         <div class="container mt-5 mb-5">
         {% block main %}
@@ -23,8 +27,5 @@
         </div>
         {% endblock %}
     {% include "_parts/_footer.html.twig" %}
-    {# JS #}
-    <link rel="stylesheet" href="{{ asset('assets/js/bootstrap.bundle.js') }}">
-    {% block javascripts %}{% endblock %}
     </body>
 </html>

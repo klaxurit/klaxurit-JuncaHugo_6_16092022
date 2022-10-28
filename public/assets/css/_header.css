@@ -3,7 +3,8 @@ header {
 }
 
 .header__snowtricks-title {
-    font-size: 6vw;
+    color: white;
+    font-size: 5vw;
 }
 
 .header__snowtricks-font {

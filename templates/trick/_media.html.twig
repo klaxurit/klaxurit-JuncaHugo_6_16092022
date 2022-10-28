@@ -1,0 +1,24 @@
+<div class="item form-media">
+	<div class="mb-3">
+		<label for="name" class="form-label">Media type</label>
+		{{form_widget(form.type)}}
+		{{form_errors(form.type)}}
+	</div>
+	<div id="image-upload" class="mb-3 d-none">
+		<label for="name" class="form-label">Upload image</label>
+		{{form_widget(form.image)}}
+	</div>
+	<div id="video-url" class="mb-3 d-none">
+		<label for="name" class="form-label">Video link</label>
+		{{form_widget(form.url)}}
+		{{form_errors(form.url)}}
+	</div>
+	<div id="image-alt" class="mb-3 d-none">
+		<label for="name" class="form-label">Media description</label>
+		{{form_widget(form.alt)}}
+		{{form_errors(form.alt)}}
+	</div>
+	<div class="form-group">
+		<buton type="button" class="btn btn-danger btn-remove">Remove</buton>
+	</div>
+</div>

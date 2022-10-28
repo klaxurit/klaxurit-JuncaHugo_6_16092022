@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\TrickRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TrickRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TrickRepository::class)]
 class Trick
@@ -23,15 +24,6 @@ class Trick
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $picture = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $video = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $picture_alt = null;
-
-    #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
     #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'tricks')]
@@ -40,9 +32,22 @@ class Trick
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, orphanRemoval: true, cascade:['persist'])]
+    private Collection $medias;
+
+    // #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, orphanRemoval: true, cascade:['persist'])]
+    // private Collection $medias;
+
     public function __construct()
     {
         $this->groups = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->medias = new ArrayCollection();
+        // $this->media = new ArrayCollection();
+    }
+
+    public function __toString() {
+        return $this->name;
     }
 
     public function getId(): ?int
@@ -70,42 +75,6 @@ class Trick
     public function setDescription(string $description): self
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getPicture(): ?string
-    {
-        return $this->picture;
-    }
-
-    public function setPicture(string $picture): self
-    {
-        $this->picture = $picture;
-
-        return $this;
-    }
-
-    public function getVideo(): ?string
-    {
-        return $this->video;
-    }
-
-    public function setVideo(string $video): self
-    {
-        $this->video = $video;
-
-        return $this;
-    }
-
-    public function getPictureAlt(): ?string
-    {
-        return $this->picture_alt;
-    }
-
-    public function setPictureAlt(string $picture_alt): self
-    {
-        $this->picture_alt = $picture_alt;
 
         return $this;
     }
@@ -154,6 +123,67 @@ class Trick
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    // /**
+    //  * @return Collection<int, Media>
+    //  */
+    // public function getMedias(): Collection
+    // {
+    //     return $this->medias;
+    // }
+
+    // public function addMedia(Media $media): self
+    // {
+    //     if (!$this->medias->contains($media)) {
+    //         $this->medias->add($media);
+    //         $media->setTrick($this);
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeMedia(Media $media): self
+    // {
+    //     if ($this->medias->removeElement($media)) {
+    //         // set the owning side to null (unless already changed)
+    //         if ($media->getTrick() === $this) {
+    //             $media->setTrick(null);
+    //         }
+    //     }
+
+    //     return $this;
+    // }
+
+    /**
+     * @return Collection<int, Media>
+     */
+    public function getMedias(): Collection
+    {
+        return $this->medias;
+    }
+
+    public function addMedia(Media $media): self
+    {
+        if (!$this->medias->contains($media)) {
+            $this->medias[] = $media;
+            $media->setTrick($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMedia(Media $media): self
+    {
+        if ($this->medias->contains($media)) {
+            $this->medias->removeElement($media);
+            // set the owning side to null (unless already changed)
+            if ($media->getTrick() === $this) {
+                $media->setTrick(null);
+            }
+        }
 
         return $this;
     }
