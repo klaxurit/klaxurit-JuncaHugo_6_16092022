@@ -140,7 +140,7 @@ class TrickController extends AbstractController
                 $entityManager->persist($trick);
                 $entityManager->flush();
             }
-            // $trickRepository->add($trick, true);
+            $trickRepository->add($trick, true);
 
             return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }

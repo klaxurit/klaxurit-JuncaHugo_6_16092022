@@ -17,9 +17,11 @@
         <a href="" class="btn btn-primary my-5">See medias</a>
         <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-4 justify-content-center">
         {% for media in trick.medias %}
-            <div class="col mb-5">
-                <img class="rounded" src="{{ asset('/uploads/' ~ media.fileName) }}" alt="" width="250">
-            </div>
+            {% if media.type is same as("Image") %}
+                <div class="col mb-5">
+                    <img class="rounded" src="{{ asset('/uploads/' ~ media.fileName) }}" alt="" width="250">
+                </div>
+            {% endif %}
         {% endfor %}
         </div>
     </div>

@@ -1,0 +1,26 @@
+<a id="loadMore" class="btn btn-primary"><span class="snow-text">View more tricks</span></a>
+
+{% block javascripts %}
+    {# <script src="{{ asset('/assets/js/loadMore.js') }}"></script> #}
+    <script language="javascript" 
+        src = "https://code.jquery.com/jquery-2.2.4.min.js">
+    </script> 
+
+    <script language="javascript">
+    $(document).ready(function(){
+        $("#loadMore").on("click", function(event){
+            $.ajax({
+                url: '/ajax/trick',
+                type: 'POST',
+                dataType: 'json',
+                async: true,
+
+                success: function(data, status) {
+                    var e = $('<p>Name</p>');
+                    $('#')
+                }
+            })
+        })
+    })
+    </script>
+{% endblock %}

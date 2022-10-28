@@ -18,23 +18,9 @@
             {% include "trick/_content.html.twig" %}
         </div>
         <div class="col-12 text-center my-4">
-            <a id="loadMore" class="btn btn-primary"><span class="snow-text">View more tricks</span></a>
+            {% include "trick/_ajax.html.twig" %}
         </div>
     </div>
 </section>
-{% endblock %}
-{% block javascripts %}
-    {# <script src="{{ asset('/assets/js/loadMore.js') }}"></script> #}
-    <script language="javascript" 
-        src = "https://code.jquery.com/jquery-2.2.4.min.js">
-    </script> 
-
-    <script language="javascript">
-    $(document).ready(function(){
-        $("#loadMore").on("click", function(event){
-            console.log("clic");
-        })
-    })
-    </script>
 {% endblock %}
 
