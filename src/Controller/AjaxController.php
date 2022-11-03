@@ -18,7 +18,7 @@ class AjaxController extends AbstractController
     public function ajaxAction(Request $request, TrickRepository $trickRepository): Response
     {
         // get page number
-        $page = (int)$request->query->get("page", 2);
+        $page = (int)$request->query->get("page");
         // dd($page);
         
         $tricks = $trickRepository->getTricks($page);
@@ -35,30 +35,5 @@ class AjaxController extends AbstractController
         ]);
 
         return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
-        
-
-        // return $this->json([
-        //     'success' => true,
-        //     'data' => $tricks
-        // ]);
-
-        // if($request->isXmlHttpRequest() || $request->query->get('showJson') == 1) {
-        //     $jsonData = array();
-        //     $idx = 0;
-
-        //     foreach($tricks as $trick) {
-        //         $temp = array(
-        //             'element' => $this->render('trick/_content.html.twig', [
-        //                 'tricks' => $tricks,
-        //             ])
-        //         );
-        //         $jsonData[$idx++] = $temp;
-        //     }
-        //     return new JsonResponse($jsonData);
-        // } else {
-        //     return $this->render('trick/_ajax.html.twig', [
-        //         'controller_name' => 'AjaxController',
-        //     ]);
-        // }
     }
 }

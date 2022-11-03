@@ -1,4 +1,4 @@
-<a id="loadMore" class="btn btn-primary"><span class="snow-text">View more tricks</span></a>
+<a id="loadMore" data-currentPage="1" class="btn btn-primary"><span class="snow-text">View more tricks</span></a>
 
 {% block javascripts %}
     {# <script src="{{ asset('/assets/js/loadMore.js') }}"></script> #}
@@ -8,15 +8,16 @@
 
     <script language="javascript">
     const addTrickItem = function(tricks) {
+
         tricks.forEach(trick => {
-            console.log("tutu")
+            const trickCoverImage = getTrickCoverImage(trick);
             $('#trick__card').append(
             `
                 <div class="col mb-5">
                     <div class="card h-100">
                         <!-- Trick image-->
                         <a href="/trick/${trick.id}">
-                            <img class="card-img-top" src="/uploads/${trick.medias[0].fileName}" alt="zazz">
+                            <img class="card-img-top" src="/uploads/${trickCoverImage.trickCoverImageFileName}" alt="${trickCoverImage.trickCoverImageAlt}">
                         </a>
                     
                         <!-- Trick details-->
@@ -37,11 +38,30 @@
         })
     }
 
+    function getTrickCoverImage(trick){
+        let trickCoverImageFileName = null;
+        let trickCoverImageAlt = null;
+        for(const trickMedia of trick.medias) {
+            if(trickMedia.type === "Image"){
+                console.log(trickMedia)
+                trickCoverImageFileName = trickMedia.fileName;
+                trickCoverImageAlt = trickMedia.alt;
+                break;
+            }
+        }
+        return {trickCoverImageFileName, trickCoverImageAlt};
+    }
+
     $(document).ready(function(){
+        let currentPage = 1;
         $("#loadMore").on("click", function(event){
-            $.get("/ajax/trick")
+            $.get("/ajax/trick?page=" + currentPage)
             .then(tricks => {
-                addTrickItem(tricks)
+                if (tricks.length > 5){
+                currentPage++;
+                addTrickItem(tricks);
+                console.log(currentPage, tricks.length);
+                }
             })
         })
     })
