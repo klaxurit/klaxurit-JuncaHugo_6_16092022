@@ -29,9 +29,7 @@
     <p class="text-justify text-center mt-3">{{trick.description}}</p>
 
     <div class="trick__groups text-center">
-    {% for group in trick.groups %}
-        <span class="badge rounded-pill text-bg-primary">{{group.name}}</span>
-    {% endfor %}
+        <span class="badge rounded-pill text-bg-primary">{{trick.trickGroup.name}}</span>
     </div>
 
     <div class="trick__separator my-3">

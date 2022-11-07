@@ -26,24 +26,23 @@ class Trick
     #[ORM\Column(length: 255)]
     private ?string $slug = null;
 
-    #[ORM\ManyToMany(targetEntity: Group::class, inversedBy: 'tricks')]
-    private Collection $groups;
-
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, orphanRemoval: true, cascade:['persist'])]
     private Collection $medias;
 
+    #[ORM\ManyToOne(inversedBy: 'trick')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Group $trickGroup = null;
+
     // #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, orphanRemoval: true, cascade:['persist'])]
     // private Collection $medias;
 
     public function __construct()
     {
-        $this->groups = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->medias = new ArrayCollection();
-        // $this->media = new ArrayCollection();
     }
 
     public function __toString() {
@@ -87,30 +86,6 @@ class Trick
     public function setSlug(string $slug): self
     {
         $this->slug = $slug;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Group>
-     */
-    public function getGroups(): Collection
-    {
-        return $this->groups;
-    }
-
-    public function addGroup(Group $group): self
-    {
-        if (!$this->groups->contains($group)) {
-            $this->groups->add($group);
-        }
-
-        return $this;
-    }
-
-    public function removeGroup(Group $group): self
-    {
-        $this->groups->removeElement($group);
 
         return $this;
     }
@@ -184,6 +159,18 @@ class Trick
                 $media->setTrick(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTrickGroup(): ?Group
+    {
+        return $this->trickGroup;
+    }
+
+    public function setTrickGroup(?Group $trickGroup): self
+    {
+        $this->trickGroup = $trickGroup;
 
         return $this;
     }

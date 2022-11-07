@@ -53,11 +53,9 @@ class TrickType extends AbstractType
                 'allow_delete' => true,
                 'error_bubbling' => true
             ])
-            ->add('groups', EntityType::class, [
+            ->add('trickGroup', EntityType::class, [
                 'class'        => Group::class,
                 'choice_label' => 'name',
-                'mapped'       => false,
-                'by_reference' => false,
                 'multiple'     => false,
                 'expanded'     => true,
                 'required'     => true,

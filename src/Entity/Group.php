@@ -19,12 +19,13 @@ class Group
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\ManyToMany(targetEntity: Trick::class, mappedBy: 'groups')]
-    private Collection $tricks;
+    #[ORM\OneToMany(mappedBy: 'trickGroup', targetEntity: Trick::class)]
+    private Collection $trick;
 
     public function __construct()
     {
         $this->tricks = new ArrayCollection();
+        $this->trick = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -47,16 +48,16 @@ class Group
     /**
      * @return Collection<int, Trick>
      */
-    public function getTricks(): Collection
+    public function getTrick(): Collection
     {
-        return $this->tricks;
+        return $this->trick;
     }
 
     public function addTrick(Trick $trick): self
     {
-        if (!$this->tricks->contains($trick)) {
-            $this->tricks->add($trick);
-            $trick->addGroup($this);
+        if (!$this->trick->contains($trick)) {
+            $this->trick->add($trick);
+            $trick->setTrickGroup($this);
         }
 
         return $this;
@@ -64,8 +65,11 @@ class Group
 
     public function removeTrick(Trick $trick): self
     {
-        if ($this->tricks->removeElement($trick)) {
-            $trick->removeGroup($this);
+        if ($this->trick->removeElement($trick)) {
+            // set the owning side to null (unless already changed)
+            if ($trick->getTrickGroup() === $this) {
+                $trick->setTrickGroup(null);
+            }
         }
 
         return $this;
