@@ -13,18 +13,20 @@
     <div class="d-flex flex-column justify-content-center">
     <h1 class="text-center my-5">{{trick.name}}</h1>
 
-    <div class="text-center">
-        <a href="" class="btn btn-primary my-5">See medias</a>
-        <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-4 justify-content-center">
-        {% for media in trick.medias %}
-            {% if media.type is same as("Image") %}
-                <div class="col mb-5">
-                    <img class="rounded" src="{{ asset('/uploads/' ~ media.fileName) }}" alt="" width="250">
-                </div>
-            {% endif %}
-        {% endfor %}
-        </div>
-    </div>
+    <section class="slider" id="slider">
+    {% for media in trick.medias %}
+        <img src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}">
+    {% endfor %}
+    {# {% for video in trick.videos %}
+        <iframe
+            width="560"
+            height="208"
+            src="{{ video.link }}"
+            frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+    {% endfor %} #}
+</section>
 
     <p class="text-justify text-center mt-3">{{trick.description}}</p>
 
@@ -38,12 +40,46 @@
 
     {% include('trick/_comment.html.twig') %}
     </div>
-    
 
     <a href="{{ path('app_trick_index') }}" class="btn btn-m btn-secondary">Back to list</a>
-
-
-
     
 </div>
+
+
+
+<div class="swiper mySwiper">
+    <div class="swiper-wrapper">
+        {% for media in trick.medias %}
+            <div class="swiper-slide"><img src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}"></div>
+        {% endfor %}
+    </div>
+    <div class="swiper-button-next"></div>
+    <div class="swiper-button-prev"></div>
+    <div class="swiper-pagination"></div>
+</div>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
 {% endblock %}
+
+
+{% block javascripts %}
+{# <script language="javascript" 
+    src = "https://code.jquery.com/jquery-2.2.4.min.js">
+</script> #}
+<script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+<script>
+var swiper = new Swiper(".mySwiper", {
+    slidesPerView: 3,
+    spaceBetween: 30,
+    navigation: {
+        nextEl: ".swiper-button-next",
+        prevEl: ".swiper-button-prev",
+    },
+    pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+    },
+});
+</script>
+{% endblock %}  
