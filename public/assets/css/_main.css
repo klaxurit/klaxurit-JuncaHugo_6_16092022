@@ -51,37 +51,126 @@ hr.rounded {
     background-color: #D9FAFF;
 }
 
-
-
-
-.swiper {
-    width: 50%;
-    height: 50%;
+.modal-body {
+position:relative;
+padding:0px;
 }
 
-.swiper-slide {
+.close {
+position:absolute;
+right:-30px;
+top:0;
+z-index:999;
+font-size:2rem;
+font-weight: normal;
+color:#fff;
+opacity:1;
+}
+
+.modal-dialog {
+    width: 80%;
+    height: auto;
+}
+.modal-content {
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+}
+
+.modal {
     text-align: center;
-    font-size: 18px;
-    background: #fff;
-
-    /* Center slide text vertically */
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-box-pack: center;
-    -ms-flex-pack: center;
-    -webkit-justify-content: center;
-    justify-content: center;
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    -webkit-align-items: center;
-    align-items: center;
 }
 
-.swiper-slide img {
-    display: block;
-    width: 50%;
-    height: 50%;
+@media screen and (min-width: 768px) { 
+    .modal:before {
+        display: inline-block;
+        vertical-align: middle;
+        content: " ";
+        height: 100%;
+    }
+}
+
+.modal-dialog {
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
+}
+
+@media screen and (max-width: 767px) { 
+    .modal:before {
+        display: inline-block;
+        vertical-align: middle;
+        content: " ";
+        height: 100%;
+    }
+    .modal-dialog {
+        margin: 0;
+    }
+}
+
+
+.trick__img {
+    padding: 5%;
+    border-radius: 15%;
+    width: 100%;
+    height: 40vh;
     object-fit: cover;
+    object-position: 50% 50%;
+}
+
+.trick__video {
+    padding: 5%;
+    border-radius: 15%;
+    width: 100%;
+    height: 40vh;
+    object-fit: cover;
+    object-position: 50% 50%;
+}
+
+.carousel {
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel__container {
+    transition: transform 0.3s;
+    transform: translate3d(0, 0, 0);
+}
+
+.carousel__container::after {
+    content: '';
+    clear: both;
+    display: table;
+}
+
+.carousel__item {
+    float: left;
+}
+
+.carousel__next, .carousel__prev {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: #FFF url(../images/right.svg) center center no-repeat;
+    background-size: 20px 20px;
+    border-radius: 50%;
+    top: 50%;
+    margin-top: -20px;
+    right: 5px;
+    cursor: pointer;
+    transition: transform 0.3s, opacity 0.3s;
+}
+
+.carousel__next:hover, .carousel__prev:hover {
+    transform: scale(1.2);
+}
+
+.carousel__prev {
+    background-image: url(../images/left.svg);
+    right: auto;
+    left: 5px;
+}
+
+.carousel__next--hidden, .carousel__prev--hidden {
+    opacity: 0;
 }

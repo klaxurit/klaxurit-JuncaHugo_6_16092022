@@ -42,4 +42,27 @@ class AjaxController extends AbstractController
 
         return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
     }
+
+    #[Route('/ajax/trick/{id}', name: 'app_ajax_trick')]
+    public function ajaxCallTrick(
+        TrickRepository $trickRepository,
+        $id
+        ): Response
+    {
+        
+        $tricks = $trickRepository->findOneById($id);
+        // dd($tricks);
+
+        $encoders = [new JsonEncoder()]; 
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+
+        $jsonObject = $serializer->serialize($tricks, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            },
+        ]);
+
+        return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
+    }
 }

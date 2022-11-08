@@ -43,7 +43,6 @@
         let trickCoverImageAlt = null;
         for(const trickMedia of trick.medias) {
             if(trickMedia.type === "Image"){
-                console.log(trickMedia)
                 trickCoverImageFileName = trickMedia.fileName;
                 trickCoverImageAlt = trickMedia.alt;
                 break;
@@ -57,7 +56,6 @@
         $("#loadMore").on("click", function(event){
             $.get("/ajax/trick?page=" + currentPage)
             .then(tricks => {
-                console.log(tricks);
                 if (tricks.length >= 1){
                 currentPage++;
                 addTrickItem(tricks);

@@ -23,7 +23,7 @@ window.onload = () => {
                 item.querySelector('#image-upload').classList.add('d-none')
                 item.querySelector('#image-alt').classList.add('d-none')
             }
-            console.log(selector.checked, selector.value)
+            
         })
     }
 
@@ -61,7 +61,7 @@ window.onload = () => {
 
         // manage delete buttons
     let links = document.querySelectorAll("[data-delete]")
-    console.log(links)
+    
 
     // EDIT FORM REMOVE MEDIA PART
     // loop on buttons
