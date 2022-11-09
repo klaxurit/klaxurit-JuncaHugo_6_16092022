@@ -22,36 +22,8 @@ class AjaxController extends AbstractController
     {
         // get page number
         $page = (int)$request->query->get("page");
-        // dd($page);
         
         $tricks = $trickRepository->getTricks($page);
-        // dd($tricks);
-
-        $encoders = [new JsonEncoder()]; 
-        $normalizers = [new ObjectNormalizer()];
-        $serializer = new Serializer($normalizers, $encoders);
-
-        $maxResults = $trickRepository->getTotalTricks();
-        // dd($maxResults);
-
-        $jsonObject = $serializer->serialize($tricks, 'json', [
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            },
-        ]);
-
-        return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
-    }
-
-    #[Route('/ajax/trick/{id}', name: 'app_ajax_trick')]
-    public function ajaxCallTrick(
-        TrickRepository $trickRepository,
-        $id
-        ): Response
-    {
-        
-        $tricks = $trickRepository->findOneById($id);
-        // dd($tricks);
 
         $encoders = [new JsonEncoder()]; 
         $normalizers = [new ObjectNormalizer()];
