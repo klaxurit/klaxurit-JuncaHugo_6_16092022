@@ -44,7 +44,7 @@
 		<div class="d-flex flex-column justify-content-center">
 			<h1 class="text-center my-5">{{trick.name}}</h1>
 
-			<div id="carousel">
+			<div id="carousel" class="d-flex justify-content-center">
 				{% for media in trick.medias %}
 					{% if media.type is same as("Image") %}
 						<div class="item">
@@ -74,7 +74,7 @@
 			{% include('trick/_comment.html.twig') %}
 		</div>
 
-		<a href="{{ path('app_trick_index') }}" class="btn btn-m btn-secondary">Back to list</a>
+		<a href="{{ path('app_home') }}" class="btn btn-m btn-secondary">Back to list</a>
 
 	</div>
 
