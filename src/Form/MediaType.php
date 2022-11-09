@@ -44,7 +44,7 @@ class MediaType extends AbstractType
             ->add('image', FileType::class, [
                 'label'       => false,
                 'mapped'      => false,
-                'required'    => false,
+                'required'    => true,
                 'constraints' => [
                     new ConstraintsImage([
                         'maxSize' => '2M',

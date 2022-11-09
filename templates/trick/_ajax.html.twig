@@ -11,7 +11,8 @@
 
         tricks.forEach(trick => {
             const trickCoverImage = getTrickCoverImage(trick);
-            $('#trick__card').append(
+            if (trickCoverImage.trickCoverImageFileName) {
+                $('#trick__card').append(
             `
                 <div class="col mb-5">
                     <div class="card h-100">
@@ -35,6 +36,32 @@
                 </div>
             `
             )
+            } else {
+            $('#trick__card').append(
+            `
+                <div class="col mb-5">
+                    <div class="card h-100">
+                        <!-- Trick image-->
+                        <a href="/trick/${trick.id}">
+                            <img class="card-img-top" src="/assets/images/empty.jpg" alt="no image to show">
+                        </a>
+                    
+                        <!-- Trick details-->
+                        <div class="card-body p-3 d-flex flex-row align-items-center justify-content-between">
+                            <div class="text-start m-0">
+                                <!-- Trick name-->
+                                <h4 class="snow-text">${ trick.name }</h4>
+                            </div>
+                            <div class="trick__actions">
+                                <a href="/trick/${trick.id}/edit" class="trick__actions-button"><i class="bi bi-pencil-fill"></i></a>
+                                <a onClick="javascript: return confirm('Please confirm trick deletion');" href="/trick/delete/${trick.id}" class="ms-2 trick__actions-button"><i class="bi bi-trash-fill"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `
+            )
+            }
         })
     }
 
@@ -56,11 +83,13 @@
         $("#loadMore").on("click", function(event){
             $.get("/ajax/trick?page=" + currentPage)
             .then(tricks => {
-                if (tricks.length >= 1){
-                currentPage++;
-                addTrickItem(tricks);
-                } else {
+                if (tricks.length < 6){
+                    currentPage++;
+                    addTrickItem(tricks);
                     deactivateButton();
+                } else {
+                    currentPage++;
+                    addTrickItem(tricks);
                 }
             })
         });
