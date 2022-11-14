@@ -3,20 +3,17 @@
 namespace App\Form;
 
 use App\Entity\Media;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
-use App\EventSubscriber\AddATrickFormSubscriber;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Validator\Constraints\Image as ConstraintsImage;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 class MediaType extends AbstractType
 {
@@ -46,11 +43,16 @@ class MediaType extends AbstractType
                 'mapped'      => false,
                 'required'    => false,
                 'constraints' => [
+                    new NotBlank([
+                        'groups' => ['image', 'Default'],
+                        'message' => 'Please upload an image.'
+                    ]),
                     new ConstraintsImage([
+                        'groups' => ['image', 'Default'],
                         'maxSize' => '2M',
                         'maxSizeMessage' => 'The file size cannot exceed {{ limit }} {{ suffix }}',
-                    ])
-                ]
+                    ]),
+                ],
             ])
             ->add('alt', TextType::class, [
                 'required' => false,

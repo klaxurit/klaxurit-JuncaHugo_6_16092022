@@ -14,27 +14,13 @@
         <div class="col-12 text-center my-4">
             <a href="{{ path('app_trick_new') }}" class="btn btn-primary"><span class="snow-text">Add a new trick</span></a>
         </div>
-        <div class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-3 justify-content-center">
+        <div id="trick__card" class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-3 justify-content-center">
             {% include "trick/_content.html.twig" %}
         </div>
         <div class="col-12 text-center my-4">
-            <a id="loadMore" class="btn btn-primary"><span class="snow-text">View more tricks</span></a>
+            {% include "trick/_ajax.html.twig" %}
         </div>
     </div>
 </section>
-{% endblock %}
-{% block javascripts %}
-    {# <script src="{{ asset('/assets/js/loadMore.js') }}"></script> #}
-    <script language="javascript" 
-        src = "https://code.jquery.com/jquery-2.2.4.min.js">
-    </script> 
-
-    <script language="javascript">
-    $(document).ready(function(){
-        $("#loadMore").on("click", function(event){
-            console.log("clic");
-        })
-    })
-    </script>
 {% endblock %}
 

@@ -71,7 +71,7 @@ class TrickController extends AbstractController
                         $trick->addMedia($media);
                     }
                 }
-                $trick->addGroup($form->get('groups')->getData());
+                $trick->setTrickGroup($form->get('trickGroup')->getData());
                 $entityManager->persist($trick);
                 $entityManager->flush();
             }
@@ -136,11 +136,11 @@ class TrickController extends AbstractController
                         $trick->addMedia($media);
                     }
                 }
-                $trick->addGroup($form->get('groups')->getData());
+                $trick->setTrickGroup($form->get('trickGroup')->getData());
                 $entityManager->persist($trick);
                 $entityManager->flush();
             }
-            // $trickRepository->add($trick, true);
+            $trickRepository->add($trick, true);
 
             return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }

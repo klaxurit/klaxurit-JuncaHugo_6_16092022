@@ -23,7 +23,7 @@ window.onload = () => {
                 item.querySelector('#image-upload').classList.add('d-none')
                 item.querySelector('#image-alt').classList.add('d-none')
             }
-            console.log(selector.checked, selector.value)
+            
         })
     }
 
@@ -59,9 +59,9 @@ window.onload = () => {
             initMediaTypeSelector(formCtrl)
         })
 
-        // manage delete buttons
+    // manage delete buttons
     let links = document.querySelectorAll("[data-delete]")
-    console.log(links)
+    
 
     // EDIT FORM REMOVE MEDIA PART
     // loop on buttons
@@ -70,6 +70,8 @@ window.onload = () => {
         link.addEventListener("click", function(e){
             //block navigation
             e.preventDefault()
+            const elParent = e.currentTarget.closest('.mediasPreview')
+            console.log(elParent)
 
             // ask for confirmation
             if(confirm("Did you really want to delete this image ?")){
@@ -86,7 +88,7 @@ window.onload = () => {
                     response => response.json()
                 ).then(data => {
                     if(data.success)
-                        document.getElementById('mediasPreview').remove()
+                        elParent.remove()
                     else
                         alert(data.error)
                 }).catch(e => alert(e))

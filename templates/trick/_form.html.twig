@@ -14,7 +14,7 @@
     {% if app.request.attributes.get('_route') == 'app_trick_edit' %}
 		{% for media in trick.medias %}
             {% if media.type is same as("Image") %}
-                <div id="mediasPreview" class="d-flex flex-column justify-content-center mx-2">
+                <div class="mediasPreview d-flex flex-column justify-content-center mx-2">
                     <label for="mediaImage" class="mb-2">Media Image</label>
                     <img src="{{ asset('/uploads/' ~ media.fileName)}}" alt="{{media.alt}}" width="150" class="rounded">
                     <div>
@@ -22,7 +22,7 @@
                     </div>
                 </div>
             {% else %}
-                <div id="mediasPreview" class="d-flex flex-column justify-content-center mx-2">
+                <div class="mediasPreview d-flex flex-column justify-content-center mx-2">
                     <label for="mediaVideo" class="mb-2">Media Video</label>
                     <p>{{media.url}}</p>
                     <div>
@@ -39,9 +39,9 @@
     </div>
     <button type="button" class="btn btn-primary btn-new mb-3" data-collection="#medias">New media</button>
     <div class="mb-3">
-        <label for="groups" class="form-label">Groups</label>
-        {{ form_widget(trickForm.groups) }}
-        {{ form_errors(trickForm.groups) }}
+        <label for="groups" class="form-label">Group</label>
+        {{ form_widget(trickForm.trickGroup) }}
+        {{ form_errors(trickForm.trickGroup) }}
     </div>
     <button class="btn btn-primary mb-3">{{ button_label|default('Save') }}</button>
 {{ form_end(trickForm, { render_rest: false }) }}
