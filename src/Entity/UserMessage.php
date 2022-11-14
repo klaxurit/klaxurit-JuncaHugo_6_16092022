@@ -26,6 +26,10 @@ class UserMessage
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\ManyToOne(inversedBy: 'userMessages')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Trick $trick = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -80,6 +84,18 @@ class UserMessage
     public function setCreatedAt(\DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getTrick(): ?Trick
+    {
+        return $this->trick;
+    }
+
+    public function setTrick(?Trick $trick): self
+    {
+        $this->trick = $trick;
 
         return $this;
     }

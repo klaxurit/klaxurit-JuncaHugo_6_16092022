@@ -61,14 +61,16 @@
 				{% endfor %}
 			</div>
 
-			<p class="text-justify text-center mt-3">{{trick.description}}</p>
-
-			<div class="trick__groups text-center">
-				<span class="badge rounded-pill text-bg-primary">{{trick.trickGroup.name}}</span>
-			</div>
+			<p class="text-justify text-center mt-3 mx-5">{{trick.description}}</p>
 
 			<div class="trick__separator my-3">
 				<hr class="rounded">
+			</div>
+
+			<div class="trick__groups text-center">
+				<span class="badge rounded-pill text-bg-warning">Created at: {{trick.createdAt|date('d-m-Y')}}</span>
+				<span class="badge rounded-pill text-bg-primary">Group: {{trick.trickGroup.name}}</span>
+				<span class="badge rounded-pill text-bg-info">Last update: {{trick.createdAt|date('d-m-Y')}}</span>
 			</div>
 
 			{% include('trick/_comment.html.twig') %}

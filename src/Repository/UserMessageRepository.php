@@ -3,8 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\UserMessage;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @extends ServiceEntityRepository<UserMessage>
@@ -37,6 +38,60 @@ class UserMessageRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    private function getCommentQueryBuilder(){
+        $queryBuilder = $this->createQueryBuilder('c');
+
+        return $queryBuilder;
+    }
+
+    public function getComments($page){
+        $pageSize = 2;
+		$firstResult = ($page - 1) * $pageSize;
+
+		$queryBuilder = $this->getCommentQueryBuilder();
+		
+		// Set the returned page
+		$queryBuilder->setFirstResult($firstResult);
+		$queryBuilder->setMaxResults($pageSize);
+		
+		// Generate the Query
+		$query = $queryBuilder->getQuery();
+
+        //Generate the Paginator
+        $paginator = new Paginator($query, true);
+        return $paginator;
+    }
+
+    /**
+     * getPaginatedComments
+     *
+     * @param  mixed $page
+     * @param  mixed $limit
+     * @return void
+     */
+    public function getPaginatedComments($page, $limit)
+    {
+        $query = $this->createQueryBuilder('c')
+            ->orderBy('c.createdAt')
+            ->setFirstResult(($page * $limit) - $limit)
+            ->setMaxResults($limit);
+
+            return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Return number of comments
+     *
+     * @return void
+     */
+    public function getTotalComments()
+    {
+        $query = $this->createQueryBuilder('c')
+            ->select('COUNT(c)');
+
+        return $query->getQuery()->getSingleScalarResult();
     }
 
 //    /**

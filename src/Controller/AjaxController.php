@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\TrickRepository;
+use App\Repository\UserMessageRepository;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +18,6 @@ class AjaxController extends AbstractController
     public function ajaxAction(
         Request $request, 
         TrickRepository $trickRepository,
-        bool $noMoreTricks = false
         ): Response
     {
         // get page number
@@ -30,6 +30,30 @@ class AjaxController extends AbstractController
         $serializer = new Serializer($normalizers, $encoders);
 
         $jsonObject = $serializer->serialize($tricks, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            },
+        ]);
+
+        return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
+    }
+
+    #[Route('/ajax/comment', name: 'app_ajax_comment')]
+    public function ajaxCommentAction(
+        Request $request, 
+        UserMessageRepository $UserMessage,
+        ): Response
+    {
+        // get page number
+        $page = (int)$request->query->get("page");
+        
+        $comments = $UserMessage->getComments($page);
+
+        $encoders = [new JsonEncoder()]; 
+        $normalizers = [new ObjectNormalizer()];
+        $serializer = new Serializer($normalizers, $encoders);
+
+        $jsonObject = $serializer->serialize($comments, 'json', [
             'circular_reference_handler' => function ($object) {
                 return $object->getId();
             },
