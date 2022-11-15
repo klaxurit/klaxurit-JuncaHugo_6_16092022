@@ -1,7 +1,6 @@
-<a id="loadMore" data-currentPage="1" class="btn btn-primary"><span class="snow-text">View more comments</span></a>
+<a id="loadMore" data-currentPage="1" data-trickId="{{ trick.id }}" class="btn btn-primary"><span class="snow-text">View more comments</span></a>
 
 {% block javascripts %}
-    {# <script src="{{ asset('/assets/js/loadMore.js') }}"></script> #}
     <script language="javascript" 
         src = "https://code.jquery.com/jquery-2.2.4.min.js">
     </script> 
@@ -10,12 +9,13 @@
     const addCommentItem = function(comments) {
 
         comments.forEach(comment => {
-            $('#trick__comment').append(
+            console.log(comment.createdAt)
+            $('#comment-section').append(
                 `
                 <li class="comment user-comment" id="trick__comment">
                     <div class="info">
                         <a href="#">${comment.user.username}</a>
-                        <span>${comment.createdAt|ago}</span>
+                        <span>${comment.createdAt}</span>
                     </div>
                     <a class="avatar" href="#">
                         <img src="{{ asset('assets/images/avatar.png') }}" width="35" alt="Profile Avatar" title="Anie Silverston"/>
@@ -29,10 +29,11 @@
 
     $(document).ready(function(){
         let currentPage = 2;
+        const trickId = document.querySelector('#loadMore').dataset.trickid
         $("#loadMore").on("click", function(event){
-            $.get("/ajax/comment?page=" + currentPage)
+            $.get("/ajax/comment?page=" + currentPage + "&trickid=" + trickId)
             .then(comments => {
-                if (comments.length < 2){
+                if (comments.length < 3){
                     currentPage++;
                     addCommentItem(comments);
                     deactivateButton();
@@ -47,7 +48,6 @@
             document.querySelector('#loadMore').classList.add('btn-secondary');
             document.querySelector('#loadMore').classList.add('disable');
         }
-        
     })
     </script>
 {% endblock %}

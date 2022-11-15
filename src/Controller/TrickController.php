@@ -91,24 +91,18 @@ class TrickController extends AbstractController
     public function show(Trick $trick, Request $request, UserMessageRepository $userMessage): Response
     {
         // define number of comments on page
-        $limit = 2;
+        $limit = 3;
         
         // get page number
         $page = (int)$request->query->get("page", 1);
         
         // get comments of page
-        $comments = $userMessage->getPaginatedComments($page, $limit);
+        $comments = $userMessage->getPaginatedComments($page, $limit, $trick);
 
         //get total number of comments
         $total = $userMessage->getTotalComments();
 
-        return $this->render('trick/show.html.twig', [
-            'comments' => $comments,
-            'trick' => $trick,
-            'limit' => $limit,
-            'page' => $page,
-            'total' => $total
-        ]); 
+        return $this->render('trick/show.html.twig', compact('trick', 'total', 'limit', 'page', 'comments')); 
     }
 
     #[Route('/{id}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]

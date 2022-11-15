@@ -1,8 +1,8 @@
 {% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/css/_comment.css') }}">{% endblock %}
 <div class="trick__comments">
-	<ul class="comment-section">
-	{% for comment in trick.userMessages %}
-		<li class="comment user-comment" id="trick__comment">
+	<ul class="comment-section" id="comment-section">
+	{% for comment in comments %}
+		<li class="comment user-comment">
 			<div class="info">
 				<a href="#">{{ comment.user.username }}</a>
 				<span>{{ comment.createdAt|ago }}</span>
@@ -15,6 +15,8 @@
 	{% endfor %}
 	</ul>
 </div>
-<div class="col-12 text-center my-4">
-	{% include "trick/_more_comments.html.twig" %}
-</div>
+{% if comments %}
+	<div class="col-12 text-center my-4">
+		{% include "trick/_more_comments.html.twig" %}
+	</div>
+{% endif %}
