@@ -41,31 +41,6 @@ class UserMessageRepository extends ServiceEntityRepository
         }
     }
 
-    private function getCommentQueryBuilder(){
-        $queryBuilder = $this->createQueryBuilder('c');
-
-        return $queryBuilder;
-    }
-
-    public function getComments($page, $trick){
-        $limit = 3;
-		// $firstResult = ($page - 1) * $pageSize;
-        
-		// $queryBuilder = $this->getCommentQueryBuilder();
-		
-		// // Set the returned page
-		// $queryBuilder->setFirstResult($firstResult);
-		// $queryBuilder->setMaxResults($pageSize);
-		
-		// // Generate the Query
-		// $query = $queryBuilder->getQuery();
-        
-        // //Generate the Paginator
-        // $paginator = new Paginator($query, true);
-        // return $paginator;
-        return $this->getPaginatedComments($page, $limit, $trick);
-    }
-
     /**
      * getPaginatedComments
      *
@@ -76,13 +51,13 @@ class UserMessageRepository extends ServiceEntityRepository
     public function getPaginatedComments($page, $limit, Trick $trick)
     {
         $query = $this->createQueryBuilder('c')
-        ->orderBy('c.createdAt')
-        ->andWhere('c.trick = :trick')
-        ->setParameter('trick', $trick->getId())
-        ->setFirstResult(($page * $limit) - $limit)
-        ->setMaxResults($limit);
+            ->orderBy('c.createdAt')
+            ->andWhere('c.trick = :trick')
+            ->setParameter('trick', $trick->getId())
+            ->setFirstResult(($page * $limit) - $limit)
+            ->setMaxResults($limit);
 
-            return $query->getQuery()->getResult();
+        return $query->getQuery()->getResult();
     }
 
     /**
@@ -98,28 +73,28 @@ class UserMessageRepository extends ServiceEntityRepository
         return $query->getQuery()->getSingleScalarResult();
     }
 
-//    /**
-//     * @return UserMessage[] Returns an array of UserMessage objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    //    /**
+    //     * @return UserMessage[] Returns an array of UserMessage objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('u')
+    //            ->andWhere('u.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('u.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
 
-//    public function findOneBySomeField($value): ?UserMessage
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    //    public function findOneBySomeField($value): ?UserMessage
+    //    {
+    //        return $this->createQueryBuilder('u')
+    //            ->andWhere('u.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

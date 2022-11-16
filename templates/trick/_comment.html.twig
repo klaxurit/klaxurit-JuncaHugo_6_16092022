@@ -1,21 +1,22 @@
-{% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/css/_comment.css') }}">{% endblock %}
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/css/_comment.css') }}">
+{% endblock %}
 <div class="trick__comments">
 	<ul class="comment-section" id="comment-section">
-	{% for comment in comments %}
-		<li class="comment user-comment">
-			<div class="info">
-				<a href="#">{{ comment.user.username }}</a>
-				<span>{{ comment.createdAt|ago }}</span>
-			</div>
-			<a class="avatar" href="#">
-				<img src="{{ asset('assets/images/avatar.png') }}" width="35" alt="Profile Avatar" title="Anie Silverston"/>
-			</a>
-			<p>{{ comment.content }}</p>
-		</li>
-	{% endfor %}
+		{% for comment in comments %}
+			<li class="comment user-comment">
+				<div class="info">
+					<a href="#">{{ comment.user.username }}</a>
+					<span>{{ comment.createdAt|ago }}</span>
+				</div>
+				<a class="avatar" href="#">
+					<img src="{{ asset('assets/images/avatar.png') }}" width="35" alt="Profile Avatar" title="Anie Silverston"/>
+				</a>
+				<p>{{ comment.content }}</p>
+			</li>
+		{% endfor %}
 	</ul>
 </div>
-{% if comments %}
+{% if comments|length >= 3 %}
 	<div class="col-12 text-center my-4">
 		{% include "trick/_more_comments.html.twig" %}
 	</div>

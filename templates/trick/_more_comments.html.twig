@@ -1,21 +1,19 @@
 <a id="loadMore" data-currentPage="1" data-trickId="{{ trick.id }}" class="btn btn-primary"><span class="snow-text">View more comments</span></a>
 
 {% block javascripts %}
-    <script language="javascript" 
-        src = "https://code.jquery.com/jquery-2.2.4.min.js">
-    </script> 
-
+    <script language="javascript" src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script language="javascript">
     const addCommentItem = function(comments) {
 
         comments.forEach(comment => {
-            console.log(comment.createdAt)
+            let formatedCreatedAt = moment.unix(comment.createdAt.timestamp).format("YYYY-MM-DD HH:mm:ss")
             $('#comment-section').append(
                 `
                 <li class="comment user-comment" id="trick__comment">
                     <div class="info">
                         <a href="#">${comment.user.username}</a>
-                        <span>${comment.createdAt}</span>
+                        <span>${moment(formatedCreatedAt).fromNow()}</span>
                     </div>
                     <a class="avatar" href="#">
                         <img src="{{ asset('assets/images/avatar.png') }}" width="35" alt="Profile Avatar" title="Anie Silverston"/>
