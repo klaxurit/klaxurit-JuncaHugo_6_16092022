@@ -37,6 +37,7 @@ class TrickController extends AbstractController
     public function new(
         Request $request,
         EntityManagerInterface $entityManager,
+        UserInterface $user = null,
         SluggerInterface $slugger,
         UploaderHelper $uploadedFile,
     ): Response {
@@ -47,6 +48,7 @@ class TrickController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $trickSlug = $slugger->slug($form->get('name')->getData());
             $trick->setSlug($trickSlug);
+            $trick->setUser($user);
 
             if ($form->get('medias')) {
                 // get media

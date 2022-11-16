@@ -169,6 +169,7 @@ hr.rounded {
 .carousel__prev {
     position: absolute;
     width: 40px;
+    border: 3px solid #00BBF0;
     height: 40px;
     background: #FFF url(../images/right.svg) center center no-repeat;
     background-size: 20px 20px;

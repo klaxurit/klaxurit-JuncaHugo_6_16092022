@@ -39,6 +39,10 @@ class Trick
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: UserMessage::class, orphanRemoval: true, cascade:['persist'])]
     private Collection $userMessages;
 
+    #[ORM\ManyToOne(inversedBy: 'tricks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -202,6 +206,18 @@ class Trick
                 $userMessage->setTrick(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

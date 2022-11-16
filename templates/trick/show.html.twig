@@ -34,12 +34,14 @@
 	</div>
 
 	<div class="container main my-5">
+	{% if app.user.id is same as(trick.user.id) %}
 		<div class="text-end">
 			<a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="btn btn-m btn-primary">
 				<i class="bi bi-pencil-fill"></i>
 			</a>
 			{{ include('trick/_delete_form.html.twig') }}
 		</div>
+	{% endif %}
 
 		<div class="d-flex flex-column justify-content-center">
 			<h1 class="text-center snow__title my-5">{{trick.name}}</h1>
@@ -69,7 +71,7 @@
 						<p>{{trick.description}}</p>
 					</blockquote>
 					<figcaption class="blockquote-footer">
-						by Author, <cite title="Source Title">the 2022 14th November</cite>
+						by {{ trick.user.username }}, <cite title="Source Title">the {{ trick.createdAt|date('F jS \\a\\t g:ia') }}</cite>
 					</figcaption>
 				</figure>
 				<p class=" "></p>
