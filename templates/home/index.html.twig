@@ -1,26 +1,29 @@
 {% extends 'base.html.twig' %}
-{% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/css/_main.css') }}">{% endblock %}
-
-{% block title %}SnowTricks - Homepage{% endblock %}
-
-{% block body %}
-{% include "_parts/_header.html.twig" %}
-{% for message in app.flashes('verify_email_success') %}
-    <div class="alert alert-success" role="alert">{{ message }}</div>
-{% endfor %}
-<!-- Section-->
-<section class="py-5" id="tricks">
-    <div class="container px-4 px-lg-5 mt-5">
-        <div class="col-12 text-center my-4">
-            <a href="{{ path('app_trick_new') }}" class="btn btn-primary"><span class="snow-text">Add a new trick</span></a>
-        </div>
-        <div id="trick__card" class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-3 justify-content-center">
-            {% include "trick/_content.html.twig" %}
-        </div>
-        <div class="col-12 text-center my-4">
-            {% include "trick/_more_tricks.html.twig" %}
-        </div>
-    </div>
-</section>
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/css/_main.css') }}">
 {% endblock %}
 
+{% block title %}SnowTricks - Homepage
+{% endblock %}
+
+{% block body %}
+	{% include "_parts/_header.html.twig" %}
+	{% for message in app.flashes('verify_email_success') %}
+		<div class="alert alert-success" role="alert">{{ message }}</div>
+	{% endfor %}
+	<!-- Section-->
+	<section class="py-5" id="tricks">
+		<div class="container px-4 px-lg-5 mt-5">
+			<div class="col-12 text-center my-4">
+				<a href="{{ path('app_trick_new') }}" class="btn btn-primary">
+					<span class="snow__text">Add a new trick</span>
+				</a>
+			</div>
+			<div id="trick__card" class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-3 justify-content-center">
+				{% include "trick/_content.html.twig" %}
+			</div>
+			<div class="col-12 text-center my-4">
+				{% include "trick/_more_tricks.html.twig" %}
+			</div>
+		</div>
+	</section>
+{% endblock %}

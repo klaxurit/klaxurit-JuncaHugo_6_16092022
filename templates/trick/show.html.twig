@@ -42,66 +42,86 @@
 		</div>
 
 		<div class="d-flex flex-column justify-content-center">
-			<h1 class="text-center my-5">{{trick.name}}</h1>
+			<h1 class="text-center snow__title my-5">{{trick.name}}</h1>
 
 			<div id="carousel" class="d-flex justify-content-center">
 				{% for media in trick.medias %}
 					{% if media.type is same as("Image") %}
 						<div class="item">
 							<button type="button" class="popImage">
-                                <img data-id="{{ media.id }}" class="trick__img" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}">
-                            </button>
+								<img data-id="{{ media.id }}" class="trick__img" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}">
+							</button>
 						</div>
 					{% else %}
 						<div class="item-video">
 							<iframe class="trick__video" src="{{ media.url }}" frameborder="0"></iframe>
-							<button type="button" class="popVideo"><iframe class="trick__video d-none" src="{{ media.url }}" frameborder="0"></iframe></button>
+							<button type="button" class="popVideo">
+								<iframe class="trick__video d-none" src="{{ media.url }}" frameborder="0"></iframe>
+							</button>
 						</div>
 					{% endif %}
 				{% endfor %}
 			</div>
-
-			<p class="text-justify text-center mt-3 mx-5">{{trick.description}}</p>
+			<div class="snow__description my-5 text-center">
+				<h3 class="snow__title">Description</h3>
+				<figure class="text-center text-justify mt-3 mx-5">
+					<blockquote class="blockquote">
+						<p>{{trick.description}}</p>
+					</blockquote>
+					<figcaption class="blockquote-footer">
+						by Author, <cite title="Source Title">the 2022 14th November</cite>
+					</figcaption>
+				</figure>
+				<p class=" "></p>
+			</div>
 
 			<div class="trick__separator my-3">
 				<hr class="rounded">
 			</div>
 
 			<div class="trick__groups text-center">
-				<span class="badge rounded-pill text-bg-warning">Created at: {{trick.createdAt|date('d-m-Y')}}</span>
-				<span class="badge rounded-pill text-bg-primary">Group: {{trick.trickGroup.name}}</span>
-				<span class="badge rounded-pill text-bg-info">Last update: {{trick.createdAt|date('d-m-Y')}}</span>
+				<span class="badge rounded-pill text-bg-warning">Created at:
+					{{trick.createdAt|date('d-m-Y')}}</span>
+				<span class="badge rounded-pill text-bg-primary">Group:
+					{{trick.trickGroup.name}}</span>
+				<span class="badge rounded-pill text-bg-info">Last update:
+					{{trick.createdAt|date('d-m-Y')}}</span>
+			</div>
+			{% include('trick/_comment.html.twig') %}
+			{% if app.user %}
+				<div class="send__comment-section">
+					<h3 class="snow__title">Send comment</h3>
+					{{ form(commentForm) }}
+					</div>
+			{% endif %}
 			</div>
 
-			{% include('trick/_comment.html.twig') %}
+			<a href="{{ path('app_home') }}" class="btn btn-m btn-secondary">Back to list</a>
+
 		</div>
 
-		<a href="{{ path('app_home') }}" class="btn btn-m btn-secondary">Back to list</a>
 
-	</div>
-
-
-{% endblock %}
+	{% endblock %}
 
 
-{% block javascripts %}
-	<script src="{{ asset('assets/js/slider.js') }}" type="text/javascript"></script>
-	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-	<script>
-	$(function () {
-        $('.popImage').on('click', function () {
-            $('.imagepreview').attr('src', $(this).find('img').attr('src'));
-            $('#imagemodal').modal('show');
-        });
-    });
-    $(function () {
-        $('.popVideo').on('click', function () {
-            $('.embed-responsive-item').attr('src', $(this).find('iframe').attr('src'));
-            $('#videomodal').modal('show');
-            $("#videomodal").on('hide.bs.modal', function () {
-                $(".embed-responsive-item").attr('src', '');
-            });
-        });
-    });
-	</script>
-{% endblock %}
+	{% block javascripts %}
+		<script src="{{ asset('assets/js/slider.js') }}" type="text/javascript"></script>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script>
+			$(function () {
+$('.popImage').on('click', function () {
+$('.imagepreview').attr('src', $(this).find('img').attr('src'));
+$('#imagemodal').modal('show');
+});
+});
+$(function () {
+$('.popVideo').on('click', function () {
+$('.embed-responsive-item').attr('src', $(this).find('iframe').attr('src'));
+$('#videomodal').modal('show');
+$("#videomodal").on('hide.bs.modal', function () {
+$(".embed-responsive-item").attr('src', '');
+});
+});
+});
+		</script>
+	{% endblock %}

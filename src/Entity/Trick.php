@@ -36,7 +36,7 @@ class Trick
     #[ORM\JoinColumn(nullable: false)]
     private ?Group $trickGroup = null;
 
-    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: UserMessage::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: UserMessage::class, orphanRemoval: true, cascade:['persist'])]
     private Collection $userMessages;
 
     public function __construct()

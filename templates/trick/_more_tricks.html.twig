@@ -1,47 +1,58 @@
-<a id="loadMore" data-currentPage="1" class="btn btn-primary"><span class="snow-text">View more tricks</span></a>
+<a id="loadMore" data-currentpage="1" class="btn btn-primary">
+	<span class="snow__text">View more tricks</span>
+</a>
 
 {% block javascripts %}
-    <script language="javascript" 
-        src = "https://code.jquery.com/jquery-2.2.4.min.js">
-    </script> 
+	<script language="javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 
-    <script language="javascript">
-    const addTrickItem = function(tricks) {
+	<script language="javascript">
+		const addTrickItem = function (tricks) {
 
-        tricks.forEach(trick => {
-            const trickCoverImage = getTrickCoverImage(trick);
-            if (trickCoverImage.trickCoverImageFileName) {
-                $('#trick__card').append(
-            `
+tricks.forEach(trick => {
+const trickCoverImage = getTrickCoverImage(trick);
+if (trickCoverImage.trickCoverImageFileName) {
+$('#trick__card').append(`
                 <div class="col mb-5">
                     <div class="card h-100">
                         <!-- Trick image-->
-                        <a href="/trick/${trick.id}">
-                            <img class="card-img-top" src="/uploads/${trickCoverImage.trickCoverImageFileName}" alt="${trickCoverImage.trickCoverImageAlt}">
+                        <a href="/trick/${
+trick.id
+}">
+                            <img class="card-img-top" src="/uploads/${
+trickCoverImage.trickCoverImageFileName
+}" alt="${
+trickCoverImage.trickCoverImageAlt
+}">
                         </a>
                     
                         <!-- Trick details-->
                         <div class="card-body p-3 d-flex flex-row align-items-center justify-content-between">
                             <div class="text-start m-0">
                                 <!-- Trick name-->
-                                <h4 class="snow-text">${ trick.name }</h4>
+                                <h4 class="snow__text">${
+trick.name
+}</h4>
                             </div>
                             <div class="trick__actions">
-                                <a href="/trick/${trick.id}/edit" class="trick__actions-button"><i class="bi bi-pencil-fill"></i></a>
-                                <a onClick="javascript: return confirm('Please confirm trick deletion');" href="/trick/delete/${trick.id}" class="ms-2 trick__actions-button"><i class="bi bi-trash-fill"></i></a>
+                                <a href="/trick/${
+trick.id
+}/edit" class="trick__actions-button"><i class="bi bi-pencil-fill"></i></a>
+                                <a onClick="javascript: return confirm('Please confirm trick deletion');" href="/trick/delete/${
+trick.id
+}" class="ms-2 trick__actions-button"><i class="bi bi-trash-fill"></i></a>
                             </div>
                         </div>
                     </div>
                 </div>
-            `
-            )
-            } else {
-            $('#trick__card').append(
-            `
+            `)
+} else {
+$('#trick__card').append(`
                 <div class="col mb-5">
                     <div class="card h-100">
                         <!-- Trick image-->
-                        <a href="/trick/${trick.id}">
+                        <a href="/trick/${
+trick.id
+}">
                             <img class="card-img-top" src="/assets/images/empty.jpg" alt="no image to show">
                         </a>
                     
@@ -49,55 +60,59 @@
                         <div class="card-body p-3 d-flex flex-row align-items-center justify-content-between">
                             <div class="text-start m-0">
                                 <!-- Trick name-->
-                                <h4 class="snow-text">${ trick.name }</h4>
+                                <h4 class="snow__text">${
+trick.name
+}</h4>
                             </div>
                             <div class="trick__actions">
-                                <a href="/trick/${trick.id}/edit" class="trick__actions-button"><i class="bi bi-pencil-fill"></i></a>
-                                <a onClick="javascript: return confirm('Please confirm trick deletion');" href="/trick/delete/${trick.id}" class="ms-2 trick__actions-button"><i class="bi bi-trash-fill"></i></a>
+                                <a href="/trick/${
+trick.id
+}/edit" class="trick__actions-button"><i class="bi bi-pencil-fill"></i></a>
+                                <a onClick="javascript: return confirm('Please confirm trick deletion');" href="/trick/delete/${
+trick.id
+}" class="ms-2 trick__actions-button"><i class="bi bi-trash-fill"></i></a>
                             </div>
                         </div>
                     </div>
                 </div>
-            `
-            )
-            }
-        })
-    }
+            `)
+}
+})
+}
 
-    function getTrickCoverImage(trick){
-        let trickCoverImageFileName = null;
-        let trickCoverImageAlt = null;
-        for(const trickMedia of trick.medias) {
-            if(trickMedia.type === "Image"){
-                trickCoverImageFileName = trickMedia.fileName;
-                trickCoverImageAlt = trickMedia.alt;
-                break;
-            }
-        }
-        return {trickCoverImageFileName, trickCoverImageAlt};
-    }
+function getTrickCoverImage(trick) {
+let trickCoverImageFileName = null;
+let trickCoverImageAlt = null;
+for (const trickMedia of trick.medias) {
+if (trickMedia.type === "Image") {
+trickCoverImageFileName = trickMedia.fileName;
+trickCoverImageAlt = trickMedia.alt;
+break;
+}
+}
+return {trickCoverImageFileName, trickCoverImageAlt};
+}
 
-    $(document).ready(function(){
-        let currentPage = 2;
-        $("#loadMore").on("click", function(event){
-            $.get("/ajax/trick?page=" + currentPage)
-            .then(tricks => {
-                if (tricks.length < 6){
-                    currentPage++;
-                    addTrickItem(tricks);
-                    deactivateButton();
-                } else {
-                    currentPage++;
-                    addTrickItem(tricks);
-                }
-            })
-        });
-        const deactivateButton = () => {
-            document.querySelector('#loadMore').classList.remove('btn-primary');
-            document.querySelector('#loadMore').classList.add('btn-secondary');
-            document.querySelector('#loadMore').classList.add('disable');
-        }
-        
-    })
-    </script>
+$(document).ready(function () {
+let currentPage = 2;
+$("#loadMore").on("click", function (event) {
+$.get("/ajax/trick?page=" + currentPage).then(tricks => {
+if (tricks.length < 6) {
+currentPage++;
+addTrickItem(tricks);
+deactivateButton();
+} else {
+currentPage++;
+addTrickItem(tricks);
+}
+})
+});
+const deactivateButton = () => {
+document.querySelector('#loadMore').classList.remove('btn-primary');
+document.querySelector('#loadMore').classList.add('btn-secondary');
+document.querySelector('#loadMore').classList.add('disable');
+}
+
+})
+	</script>
 {% endblock %}

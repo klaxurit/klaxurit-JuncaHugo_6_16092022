@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Media;
 use App\Entity\Trick;
+use App\Entity\User;
 use App\Entity\UserMessage;
 use App\Form\TrickType;
+use App\Form\UserMessageType;
 use App\Repository\MediaRepository;
 use App\Service\UploaderHelper;
 use App\Repository\TrickRepository;
@@ -18,6 +20,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[Route('/trick')]
 class TrickController extends AbstractController
@@ -34,7 +37,6 @@ class TrickController extends AbstractController
     public function new(
         Request $request,
         EntityManagerInterface $entityManager,
-        TrickRepository $trickRepository,
         SluggerInterface $slugger,
         UploaderHelper $uploadedFile,
     ): Response {
@@ -86,8 +88,14 @@ class TrickController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_trick_show', methods: ['GET'])]
-    public function show(Trick $trick, Request $request, UserMessageRepository $userMessage): Response
+    #[Route('/{id}', name: 'app_trick_show', methods: ['GET', 'POST'])]
+    public function show(
+        Trick $trick, 
+        Request $request, 
+        UserMessageRepository $userMessage, 
+        EntityManagerInterface $entityManager,
+        UserInterface $user = null,
+        ): Response
     {
         // define number of comments on page
         $limit = 3;
@@ -98,10 +106,34 @@ class TrickController extends AbstractController
         // get comments of page
         $comments = $userMessage->getPaginatedComments($page, $limit, $trick);
 
-        //get total number of comments
+        // get total number of comments
         $total = $userMessage->getTotalComments();
 
-        return $this->render('trick/show.html.twig', compact('trick', 'total', 'limit', 'page', 'comments'));
+        // comments parts
+        $comment = new UserMessage;
+        $commentForm = $this->createForm(UserMessageType::class, $comment);
+        $commentForm->handleRequest($request);
+
+        if($commentForm->isSubmitted() && $commentForm->isValid()){
+            $comment->setTrick($trick);
+            $comment->setStatus(false);
+            $comment->setUser($user);
+
+            $entityManager->persist($comment);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Your comment has been successfully submitted!');
+            return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
+        }
+
+        return $this->render('trick/show.html.twig', [
+            'trick' => $trick, 
+            'total' => $total, 
+            'limit' => $limit, 
+            'page'  => $page, 
+            'comments'  => $comments, 
+            'commentForm'   => $commentForm->createView()
+        ]);
     }
 
     #[Route('/{id}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
