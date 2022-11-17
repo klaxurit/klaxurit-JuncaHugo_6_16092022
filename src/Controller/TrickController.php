@@ -110,7 +110,7 @@ class TrickController extends AbstractController
 
         // get total number of comments
         $total = $userMessage->getTotalComments();
-
+        
         // comments parts
         $comment = new UserMessage;
         $commentForm = $this->createForm(UserMessageType::class, $comment);
@@ -145,68 +145,77 @@ class TrickController extends AbstractController
         EntityManagerInterface $entityManager,
         TrickRepository $trickRepository,
         UploaderHelper $uploadedFile,
-        SluggerInterface $slugger
+        SluggerInterface $slugger,
+        UserInterface $user = null,
     ): Response {
-        $form = $this->createForm(TrickType::class, $trick);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $trickSlug = $slugger->slug($form->get('name')->getData());
-            $trick->setSlug($trickSlug);
-
-            if ($form->get('medias')) {
-                // get media
-                foreach ($form->get('medias') as $mediaForm) {
-                    if ($mediaForm->get('type')->getData() === "Image") {
-                        $trickImg = $mediaForm->get('image')->getData();
-
-                        try {
-                            $filePath = $uploadedFile->uploadTrickImage($trickImg);
-                            // get the array form the class
-                        } catch (FileException $e) {
-                            $this->addFlash('danger', "Error on uploading file");
+        if ($this->getUser() && $user->getId() === $trick->getUser()->getId()) {
+            $form = $this->createForm(TrickType::class, $trick);
+            $form->handleRequest($request);
+    
+            if ($form->isSubmitted() && $form->isValid()) {
+                $trickSlug = $slugger->slug($form->get('name')->getData());
+                $trick->setSlug($trickSlug);
+    
+                if ($form->get('medias')) {
+                    // get media
+                    foreach ($form->get('medias') as $mediaForm) {
+                        if ($mediaForm->get('type')->getData() === "Image") {
+                            $trickImg = $mediaForm->get('image')->getData();
+    
+                            try {
+                                $filePath = $uploadedFile->uploadTrickImage($trickImg);
+                                // get the array form the class
+                            } catch (FileException $e) {
+                                $this->addFlash('danger', "Error on uploading file");
+                            }
+    
+                            // stock file name in db
+                            $media = new Media();
+                            $media->setType("Image");
+                            $media->setFileName($filePath);
+                            $media->setAlt($mediaForm->get('alt')->getData());
+                            $trick->addMedia($media);
+                        } else {
+                            $media = new Media();
+                            $media->setType("Video");
+                            $media->setUrl($mediaForm->get('url')->getData());
+                            $trick->addMedia($media);
                         }
-
-                        // stock file name in db
-                        $media = new Media();
-                        $media->setType("Image");
-                        $media->setFileName($filePath);
-                        $media->setAlt($mediaForm->get('alt')->getData());
-                        $trick->addMedia($media);
-                    } else {
-                        $media = new Media();
-                        $media->setType("Video");
-                        $media->setUrl($mediaForm->get('url')->getData());
-                        $trick->addMedia($media);
                     }
+                    $trick->setTrickGroup($form->get('trickGroup')->getData());
+                    $entityManager->persist($trick);
+                    $entityManager->flush();
                 }
-                $trick->setTrickGroup($form->get('trickGroup')->getData());
-                $entityManager->persist($trick);
-                $entityManager->flush();
+                $trickRepository->add($trick, true);
+    
+                return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
             }
-            $trickRepository->add($trick, true);
-
-            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+            return $this->render('trick/edit.html.twig', [
+                'trickForm' => $form->createView(),
+                'trick' => $trick,
+                'controller_name' => 'TrickController',
+            ]);
         }
+        $this->addFlash('danger', "Access denied, you cannot acces to this page.");
+        return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
 
-        return $this->render('trick/edit.html.twig', [
-            'trickForm' => $form->createView(),
-            'trick' => $trick,
-            'controller_name' => 'TrickController',
-        ]);
     }
 
     #[Route('/delete/{id}', name: 'app_trick_delete', methods: ['DELETE', 'GET'])]
-    public function delete(Trick $trick, TrickRepository $trickRepository): Response
+    public function delete(Trick $trick, TrickRepository $trickRepository, UserInterface $user = null): Response
     {
-        $trickRepository->remove($trick, true);
-        $this->addFlash('success', "Trick deleted");
+        if ($this->getUser() && $user->getId() === $trick->getUser()->getId()) {
+            $trickRepository->remove($trick, true);
+            $this->addFlash('success', "Trick deleted");
 
+            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+        }
+        $this->addFlash('danger', "You are not allowed to perform this action.");
         return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/delete/media/{id}', name: 'app_trick_delete_media', methods: ['DELETE'])]
-    public function deleteMedia(Media $media, Request $request, MediaRepository $mediaRepository)
+    public function deleteMedia(Media $media, Request $request, MediaRepository $mediaRepository, UserInterface $user = null)
     {
         $data = json_decode($request->getContent(), true);
 
