@@ -110,7 +110,7 @@ class TrickController extends AbstractController
 
         // get total number of comments
         $total = $userMessage->getTotalComments();
-        
+
         // comments parts
         $comment = new UserMessage;
         $commentForm = $this->createForm(UserMessageType::class, $comment);
@@ -215,7 +215,7 @@ class TrickController extends AbstractController
     }
 
     #[Route('/delete/media/{id}', name: 'app_trick_delete_media', methods: ['DELETE'])]
-    public function deleteMedia(Media $media, Request $request, MediaRepository $mediaRepository, UserInterface $user = null)
+    public function deleteMedia(Media $media, Request $request, MediaRepository $mediaRepository)
     {
         $data = json_decode($request->getContent(), true);
 

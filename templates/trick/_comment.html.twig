@@ -3,6 +3,7 @@
 <div class="trick__comments">
 	<ul class="comment-section" id="comment-section">
 		{% for comment in comments %}
+		{% if comment.isStatus is same as(true) %}
 			<li class="comment user-comment">
 				<div class="info">
 					<a href="#">{{ comment.user.username }}</a>
@@ -13,11 +14,10 @@
 				</a>
 				<p>{{ comment.content }}</p>
 			</li>
+		{% endif %}
 		{% endfor %}
 	</ul>
 </div>
-{% if comments|length >= 3 %}
-	<div class="col-12 text-center my-4">
-		{% include "trick/_more_comments.html.twig" %}
-	</div>
-{% endif %}
+<div class="col-12 text-center my-4">
+	{% include "trick/_more_comments.html.twig" %}
+</div>
