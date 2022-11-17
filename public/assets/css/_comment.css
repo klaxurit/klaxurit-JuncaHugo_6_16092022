@@ -6,6 +6,13 @@
     padding: 10px;
 }
 
+.send__comment-section {
+    max-width: 600px;
+    width: 100%;
+    margin: 50px auto;
+    padding: 10px;
+}
+
 .comment{
     display: flex;
     border-radius: 3px;
@@ -90,7 +97,7 @@
 
 .comment.user-comment p{
     background-color:  #D9FAFF;
-    border-right: 3px solid white;
+    border-right: 3px solid #656c71;
 }
 
 .comment.author-comment p{
@@ -105,8 +112,8 @@
     width: 15px;
     height: 15px;
     border-radius: 50%;
-    background-color: #ffffff;
-    border: 2px solid #f3f3f3;
+    background-color: #dddddd;
+    border: 2px solid #4ecdff;
     left: -8px;
     top: 18px;
 }

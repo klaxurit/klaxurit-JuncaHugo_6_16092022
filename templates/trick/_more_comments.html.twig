@@ -1,0 +1,51 @@
+<a id="loadMore" data-currentPage="1" data-trickId="{{ trick.id }}" class="btn btn-primary"><span class="snow__text">View more comments</span></a>
+
+{% block javascripts %}
+    <script language="javascript" src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script language="javascript">
+    const addCommentItem = function(comments) {
+
+        comments.forEach(comment => {
+            let formatedCreatedAt = moment.unix(comment.createdAt.timestamp).format("YYYY-MM-DD HH:mm:ss")
+            $('#comment-section').append(
+                `
+                <li class="comment user-comment" id="trick__comment">
+                    <div class="info">
+                        <a href="#">${comment.user.username}</a>
+                        <span>${moment(formatedCreatedAt).fromNow()}</span>
+                    </div>
+                    <a class="avatar" href="#">
+                        <img src="{{ asset('assets/images/avatar.png') }}" width="35" alt="Profile Avatar" title="Anie Silverston"/>
+                    </a>
+                    <p>${comment.content}</p>
+                </li>
+                `
+            )
+        })
+    }
+
+    $(document).ready(function(){
+        let currentPage = 2;
+        const trickId = document.querySelector('#loadMore').dataset.trickid
+        $("#loadMore").on("click", function(event){
+            $.get("/ajax/comment?page=" + currentPage + "&trickid=" + trickId)
+            .then(comments => {
+                if (comments.length < 3){
+                    currentPage++;
+                    addCommentItem(comments);
+                    deactivateButton();
+                } else {
+                    currentPage++;
+                    addCommentItem(comments);
+                }
+            })
+        });
+        const deactivateButton = () => {
+            document.querySelector('#loadMore').classList.remove('btn-primary');
+            document.querySelector('#loadMore').classList.add('btn-secondary');
+            document.querySelector('#loadMore').classList.add('disable');
+        }
+    })
+    </script>
+{% endblock %}

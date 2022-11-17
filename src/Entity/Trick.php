@@ -36,13 +36,18 @@ class Trick
     #[ORM\JoinColumn(nullable: false)]
     private ?Group $trickGroup = null;
 
-    // #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, orphanRemoval: true, cascade:['persist'])]
-    // private Collection $medias;
+    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: UserMessage::class, orphanRemoval: true, cascade:['persist'])]
+    private Collection $userMessages;
+
+    #[ORM\ManyToOne(inversedBy: 'tricks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->medias = new ArrayCollection();
+        $this->userMessages = new ArrayCollection();
     }
 
     public function __toString() {
@@ -171,6 +176,48 @@ class Trick
     public function setTrickGroup(?Group $trickGroup): self
     {
         $this->trickGroup = $trickGroup;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserMessage>
+     */
+    public function getUserMessages(): Collection
+    {
+        return $this->userMessages;
+    }
+
+    public function addUserMessage(UserMessage $userMessage): self
+    {
+        if (!$this->userMessages->contains($userMessage)) {
+            $this->userMessages->add($userMessage);
+            $userMessage->setTrick($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserMessage(UserMessage $userMessage): self
+    {
+        if ($this->userMessages->removeElement($userMessage)) {
+            // set the owning side to null (unless already changed)
+            if ($userMessage->getTrick() === $this) {
+                $userMessage->setTrick(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

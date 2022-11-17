@@ -1,56 +1,23 @@
-{% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/css/_comment.css') }}">{% endblock %}
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/css/_comment.css') }}">
+{% endblock %}
 <div class="trick__comments">
-	<ul class="comment-section">
-		<li class="comment user-comment">
-			<div class="info">
-				<a href="#">Anie Silverston</a>
-				<span>4 hours ago</span>
-			</div>
-			<a class="avatar" href="#">
-				<img src="{{ asset('assets/images/avatar.png') }}" width="35" alt="Profile Avatar" title="Anie Silverston"/>
-			</a>
-			<p>Suspendisse gravida sem?</p>
-		</li>
-		<li class="comment author-comment">
-			<div class="info">
-				<a href="#">Jack Smith</a>
-				<span>3 hours ago</span>
-			</div>
-			<a class="avatar" href="#">
-				<img src="{{ asset('assets/images/avatar.png') }}" width="35" alt="Profile Avatar" title="Jack Smith"/>
-			</a>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse gravida sem sit amet molestie portitor.</p>
-		</li>
-		<li class="comment user-comment">
-			<div class="info">
-				<a href="#">Bradley Jones</a>
-				<span>1 hour ago</span>
-			</div>
-			<a class="avatar" href="#">
-				<img src="{{ asset('assets/images/avatar.png') }}" width="35" alt="Profile Avatar" title="Bradley Jones"/>
-			</a>
-			<p>Suspendisse gravida sem sit amet molestie portitor?</p>
-		</li>
-		<li class="comment author-comment">
-			<div class="info">
-				<a href="#">Jack Smith</a>
-				<span>1 hour ago</span>
-			</div>
-			<a class="avatar" href="#">
-				<img src="{{ asset('assets/images/avatar.png') }}" width="35" alt="Profile Avatar" title="Jack Smith"/>
-			</a>
-			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisee gravida sem sit amet molestie porttitor.</p>
-		</li>
-        {% if app.user %}
-		<li class="write-new">
-			<form action="#" method="post">
-				<textarea placeholder="Write your comment here" name="comment"></textarea>
-				<div>
-					<img src="{{ asset('assets/images/avatar.png') }}" width="35" alt="Profile of Bradley Jones" title="Bradley Jones"/>
-					<button class="btn btn-sm btn-primary" type="submit">Submit</button>
+	<ul class="comment-section" id="comment-section">
+		{% for comment in comments %}
+			<li class="comment user-comment">
+				<div class="info">
+					<a href="#">{{ comment.user.username }}</a>
+					<span>{{ comment.createdAt|ago }}</span>
 				</div>
-			</form>
-		</li>
-        {% endif %}
+				<a class="avatar" href="#">
+					<img src="{{ asset('assets/images/avatar.png') }}" width="35" alt="Profile Avatar" title="Anie Silverston"/>
+				</a>
+				<p>{{ comment.content }}</p>
+			</li>
+		{% endfor %}
 	</ul>
 </div>
+{% if comments|length >= 3 %}
+	<div class="col-12 text-center my-4">
+		{% include "trick/_more_comments.html.twig" %}
+	</div>
+{% endif %}

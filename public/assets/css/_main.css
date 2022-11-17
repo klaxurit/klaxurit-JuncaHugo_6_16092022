@@ -3,9 +3,14 @@
     color: #51565a;
 }
 
-.snow-text {
+.snow__text {
     font-size: 1.2em;
     font-family: 'Coiny', cursive;
+}
+
+.snow__title {
+    font-family: 'Coiny', cursive;
+    color: #00BBF0;
 }
 
 label {
@@ -91,7 +96,7 @@ hr.rounded {
     text-align: center;
 }
 
-@media screen and (min-width: 768px) { 
+@media screen and (min-width: 768px) {
     .modal:before {
         display: inline-block;
         vertical-align: middle;
@@ -106,13 +111,14 @@ hr.rounded {
     vertical-align: middle;
 }
 
-@media screen and (max-width: 767px) { 
+@media screen and (max-width: 767px) {
     .modal:before {
         display: inline-block;
         vertical-align: middle;
         content: " ";
         height: 100%;
     }
+
     .modal-dialog {
         margin: 0;
     }
@@ -159,9 +165,11 @@ hr.rounded {
     float: left;
 }
 
-.carousel__next, .carousel__prev {
+.carousel__next,
+.carousel__prev {
     position: absolute;
     width: 40px;
+    border: 3px solid #00BBF0;
     height: 40px;
     background: #FFF url(../images/right.svg) center center no-repeat;
     background-size: 20px 20px;
@@ -173,7 +181,8 @@ hr.rounded {
     transition: transform 0.3s, opacity 0.3s;
 }
 
-.carousel__next:hover, .carousel__prev:hover {
+.carousel__next:hover,
+.carousel__prev:hover {
     transform: scale(1.2);
 }
 
@@ -183,7 +192,8 @@ hr.rounded {
     left: 5px;
 }
 
-.carousel__next--hidden, .carousel__prev--hidden {
+.carousel__next--hidden,
+.carousel__prev--hidden {
     opacity: 0;
 }
 
