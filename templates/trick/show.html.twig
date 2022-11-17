@@ -34,7 +34,7 @@
 	</div>
 
 	<div class="container main my-5">
-	{% if app.user.id is same as(trick.user.id) %}
+	{%  if (app.user) and (app.user.id is same as(trick.user.id)) %}
 		<div class="text-end">
 			<a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="btn btn-m btn-primary">
 				<i class="bi bi-pencil-fill"></i>
