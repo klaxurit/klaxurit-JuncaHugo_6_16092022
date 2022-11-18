@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Media;
 use App\Entity\Trick;
-use App\Entity\User;
 use App\Entity\UserMessage;
 use App\Form\TrickType;
 use App\Form\UserMessageType;
@@ -41,53 +40,57 @@ class TrickController extends AbstractController
         SluggerInterface $slugger,
         UploaderHelper $uploadedFile,
     ): Response {
-        $trick = new Trick();
-        $form = $this->createForm(TrickType::class, $trick);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $trickSlug = $slugger->slug($form->get('name')->getData());
-            $trick->setSlug($trickSlug);
-            $trick->setUser($user);
-
-            if ($form->get('medias')) {
-                // get media
-                foreach ($form->get('medias') as $mediaForm) {
-                    if ($mediaForm->get('type')->getData() === "Image") {
-                        $trickImg = $mediaForm->get('image')->getData();
-
-                        try {
-                            $filePath = $uploadedFile->uploadTrickImage($trickImg);
-                            // get the array form the class
-                        } catch (FileException $e) {
-                            $this->addFlash('danger', "Error on uploading file");
+        if ($this->getUser()) {
+            $trick = new Trick();
+            $form = $this->createForm(TrickType::class, $trick);
+            $form->handleRequest($request);
+    
+            if ($form->isSubmitted() && $form->isValid()) {
+                $trickSlug = $slugger->slug($form->get('name')->getData());
+                $trick->setSlug($trickSlug);
+                $trick->setUser($user);
+    
+                if ($form->get('medias')) {
+                    // get media
+                    foreach ($form->get('medias') as $mediaForm) {
+                        if ($mediaForm->get('type')->getData() === "Image") {
+                            $trickImg = $mediaForm->get('image')->getData();
+    
+                            try {
+                                $filePath = $uploadedFile->uploadTrickImage($trickImg);
+                                // get the array form the class
+                            } catch (FileException $e) {
+                                $this->addFlash('danger', "Error on uploading file");
+                            }
+    
+                            // stock file name in db
+                            $media = new Media();
+                            $media->setType("Image");
+                            $media->setFileName($filePath);
+                            $media->setAlt($mediaForm->get('alt')->getData());
+                            $trick->addMedia($media);
+                        } else {
+                            $media = new Media();
+                            $media->setType("Video");
+                            $media->setUrl($mediaForm->get('url')->getData());
+                            $trick->addMedia($media);
                         }
-
-                        // stock file name in db
-                        $media = new Media();
-                        $media->setType("Image");
-                        $media->setFileName($filePath);
-                        $media->setAlt($mediaForm->get('alt')->getData());
-                        $trick->addMedia($media);
-                    } else {
-                        $media = new Media();
-                        $media->setType("Video");
-                        $media->setUrl($mediaForm->get('url')->getData());
-                        $trick->addMedia($media);
                     }
+                    $trick->setTrickGroup($form->get('trickGroup')->getData());
+                    $entityManager->persist($trick);
+                    $entityManager->flush();
                 }
-                $trick->setTrickGroup($form->get('trickGroup')->getData());
-                $entityManager->persist($trick);
-                $entityManager->flush();
+                // $trickRepository->add($trick, true);
+                return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
             }
-            // $trickRepository->add($trick, true);
-            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+    
+            return $this->render('trick/new.html.twig', [
+                'trickForm' => $form->createView(),
+                'controller_name' => 'TrickController'
+            ]);
         }
-
-        return $this->render('trick/new.html.twig', [
-            'trickForm' => $form->createView(),
-            'controller_name' => 'TrickController'
-        ]);
+        $this->addFlash('danger', "Access denied, you must login to add a new trick.");
+        return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/{id}', name: 'app_trick_show', methods: ['GET', 'POST'])]
@@ -146,9 +149,8 @@ class TrickController extends AbstractController
         TrickRepository $trickRepository,
         UploaderHelper $uploadedFile,
         SluggerInterface $slugger,
-        UserInterface $user = null,
     ): Response {
-        if ($this->getUser() && $user->getId() === $trick->getUser()->getId()) {
+        if ($this->getUser()) {
             $form = $this->createForm(TrickType::class, $trick);
             $form->handleRequest($request);
     
