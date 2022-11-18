@@ -6,6 +6,8 @@
 			<a href="{{ path('app_trick_show', {'id': trick.id}) }}">
 				{% for media in trick.medias|filter(media=> media.type is same as("Image"))|slice(0, 1) %}
 					<img class="card-img-top" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}"/>
+					{% else %}
+					<img class="card-img-top" src="/assets/images/empty.jpg" alt="no image to show">
 				{% endfor %}
 			</a>
 			<!-- Trick details-->
@@ -19,9 +21,11 @@
 					<a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="trick__actions-button">
 						<i class="bi bi-pencil-fill"></i>
 					</a>
-					<a onclick="javascript: return confirm('Please confirm trick deletion');" href="{{ path('app_trick_delete', {'id': trick.id}) }}" class="ms-2 trick__actions-button">
-						<i class="bi bi-trash-fill"></i>
-					</a>
+					{% if is_granted("trick_delete", trick) %}
+						<a onclick="javascript: return confirm('Please confirm trick deletion');" href="{{ path('app_trick_delete', {'id': trick.id}) }}" class="ms-2 trick__actions-button">
+							<i class="bi bi-trash-fill"></i>
+						</a>
+					{% endif %}
 				</div>
 			</div>
 		</div>
