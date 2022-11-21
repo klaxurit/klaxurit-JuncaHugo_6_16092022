@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\UserMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserMessageRepository;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,6 +12,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/admin', name: 'admin_')]
 class AdminController extends AbstractController
 {
+
     #[Route('/', name: 'index')]
     public function index(): Response
     {

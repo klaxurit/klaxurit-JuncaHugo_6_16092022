@@ -4,22 +4,23 @@ namespace App\Controller;
 
 use App\Entity\Media;
 use App\Entity\Trick;
-use App\Entity\UserMessage;
 use App\Form\TrickType;
+use App\Entity\UserMessage;
 use App\Form\UserMessageType;
-use App\Repository\MediaRepository;
 use App\Service\UploaderHelper;
+use App\Repository\MediaRepository;
 use App\Repository\TrickRepository;
-use App\Repository\UserMessageRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\UserMessageRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/trick')]
 class TrickController extends AbstractController
@@ -204,16 +205,19 @@ class TrickController extends AbstractController
     }
 
     #[Route('/delete/{id}', name: 'app_trick_delete', methods: ['DELETE', 'GET'])]
-    public function delete(Trick $trick, TrickRepository $trickRepository, UserInterface $user = null): Response
-    {
-        if ($this->getUser() && $user->getId() === $trick->getUser()->getId()) {
+    public function delete(Trick $trick, TrickRepository $trickRepository): Response
+    {   
+        try {
+            $this->denyAccessUnlessGranted('trick_delete', $trick);
             $trickRepository->remove($trick, true);
             $this->addFlash('success', "Trick deleted");
 
             return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+        } catch (AccessDeniedException) {
+            $this->addFlash('danger', "You are not allowed to perform this action.");
+
+            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
-        $this->addFlash('danger', "You are not allowed to perform this action.");
-        return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/delete/media/{id}', name: 'app_trick_delete_media', methods: ['DELETE'])]

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Trick;
 use App\Repository\TrickRepository;
 use App\Repository\UserMessageRepository;
+use App\Security\Voter\TrickVoter;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AjaxController extends AbstractController
 {
+
     #[Route('/ajax/trick', name: 'app_ajax_trick')]
     public function ajaxAction(
         Request $request,
@@ -22,19 +24,20 @@ class AjaxController extends AbstractController
     ): Response {
         // get page number
         $page = (int)$request->query->get("page");
-
+        
         $tricks = $trickRepository->getTricks($page);
 
         $encoders = [new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
         $serializer = new Serializer($normalizers, $encoders);
-
+        
         $jsonObject = $serializer->serialize($tricks, 'json', [
             'circular_reference_handler' => function ($object) {
+                // $isOwner = $this->isOwner($object);
+                // dd($isOwner);
                 return $object->getId();
             },
         ]);
-
         return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
     }
 
@@ -62,5 +65,12 @@ class AjaxController extends AbstractController
         ]);
 
         return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
+    }
+
+    public function isOwner(Trick $trick) {
+        if(!$this->denyAccessUnlessGranted(TrickVoter::TRICK_DELETE, $trick)){
+            return true;
+        }
+        return false;
     }
 }

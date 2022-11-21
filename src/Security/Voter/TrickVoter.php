@@ -7,11 +7,19 @@ use App\Entity\Trick;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Security;
 
 class TrickVoter extends Voter
 {
     const TRICK_VIEW = 'trick_view';
     const TRICK_DELETE = 'trick_delete';
+
+    private $security;
+
+    public function __construct(Security $security)
+    {
+        $this->security = $security;
+    }
 
     protected function supports(string $attribute, $trick): bool
     {
@@ -28,12 +36,15 @@ class TrickVoter extends Voter
         if (!$user instanceof UserInterface) {
             return false;
         }
+
+        // check if user isAdmin
+        if($this->security->isGranted('ROLE_ADMIN')) return true;
         
         if ($attribute === self::TRICK_DELETE) {
-                // logic to determine if the user can DELETE
-                // return true or false
-                return $this->canDelete($trick, $user);
-            }
+            // logic to determine if the user can DELETE
+            // return true or false
+            return $this->canDelete($trick, $user);
+        }
         return false;
     }
 
