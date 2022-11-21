@@ -201,3 +201,13 @@ hr.rounded {
     width: 40vw;
     height: 40vh;
 }
+
+.snow__contributors-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.snow__contributors-content > p:not(:first-child):before {
+    content: ' / '
+}

@@ -43,11 +43,15 @@ class Trick
     #[ORM\JoinColumn(nullable: false)]
     private ?User $user = null;
 
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'trick_contribution')]
+    private Collection $contributors;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->medias = new ArrayCollection();
         $this->userMessages = new ArrayCollection();
+        $this->contributors = new ArrayCollection();
     }
 
     public function __toString() {
@@ -218,6 +222,30 @@ class Trick
     public function setUser(?User $user): self
     {
         $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getContributors(): Collection
+    {
+        return $this->contributors;
+    }
+
+    public function addContributor(User $contributor): self
+    {
+        if (!$this->contributors->contains($contributor)) {
+            $this->contributors->add($contributor);
+        }
+
+        return $this;
+    }
+
+    public function removeContributor(User $contributor): self
+    {
+        $this->contributors->removeElement($contributor);
 
         return $this;
     }

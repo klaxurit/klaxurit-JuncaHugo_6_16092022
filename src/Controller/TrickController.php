@@ -150,6 +150,7 @@ class TrickController extends AbstractController
         TrickRepository $trickRepository,
         UploaderHelper $uploadedFile,
         SluggerInterface $slugger,
+        UserInterface $user = null,
     ): Response {
         if ($this->getUser()) {
             $form = $this->createForm(TrickType::class, $trick);
@@ -158,6 +159,7 @@ class TrickController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 $trickSlug = $slugger->slug($form->get('name')->getData());
                 $trick->setSlug($trickSlug);
+                $trick->addContributor($user);
     
                 if ($form->get('medias')) {
                     // get media

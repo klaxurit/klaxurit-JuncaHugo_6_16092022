@@ -77,6 +77,15 @@
 				</figure>
 				<p class=" "></p>
 			</div>
+			<div class="snow__contributors-title my-5 text-center">
+				<h3 class="snow__title">Contributors</h3>
+				<div class="snow__contributors-content">
+				{% for contributor in trick.contributors %}
+					<p class="snow__text me-1 align-middle">{{contributor.username}}</p>
+				{% endfor %}
+				</div>
+			</div>
+
 
 			<div class="trick__separator my-3">
 				<hr class="rounded">

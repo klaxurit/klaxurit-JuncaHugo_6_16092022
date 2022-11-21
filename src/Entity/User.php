@@ -58,10 +58,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $avatar = null;
 
+    #[ORM\ManyToMany(targetEntity: Trick::class, mappedBy: 'contributors')]
+    private Collection $trick_contribution;
+
     public function __construct()
     {
         $this->messages = new ArrayCollection();
         $this->tricks = new ArrayCollection();
+        $this->trick_contribution = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -250,6 +254,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setAvatar(?string $avatar): self
     {
         $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Trick>
+     */
+    public function getTrickContribution(): Collection
+    {
+        return $this->trick_contribution;
+    }
+
+    public function addTrickContribution(Trick $trickContribution): self
+    {
+        if (!$this->trick_contribution->contains($trickContribution)) {
+            $this->trick_contribution->add($trickContribution);
+            $trickContribution->addContributor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTrickContribution(Trick $trickContribution): self
+    {
+        if ($this->trick_contribution->removeElement($trickContribution)) {
+            $trickContribution->removeContributor($this);
+        }
 
         return $this;
     }
