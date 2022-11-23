@@ -59,6 +59,8 @@ class TrickRepository extends ServiceEntityRepository
 		
 		// Generate the Query
 		$query = $queryBuilder->getQuery();
+        $total = $this->getTotalTricks();
+        // dd($total);
 
         //Generate the Paginator
         $paginator = new Paginator($query, true);

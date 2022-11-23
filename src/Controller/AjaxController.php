@@ -26,6 +26,7 @@ class AjaxController extends AbstractController
         $page = (int)$request->query->get("page");
         
         $tricks = $trickRepository->getTricks($page);
+        // dd($tricks->getQuery()->getResult());
 
         $encoders = [new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];

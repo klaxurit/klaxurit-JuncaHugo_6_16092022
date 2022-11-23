@@ -1,3 +1,4 @@
+
 {% for trick in tricks %}
 	<div class="col mb-5">
 		<div
@@ -22,7 +23,7 @@
 						<i class="bi bi-pencil-fill"></i>
 					</a>
 					{% if is_granted("trick_delete", trick) %}
-						<a onclick="javascript: return confirm('Please confirm trick deletion');" href="{{ path('app_trick_delete', {'id': trick.id}) }}" class="ms-2 trick__actions-button">
+						<a href="#delete__modal" role="button" class="ms-2 modal-trigger trick__actions-button" data-bs-toggle="modal" data-target="delete__modal" data-id="{{trick.id}}" data-name="{{trick.name}}">
 							<i class="bi bi-trash-fill"></i>
 						</a>
 					{% endif %}
@@ -30,4 +31,37 @@
 			</div>
 		</div>
 	</div>
+	{# DELETE MODAL #}
+	<div class="modal" id="delete__modal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Delete confirmation</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+			</div>
+			<div class="modal-footer">
+				<a href="" class="btn btn-danger">Delete</a>
+				<button type="button" data-target="modal-delete" class="btn btn-secondary modal-trigger" data-bs-dismiss="modal">Close</button>
+			</div>
+			</div>
+		</div>
+	</div>
 {% endfor %}
+{% block javascripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	window.onload = () => {
+		let myModal = new bootstrap.Modal(document.getElementById('delete__modal'))
+		console.log(myModal)
+		let supprimer = document.querySelectorAll(".modal-trigger")
+		for(let bouton of supprimer){
+			bouton.addEventListener("click", function () {
+				document.querySelector(".modal-footer a").href = `/trick/delete/${this.dataset.id}`
+				document.querySelector(".modal-body").innerText = `Are you sure you want to delete "${this.dataset.name} ?"`
+			})
+		}
+	}
+</script>
+{% endblock %}
