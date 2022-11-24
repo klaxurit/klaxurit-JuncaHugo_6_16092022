@@ -8,6 +8,7 @@
 
         comments.forEach(comment => {
             let formatedCreatedAt = moment.unix(comment.createdAt.timestamp).format("YYYY-MM-DD HH:mm:ss")
+            let avatar = comment.user.avatar ? '/uploads/' + comment.user.avatar : '/assets/images/avatar.png'
             $('#comment-section').append(
                 `
                 <li class="comment user-comment" id="trick__comment">
@@ -16,7 +17,7 @@
                         <span>${moment(formatedCreatedAt).fromNow()}</span>
                     </div>
                     <a class="avatar" href="#">
-                        <img src="{{ asset('assets/images/avatar.png') }}" width="35" alt="Profile Avatar" title="Anie Silverston"/>
+                        <img src="${avatar}" width="35" alt="Profile Avatar" title="Anie Silverston"/>
                     </a>
                     <p>${comment.content}</p>
                 </li>

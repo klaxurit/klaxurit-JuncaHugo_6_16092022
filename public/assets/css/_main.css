@@ -201,3 +201,51 @@ hr.rounded {
     width: 40vw;
     height: 40vh;
 }
+
+.snow__contributors-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.snow__contributors-content > p:not(:first-child):before {
+    content: ' / '
+}
+
+/* Delete modal on home page */
+.delete__button {
+    border: none;
+}
+
+.delete__button:hover {
+    background: none;
+    color: red;
+}
+
+/* Trick view page cover image */
+.trick__cover-image {
+    position: relative;
+    text-align: center;
+}
+
+.cover__image {
+    width: 60%;
+    border-radius: 5%;
+}
+
+.trick__cover-image-name {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-size: 4vw;
+    transform: translate(-50%, -50%);
+    text-shadow: 2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff, 1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+}
+
+.trick__cover-image-edit {
+    position: absolute;
+    top: 10%;
+    right: 25%;
+    background-color: #00BBF0;
+    border: 2px solid white;
+}

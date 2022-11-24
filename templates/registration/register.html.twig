@@ -25,6 +25,11 @@
                 {{ form_errors(registrationForm.username) }}
 			</div>
 			<div class="mb-3 text-center text-md-start">
+				<label for="avatar" class="form-label">Upload avatar</label>
+				{{form_widget(registrationForm.avatar)}}
+				{{form_errors(registrationForm.avatar)}}
+			</div>
+			<div class="mb-3 text-center text-md-start">
 				<label for="InputPassword1" class="form-label">Password</label>
 				{{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'custom__field'}}) }}
                 {{ form_errors(registrationForm.plainPassword.first) }}

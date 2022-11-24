@@ -11,11 +11,15 @@
         <link href="https://fonts.googleapis.com/css2?family=Coiny&family=Roboto&display=swap" rel="stylesheet">
         {# CSS #}
         <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.min.css') }}">
-        {% block stylesheets %}{% endblock %}
+        {% block stylesheets %}
+        {% endblock %}
         <link rel="stylesheet" href="{{ asset('assets/css/styles.css') }}">
+        {# {{ encore_entry_link_tags('app') }} #}
         {# JS #}
         <script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
-        {% block javascripts %}{% endblock %}
+        {% block javascripts %}
+        {% endblock %}
+        {{ encore_entry_script_tags('app') }}
     </head>
     <body>
     {% include "_parts/_nav.html.twig" %}

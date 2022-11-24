@@ -13,8 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
-#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
+#[UniqueEntity(fields: ['username'], message: 'There is already an account with this username')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -56,10 +55,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Trick::class)]
     private Collection $tricks;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $avatar = null;
+
+    #[ORM\ManyToMany(targetEntity: Trick::class, mappedBy: 'contributors')]
+    private Collection $trick_contribution;
+
     public function __construct()
     {
         $this->messages = new ArrayCollection();
         $this->tricks = new ArrayCollection();
+        $this->trick_contribution = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -235,6 +241,45 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             if ($trick->getUser() === $this) {
                 $trick->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Trick>
+     */
+    public function getTrickContribution(): Collection
+    {
+        return $this->trick_contribution;
+    }
+
+    public function addTrickContribution(Trick $trickContribution): self
+    {
+        if (!$this->trick_contribution->contains($trickContribution)) {
+            $this->trick_contribution->add($trickContribution);
+            $trickContribution->addContributor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTrickContribution(Trick $trickContribution): self
+    {
+        if ($this->trick_contribution->removeElement($trickContribution)) {
+            $trickContribution->removeContributor($this);
         }
 
         return $this;
