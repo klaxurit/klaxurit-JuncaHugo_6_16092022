@@ -15,23 +15,20 @@ class UpdateCoverImageType extends AbstractType
     {
         $builder
             ->add('cover_image', EntityType::class, [
-                'class'        => Trick::class,
-                // 'choices'      => function (Trick $trick) {
-                //     $medias = $trick->getMedias();
-                //     $images = $medias->getValues()->getFileName();
-                //     dd($images);
-                //     return $trick->getMedias();
+                'class'        => Media::class,
+                // 'choice_label' => function (Trick $trick) {
+                //     $images = $trick->getMedias();
+                //     // dd($images->getValues());
+                //     // dd($images->getValues());
+                //     // dd($images->getValues());
+                //     foreach ($images->getValues() as $image) {
+                //         $trickImages["fileName"] = $image->getFileName();
+                //         // dd($trickImages);
+                //         // var_dump("ici");
+                //     }
+                //     return $trickImages["fileName"];
                 // },
-                'choice_label' => function (Trick $trick) {
-                    $images = $trick->getMedias();
-                    // dd($images->getValues());
-                    foreach ($images->getValues() as $image) {
-                        $trickImages["filename"] = $image->getFileName();
-                        // dd($trickImages["filename"]);
-                    }
-                    return $trickImages["filename"];
-                },
-                // 'choice_label' => 'fileName',
+                'choice_label' => 'fileName',
                 // 'by_reference' => false,
                 'multiple'     => false,
                 'expanded'     => true,

@@ -135,3 +135,11 @@ document.addEventListener('DOMContentLoaded', function () {
         loop: false
     })
 })
+
+document.addEventListener('DOMContentLoaded', function () {
+    new Carousel(document.querySelector('#carousel2'), {
+        slidesToScroll: 1,
+        slidesVisible: 1,
+        loop: false
+    })
+})

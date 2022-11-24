@@ -133,13 +133,32 @@ class TrickController extends AbstractController
             return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
         }
 
+        if ($this->getUser()) {
+            $form = $this->createForm(UpdateCoverImageType::class, $trick);
+            $form->handleRequest($request);
+            // dd($form);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                dd($form);
+                $trickCoverImage = $form->get('coverImage')->getData();
+                $trick->setCoverImage($trickCoverImage);
+                dd($trick);
+                $entityManager->persist($trick);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Cover image successfully updated!');
+                return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
+            }
+        }
+
         return $this->render('trick/show.html.twig', [
             'trick' => $trick, 
             'total' => $total, 
             'limit' => $limit, 
             'page'  => $page, 
             'comments'  => $comments, 
-            'commentForm'   => $commentForm->createView()
+            'commentForm'   => $commentForm->createView(),
+            'trickForm' => $form->createView(),
         ]);
     }
 
@@ -225,18 +244,27 @@ class TrickController extends AbstractController
                 dd($trick);
                 $entityManager->persist($trick);
                 $entityManager->flush();
-
+                
                 $this->addFlash('success', 'Cover image successfully updated!');
                 return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
             }
-            return $this->render('trick/edit_cover_image.html.twig', [
+            // if ($request->isXmlHttpRequest()) {
+            //     return new Response(null, 204);
+            // }
+
+            $template = $request->isXmlHttpRequest() ? 'edit_cover_image.html.twig' : 'edit_cover_image.html.twig';
+
+            return $this->render('trick/' . $template, [
                 'trickForm' => $form->createView(),
                 'trick' => $trick,
                 'controller_name' => 'TrickController',
-            ]);
+            ], new Response(
+                null,
+                $form->isSubmitted() && !$form->isValid() ? 422 : 200,
+            ));
             dd($form->isValid());
         }
-        // dd($this->getUser());
+
         $this->addFlash('danger', "Access denied, you cannot acces to this page.");
         return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
     }
