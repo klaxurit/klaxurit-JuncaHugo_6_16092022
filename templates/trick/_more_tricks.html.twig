@@ -6,13 +6,14 @@
 	<script language="javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 
 	<script language="javascript">
-	const addTrickItem = function (tricks) {
+	const addTrickItem = function ({tricks, current_user}) {
         tricks.forEach(trick => {
             const trickCoverImage = getTrickCoverImage(trick);
             const trickImage = trickCoverImage.trickCoverImageFileName ? '/uploads/' + trickCoverImage.trickCoverImageFileName : '/assets/images/empty.jpg'
-            console.log(trickImage)
+            console.log(trick)
             let trickImageAlt = trickCoverImage.trickCoverImageAlt ? trickCoverImage.trickCoverImageAlt : 'no picture to show'
-            $('#trick__card').append(`
+
+            const $trickEl = $(`
                 <div class="col mb-5">
                     <div class="card h-100">
                         <!-- Trick image-->
@@ -28,31 +29,34 @@
                             </div>
                             <div class="trick__actions">
                                 <a href="/trick/${trick.id}/edit" class="trick__actions-button"><i class="bi bi-pencil-fill"></i></a>
-                                <a href="#delete__modal" role="button" class="ms-2 modal-trigger trick__actions-button" data-bs-toggle="modal" data-target="delete__modal" data-id="${trick.id}" data-name="${trick.name}">
-							        <i class="bi bi-trash-fill"></i>
-						        </a>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="modal" id="delete__modal" tabindex="-1">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Delete confirmation</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Are you sure you want to delete ${trick.name}?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <a href="/trick/delete/${trick.id}" class="btn btn-danger">Delete</a>
-                            <button type="button" data-target="modal-delete" class="btn btn-secondary modal-trigger" data-bs-dismiss="modal">Close</button>
-                        </div>
-                        </div>
-                    </div>
-                </div>
             `)
+            $('#trick__card').append($trickEl)
+            
+            if (trick.user.id === current_user) {
+                const $deleteBtn = $('<a></a>')
+                $deleteBtn.attr({
+                    href: "#delete__modal",
+                    role: "button",
+                    "data-bs-toggle": "modal",
+                    "data-target": "delete__modal",
+                    "data-id": trick.id,
+                    "data-name": trick.name
+                })
+                $deleteBtn.addClass("ms-2 modal-trigger trick__actions-button")
+                $deleteBtn.append('<i class="bi bi-trash-fill"></i>')
+
+                $deleteBtn.on("click", function () {
+                    document.querySelector(".modal-footer a").href = `/trick/delete/${trick.id}`
+                    document.querySelector(".modal-body").innerText = `Are you sure you want to delete "${trick.name} ?"`
+                })
+
+                $trickEl.find(".trick__actions").append($deleteBtn)
+            }
+
         })
     }
 
@@ -72,14 +76,14 @@
     $(document).ready(function () {
         let currentPage = 2;
         $("#loadMore").on("click", function (event) {
-            $.get("/ajax/trick?page=" + currentPage).then(tricks => {
-                if (tricks.length < 6) {
+            $.get("/ajax/trick?page=" + currentPage).then(resp => {
+                if (resp.tricks.length < 6) {
                     currentPage++;
-                    addTrickItem(tricks);
+                    addTrickItem(resp);
                     deactivateButton();
                 } else {
                     currentPage++;
-                    addTrickItem(tricks);
+                    addTrickItem(resp);
                 }
             })
         });

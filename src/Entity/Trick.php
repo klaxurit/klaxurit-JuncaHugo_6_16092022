@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\TrickRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TrickRepository::class)]
 class Trick
@@ -45,6 +44,9 @@ class Trick
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'trick_contribution')]
     private Collection $contributors;
+
+    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    private ?Media $cover_image = null;
 
     public function __construct()
     {
@@ -246,6 +248,18 @@ class Trick
     public function removeContributor(User $contributor): self
     {
         $this->contributors->removeElement($contributor);
+
+        return $this;
+    }
+
+    public function getCoverImage(): ?Media
+    {
+        return $this->cover_image;
+    }
+
+    public function setCoverImage(?Media $cover_image): self
+    {
+        $this->cover_image = $cover_image;
 
         return $this;
     }

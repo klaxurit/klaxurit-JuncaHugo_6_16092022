@@ -19,9 +19,11 @@
 					<h4 class="snow__text">{{ trick.name }}</h4>
 				</div>
 				<div class="trick__actions">
-					<a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="trick__actions-button">
-						<i class="bi bi-pencil-fill"></i>
-					</a>
+					{% if app.user %}
+						<a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="trick__actions-button">
+							<i class="bi bi-pencil-fill"></i>
+						</a>
+					{% endif %}
 					{% if is_granted("trick_delete", trick) %}
 						<a href="#delete__modal" role="button" class="ms-2 modal-trigger trick__actions-button" data-bs-toggle="modal" data-target="delete__modal" data-id="{{trick.id}}" data-name="{{trick.name}}">
 							<i class="bi bi-trash-fill"></i>

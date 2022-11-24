@@ -6,6 +6,7 @@ use App\Entity\Media;
 use App\Entity\Trick;
 use App\Form\TrickType;
 use App\Entity\UserMessage;
+use App\Form\UpdateCoverImageType;
 use App\Form\UserMessageType;
 use App\Service\UploaderHelper;
 use App\Repository\MediaRepository;
@@ -193,6 +194,7 @@ class TrickController extends AbstractController
                 }
                 $trickRepository->add($trick, true);
     
+                $this->addFlash('success', "Trick successfully updated.");
                 return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
             }
             return $this->render('trick/edit.html.twig', [
@@ -204,6 +206,39 @@ class TrickController extends AbstractController
         $this->addFlash('danger', "Access denied, you cannot acces to this page.");
         return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
 
+    }
+
+    #[Route('/{id}/edit/coverImage', name: 'app_trick_edit_cover_image', methods: ['GET', 'POST'])]
+    public function editCoverImage(
+        Request $request,
+        Trick $trick,
+        EntityManagerInterface $entityManager,
+    ): Response {
+        if ($this->getUser()) {
+            $form = $this->createForm(UpdateCoverImageType::class, $trick);
+            $form->handleRequest($request);
+            
+            if ($form->isSubmitted() && $form->isValid()) {
+                dd($form);
+                $trickCoverImage = $form->get('coverImage')->getData();
+                $trick->setCoverImage($trickCoverImage);
+                dd($trick);
+                $entityManager->persist($trick);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Cover image successfully updated!');
+                return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
+            }
+            return $this->render('trick/edit_cover_image.html.twig', [
+                'trickForm' => $form->createView(),
+                'trick' => $trick,
+                'controller_name' => 'TrickController',
+            ]);
+            dd($form->isValid());
+        }
+        // dd($this->getUser());
+        $this->addFlash('danger', "Access denied, you cannot acces to this page.");
+        return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/delete/{id}', name: 'app_trick_delete', methods: ['DELETE', 'GET'])]

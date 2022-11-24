@@ -1,0 +1,13 @@
+{{ form_start(trickForm) }}
+
+{{ form_widget(trickForm.cover_image) }}
+<button class="btn btn-primary my-3">{{ button_label }}</button>
+<pre>
+	{{ dump(trickForm) }}
+</pre>
+
+{{ form_end(trickForm, { render_rest: false }) }}
+
+{% block javascript %}
+	{# <script src="{{ asset('assets/js/media.js') }}" type="text/javascript"></script> #}
+{% endblock %}

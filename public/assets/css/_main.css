@@ -241,3 +241,11 @@ hr.rounded {
     transform: translate(-50%, -50%);
     text-shadow: 2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff, 1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
 }
+
+.trick__cover-image-edit {
+    position: absolute;
+    top: 10%;
+    right: 25%;
+    background-color: #00BBF0;
+    border: 2px solid white;
+}
