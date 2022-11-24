@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/css/_main.css') }}">
+{% endblock %}
+
+{% block title %}Edit Trick Cover Image
+{% endblock %}
+
+{% block main %}
+	<div class="container main">
+		<h1>Edit Trick Cover Trick</h1>
+
+		{{ include('trick/_edit_cover_image_form.html.twig', {'button_label': 'Update'}) }}
+
+		<a href="{{ path('app_home') }}" class="btn btn-secondary">Back to list</a>
+	</div>
+{% endblock %}

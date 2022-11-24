@@ -6,113 +6,92 @@
 	<script language="javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 
 	<script language="javascript">
-		const addTrickItem = function (tricks) {
+	const addTrickItem = function ({tricks, current_user}) {
+        tricks.forEach(trick => {
+            const trickCoverImage = getTrickCoverImage(trick);
+            const trickImage = trickCoverImage.trickCoverImageFileName ? '/uploads/' + trickCoverImage.trickCoverImageFileName : '/assets/images/empty.jpg'
+            console.log(trick)
+            let trickImageAlt = trickCoverImage.trickCoverImageAlt ? trickCoverImage.trickCoverImageAlt : 'no picture to show'
 
-tricks.forEach(trick => {
-const trickCoverImage = getTrickCoverImage(trick);
-if (trickCoverImage.trickCoverImageFileName) {
-$('#trick__card').append(`
+            const $trickEl = $(`
                 <div class="col mb-5">
                     <div class="card h-100">
                         <!-- Trick image-->
-                        <a href="/trick/${
-trick.id
-}">
-                            <img class="card-img-top" src="/uploads/${
-trickCoverImage.trickCoverImageFileName
-}" alt="${
-trickCoverImage.trickCoverImageAlt
-}">
+                        <a href="/trick/${trick.id}">
+                            <img class="card-img-top" src="${trickImage}" alt="${trickImageAlt}">
                         </a>
                     
                         <!-- Trick details-->
                         <div class="card-body p-3 d-flex flex-row align-items-center justify-content-between">
                             <div class="text-start m-0">
                                 <!-- Trick name-->
-                                <h4 class="snow__text">${
-trick.name
-}</h4>
+                                <h4 class="snow__text">${trick.name}</h4>
                             </div>
                             <div class="trick__actions">
-                                <a href="/trick/${
-trick.id
-}/edit" class="trick__actions-button"><i class="bi bi-pencil-fill"></i></a>
-                                <a onClick="javascript: return confirm('Please confirm trick deletion');" href="/trick/delete/${
-trick.id
-}" class="ms-2 trick__actions-button"><i class="bi bi-trash-fill"></i></a>
+                                <a href="/trick/${trick.id}/edit" class="trick__actions-button"><i class="bi bi-pencil-fill"></i></a>
                             </div>
                         </div>
                     </div>
                 </div>
             `)
-} else {
-$('#trick__card').append(`
-                <div class="col mb-5">
-                    <div class="card h-100">
-                        <!-- Trick image-->
-                        <a href="/trick/${
-trick.id
-}">
-                            <img class="card-img-top" src="/assets/images/empty.jpg" alt="no image to show">
-                        </a>
-                    
-                        <!-- Trick details-->
-                        <div class="card-body p-3 d-flex flex-row align-items-center justify-content-between">
-                            <div class="text-start m-0">
-                                <!-- Trick name-->
-                                <h4 class="snow__text">${
-trick.name
-}</h4>
-                            </div>
-                            <div class="trick__actions">
-                                <a href="/trick/${
-trick.id
-}/edit" class="trick__actions-button"><i class="bi bi-pencil-fill"></i></a>
-                                <a onClick="javascript: return confirm('Please confirm trick deletion');" href="/trick/delete/${
-trick.id
-}" class="ms-2 trick__actions-button"><i class="bi bi-trash-fill"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `)
-}
-})
-}
+            $('#trick__card').append($trickEl)
+            
+            if (trick.user.id === current_user) {
+                const $deleteBtn = $('<a></a>')
+                $deleteBtn.attr({
+                    href: "#delete__modal",
+                    role: "button",
+                    "data-bs-toggle": "modal",
+                    "data-target": "delete__modal",
+                    "data-id": trick.id,
+                    "data-name": trick.name
+                })
+                $deleteBtn.addClass("ms-2 modal-trigger trick__actions-button")
+                $deleteBtn.append('<i class="bi bi-trash-fill"></i>')
 
-function getTrickCoverImage(trick) {
-let trickCoverImageFileName = null;
-let trickCoverImageAlt = null;
-for (const trickMedia of trick.medias) {
-if (trickMedia.type === "Image") {
-trickCoverImageFileName = trickMedia.fileName;
-trickCoverImageAlt = trickMedia.alt;
-break;
-}
-}
-return {trickCoverImageFileName, trickCoverImageAlt};
-}
+                $deleteBtn.on("click", function () {
+                    document.querySelector(".modal-footer a").href = `/trick/delete/${trick.id}`
+                    document.querySelector(".modal-body").innerText = `Are you sure you want to delete "${trick.name} ?"`
+                })
 
-$(document).ready(function () {
-let currentPage = 2;
-$("#loadMore").on("click", function (event) {
-$.get("/ajax/trick?page=" + currentPage).then(tricks => {
-if (tricks.length < 6) {
-currentPage++;
-addTrickItem(tricks);
-deactivateButton();
-} else {
-currentPage++;
-addTrickItem(tricks);
-}
-})
-});
-const deactivateButton = () => {
-document.querySelector('#loadMore').classList.remove('btn-primary');
-document.querySelector('#loadMore').classList.add('btn-secondary');
-document.querySelector('#loadMore').classList.add('disable');
-}
+                $trickEl.find(".trick__actions").append($deleteBtn)
+            }
 
-})
+        })
+    }
+
+    function getTrickCoverImage(trick) {
+        let trickCoverImageFileName = null;
+        let trickCoverImageAlt = null;
+        for (const trickMedia of trick.medias) {
+            if (trickMedia.type === "Image") {
+                trickCoverImageFileName = trickMedia.fileName;
+                trickCoverImageAlt = trickMedia.alt;
+                break;
+            }
+        }
+        return {trickCoverImageFileName, trickCoverImageAlt};
+    }
+
+    $(document).ready(function () {
+        let currentPage = 2;
+        $("#loadMore").on("click", function (event) {
+            $.get("/ajax/trick?page=" + currentPage).then(resp => {
+                if (resp.tricks.length < 6) {
+                    currentPage++;
+                    addTrickItem(resp);
+                    deactivateButton();
+                } else {
+                    currentPage++;
+                    addTrickItem(resp);
+                }
+            })
+        });
+        const deactivateButton = () => {
+            document.querySelector('#loadMore').classList.remove('btn-primary');
+            document.querySelector('#loadMore').classList.add('btn-secondary');
+            document.querySelector('#loadMore').classList.add('disabled');
+        }
+    })
 	</script>
 {% endblock %}

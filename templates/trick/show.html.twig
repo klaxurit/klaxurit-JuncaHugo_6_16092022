@@ -21,7 +21,6 @@
 		</div>
 	</div>
 
-
 	<div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -34,17 +33,29 @@
 	</div>
 
 	<div class="container main my-5">
-	{%  if (app.user) and (app.user.id is same as(trick.user.id)) %}
 		<div class="text-end">
 			<a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="btn btn-m btn-primary">
 				<i class="bi bi-pencil-fill"></i>
 			</a>
+		</div>
+		{% if is_granted("trick_delete", trick) %}
+		<div class="text-end">
 			{{ include('trick/_delete_form.html.twig') }}
 		</div>
-	{% endif %}
+		{% endif %}
+		<div class="trick__cover-image my-5">
+		{% for media in trick.medias|filter(media=> media.type is same as("Image"))|slice(0, 1) %}
+			<img class="cover__image" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}">
+		{% else %}
+			<img class="cover__image" src="/assets/images/empty.jpg" alt="no image to show">
+		{% endfor %}
+			<h1 class="trick__cover-image-name snow__title">{{trick.name}}</h1>
+			<a href="{{ path('app_trick_edit_cover_image', {'id': trick.id}) }}" class="btn btn-m btn-primary trick__cover-image-edit">
+				<i class="bi bi-pencil-fill"></i>
+			</a>
+		</div>
 
 		<div class="d-flex flex-column justify-content-center">
-			<h1 class="text-center snow__title my-5">{{trick.name}}</h1>
 
 			<div id="carousel" class="d-flex justify-content-center">
 				{% for media in trick.medias %}
@@ -76,6 +87,15 @@
 				</figure>
 				<p class=" "></p>
 			</div>
+			<div class="snow__contributors-title my-5 text-center">
+				<h3 class="snow__title">Contributors</h3>
+				<div class="snow__contributors-content">
+				{% for contributor in trick.contributors %}
+					<p class="snow__text me-1 align-middle">{{contributor.username}}</p>
+				{% endfor %}
+				</div>
+			</div>
+
 
 			<div class="trick__separator my-3">
 				<hr class="rounded">
@@ -110,20 +130,20 @@
 		<script src="{{ asset('assets/js/slider.js') }}" type="text/javascript"></script>
 		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 		<script>
-			$(function () {
-$('.popImage').on('click', function () {
-$('.imagepreview').attr('src', $(this).find('img').attr('src'));
-$('#imagemodal').modal('show');
-});
-});
-$(function () {
-$('.popVideo').on('click', function () {
-$('.embed-responsive-item').attr('src', $(this).find('iframe').attr('src'));
-$('#videomodal').modal('show');
-$("#videomodal").on('hide.bs.modal', function () {
-$(".embed-responsive-item").attr('src', '');
-});
-});
-});
+		$(function () {
+			$('.popImage').on('click', function () {
+				$('.imagepreview').attr('src', $(this).find('img').attr('src'));
+				$('#imagemodal').modal('show');
+			});
+		});
+		$(function () {
+			$('.popVideo').on('click', function () {
+				$('.embed-responsive-item').attr('src', $(this).find('iframe').attr('src'));
+				$('#videomodal').modal('show');
+				$("#videomodal").on('hide.bs.modal', function () {
+					$(".embed-responsive-item").attr('src', '');
+				});
+			});
+		});
 		</script>
 	{% endblock %}

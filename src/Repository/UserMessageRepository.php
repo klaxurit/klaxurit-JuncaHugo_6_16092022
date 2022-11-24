@@ -52,6 +52,7 @@ class UserMessageRepository extends ServiceEntityRepository
     {
         $query = $this->createQueryBuilder('c')
             ->orderBy('c.createdAt')
+            ->where('c.status = 1')
             ->andWhere('c.trick = :trick')
             ->setParameter('trick', $trick->getId())
             ->setFirstResult(($page * $limit) - $limit)

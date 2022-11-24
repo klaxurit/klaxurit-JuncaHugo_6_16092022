@@ -3,17 +3,19 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Service\JWTService;
+use App\Service\UploaderHelper;
+use App\Service\SendMailService;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
 use App\Security\UserAuthenticator;
-use App\Service\JWTService;
-use App\Service\SendMailService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 class RegistrationController extends AbstractController
@@ -26,7 +28,8 @@ class RegistrationController extends AbstractController
         UserAuthenticator $authenticator,
         EntityManagerInterface $entityManager,
         SendMailService $mail,
-        JWTService $jwt
+        JWTService $jwt,
+        UploaderHelper $uploadedFile
     ): Response {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
@@ -39,6 +42,17 @@ class RegistrationController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
+
+            $avatar = $form->get('avatar')->getData();
+
+            try {
+                $filePath = $uploadedFile->uploadTrickImage($avatar);
+                // get the array form the class
+            } catch (FileException $e) {
+                $this->addFlash('danger', "Error on uploading file");
+            }
+
+            $user->setAvatar($filePath);
 
             $entityManager->persist($user);
             $entityManager->flush();
