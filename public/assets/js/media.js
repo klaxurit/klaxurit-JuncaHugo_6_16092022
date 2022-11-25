@@ -80,7 +80,7 @@ window.onload = () => {
                     method: 'DELETE',
                     headers: {
                         'X-Requested-With': "XMLHttpRequest",
-                        'Content-Type': "applicadtion/json"
+                        'Content-Type': "application/json"
                     },
                     body: JSON.stringify({'_token': this.dataset.token})
                 }).then(

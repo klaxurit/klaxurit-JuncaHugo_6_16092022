@@ -143,3 +143,4 @@ document.addEventListener('DOMContentLoaded', function () {
         loop: false
     })
 })
+// au moment du slide on coche le bouton radio

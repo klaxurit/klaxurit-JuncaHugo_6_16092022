@@ -45,7 +45,7 @@ class Trick
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'trick_contribution')]
     private Collection $contributors;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(targetEntity: Media::class, cascade: ["persist", "remove"])]
     private ?Media $cover_image = null;
 
     public function __construct()

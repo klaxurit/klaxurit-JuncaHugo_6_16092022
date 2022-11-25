@@ -29,7 +29,7 @@ class AjaxController extends AbstractController
 
         $tricks = $trickRepository->getTricks($page);
 
-        if($user){
+        if ($user) {
             $userId = $user->getId();
         } else {
             $userId = "";

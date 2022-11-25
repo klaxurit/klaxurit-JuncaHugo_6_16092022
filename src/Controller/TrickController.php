@@ -174,6 +174,7 @@ class TrickController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 $trickSlug = $slugger->slug($form->get('name')->getData());
                 $trick->setSlug($trickSlug);
+                // ici si auteur pas d'ajout de contributeur
                 $trick->addContributor($user);
     
                 if ($form->get('medias')) {
@@ -284,7 +285,7 @@ class TrickController extends AbstractController
     public function deleteMedia(Media $media, Request $request, MediaRepository $mediaRepository)
     {
         $data = json_decode($request->getContent(), true);
-
+        
         // check if token is valid
         if ($this->isCsrfTokenValid('delete' . $media->getId(), $data['_token'])) {
             // get image name or url
@@ -294,7 +295,19 @@ class TrickController extends AbstractController
                 $mediaRepository->remove($media, true);
 
                 return new JsonResponse(['success' => 1]);
+            } elseif ($media->getId() === $media->getTrick()->getCoverImage()->getId()) {
+                // dd("coverimage");
+                $mediaName = $media->getFileName();
+                // delete image
+                unlink($this->getParameter('images_directory') . '/' . $mediaName);
+                // remove relation coverImage with trick
+                $media->getTrick()->setCoverImage(null);
+                // delete from db
+                $mediaRepository->remove($media, true);
+
+                return new JsonResponse(['success' => 1]);
             } else {
+                dd("image");
                 $mediaName = $media->getFileName();
                 // delete image
                 unlink($this->getParameter('images_directory') . '/' . $mediaName);

@@ -39,6 +39,14 @@ class MediaRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllMediaOfATrick(int $trickId) {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.trick = :trickId')
+            ->setParameter('trickId', $trickId)
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Media[] Returns an array of Media objects
 //     */
