@@ -44,11 +44,18 @@
 		</div>
 		{% endif %}
 		<div class="trick__cover-image my-5">
-		{% for media in trick.medias|filter(media=> media.type is same as("Image"))|slice(0, 1) %}
-			<img class="cover__image" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}">
+		{# <pre>
+			{{ dump(trick.coverImage) }}
+		</pre> #}
+		{% if trick.coverImage %}
+			<img class="cover__image" src="{{asset('/uploads/' ~ trick.coverImage)}}" alt="{{ trick.coverImage.alt }}">
 		{% else %}
-			<img class="cover__image" src="/assets/images/empty.jpg" alt="no image to show">
-		{% endfor %}
+			{% for media in trick.medias|filter(media=> media.type is same as("Image"))|slice(0, 1) %}
+				<img class="cover__image" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}">
+			{% else %}
+				<img class="cover__image" src="/assets/images/empty.jpg" alt="no image to show">
+			{% endfor %}
+		{% endif %}
 			<h1 class="trick__cover-image-name snow__title">{{trick.name}}</h1>
 			<button type="button" class="btn btn-m btn-primary trick__cover-image-edit  popModal">
 				<i class="bi bi-pencil-fill"></i>
@@ -135,6 +142,7 @@
 				</div>
 				<div class="modal-body">
 					{{ form_start(trickForm) }}
+					{{ form_widget(trickForm._token) }}
 					<div id="carousel2" class="d-flex justify-content-center">
 						{% for child in trickForm.cover_image.children %}
 						<div class="item">
@@ -146,7 +154,7 @@
 						</div>
 						{% endfor %}
 					</div>
-					<button class="btn btn-primary my-3">Save</button>
+					<button type="submit" class="btn btn-primary my-3">Save</button>
 					{{ form_end(trickForm, { render_rest: false }) }}
 				</div>
 			</div>

@@ -5,11 +5,15 @@
 			class="card h-100">
 			<!-- Trick image-->
 			<a href="{{ path('app_trick_show', {'id': trick.id}) }}">
+			{% if trick.coverImage %}
+				<img class="card-img-top" src="{{asset('/uploads/' ~ trick.coverImage)}}" alt="{{ trick.coverImage.alt }}"/>
+			{% else %}
 				{% for media in trick.medias|filter(media=> media.type is same as("Image"))|slice(0, 1) %}
 					<img class="card-img-top" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}"/>
 					{% else %}
 					<img class="card-img-top" src="/assets/images/empty.jpg" alt="no image to show">
 				{% endfor %}
+			{% endif %}
 			</a>
 			<!-- Trick details-->
 			<div class="card-body p-3 d-flex flex-row align-items-center justify-content-between">

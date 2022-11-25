@@ -32,6 +32,11 @@ class Media
     #[ORM\ManyToOne(inversedBy: 'medias')]
     private ?Trick $trick = null;
 
+    public function __toString()
+    {
+        return $this->fileName;
+    }
+
     public function getId(): int
     {
         return $this->id;

@@ -29,7 +29,6 @@ class UpdateCoverImageType extends AbstractType
                 //     return $trickImages["fileName"];
                 // },
                 'choice_label' => 'fileName',
-                // 'by_reference' => false,
                 'multiple'     => false,
                 'expanded'     => true,
             ])
