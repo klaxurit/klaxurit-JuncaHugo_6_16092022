@@ -57,9 +57,11 @@
 			{% endfor %}
 		{% endif %}
 			<h1 class="trick__cover-image-name snow__title">{{trick.name}}</h1>
-			<button type="button" class="btn btn-m btn-primary trick__cover-image-edit  popModal">
-				<i class="bi bi-pencil-fill"></i>
-			</button>
+			{% if trick.coverImage %}
+				<button type="button" class="btn btn-m btn-primary trick__cover-image-edit  popModal">
+					<span class="snow__text">Change the cover image</span> 
+				</button>
+			{% endif %}
 		</div>
 
 		<div class="d-flex flex-column justify-content-center">
@@ -147,9 +149,6 @@
 						{% for child in trickForm.cover_image.children %}
 						<div class="item">
 							<img src="{{asset('/uploads/' ~ child.vars.label)}}" width="300vw;" alt="" class="trick__img" />
-							<pre>
-								{{ dump(child) }}
-							</pre>
 							{{ form_widget(child) }}
 						</div>
 						{% endfor %}

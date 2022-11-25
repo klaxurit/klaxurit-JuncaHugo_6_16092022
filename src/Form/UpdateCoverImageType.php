@@ -22,8 +22,6 @@ class UpdateCoverImageType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $trickId = $builder->getData()->getId();
-        $medias = $builder->getData()->getMedias()->getValues();
-        // dd($builder->getData()->getMedias()->getValues());
         $builder
             ->add('cover_image', EntityType::class, [
                 'class'        => Media::class,

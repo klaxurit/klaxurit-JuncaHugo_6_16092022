@@ -133,6 +133,10 @@ class TrickController extends AbstractController
             return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
         }
 
+        if(!$trick->getCoverImage()) {
+            $this->addFlash('warning', 'To have a cover image on this trick, you must first <a href="/trick/' . $trick->getId() . '/edit">upload images</a>.');
+        }
+
         $form = $this->createForm(UpdateCoverImageType::class, $trick);
         $form->handleRequest($request);
 
@@ -174,8 +178,11 @@ class TrickController extends AbstractController
             if ($form->isSubmitted() && $form->isValid()) {
                 $trickSlug = $slugger->slug($form->get('name')->getData());
                 $trick->setSlug($trickSlug);
-                // ici si auteur pas d'ajout de contributeur
-                $trick->addContributor($user);
+
+                // if trick modified by author dont add contributor
+                if ($trick->getUser()->getId() !== $user->getId()) {
+                    $trick->addContributor($user);
+                }
     
                 if ($form->get('medias')) {
                     // get media
@@ -222,48 +229,6 @@ class TrickController extends AbstractController
         return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
 
     }
-
-    // #[Route('/{id}/edit/coverImage', name: 'app_trick_edit_cover_image', methods: ['GET', 'POST'])]
-    // public function editCoverImage(
-    //     Request $request,
-    //     Trick $trick,
-    //     EntityManagerInterface $entityManager,
-    // ): Response {
-    //     if ($this->getUser()) {
-    //         $form = $this->createForm(UpdateCoverImageType::class, $trick);
-    //         $form->handleRequest($request);
-            
-    //         if ($form->isSubmitted() && $form->isValid()) {
-    //             dd($form);
-    //             $trickCoverImage = $form->get('coverImage')->getData();
-    //             $trick->setCoverImage($trickCoverImage);
-    //             dd($trick);
-    //             $entityManager->persist($trick);
-    //             $entityManager->flush();
-                
-    //             $this->addFlash('success', 'Cover image successfully updated!');
-    //             return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
-    //         }
-    //         // if ($request->isXmlHttpRequest()) {
-    //         //     return new Response(null, 204);
-    //         // }
-
-    //         $template = $request->isXmlHttpRequest() ? 'edit_cover_image.html.twig' : 'edit_cover_image.html.twig';
-
-    //         return $this->render('trick/' . $template, [
-    //             'trickForm' => $form->createView(),
-    //             'trick' => $trick,
-    //             'controller_name' => 'TrickController',
-    //         ], new Response(
-    //             null,
-    //             $form->isSubmitted() && !$form->isValid() ? 422 : 200,
-    //         ));
-    //         dd($form->isValid());
-    //     }
-
-    //     $this->addFlash('danger', "Access denied, you cannot acces to this page.");
-    //     return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
-    // }
 
     #[Route('/delete/{id}', name: 'app_trick_delete', methods: ['DELETE', 'GET'])]
     public function delete(Trick $trick, TrickRepository $trickRepository): Response
