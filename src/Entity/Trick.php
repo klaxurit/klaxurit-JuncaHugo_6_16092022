@@ -48,6 +48,9 @@ class Trick
     #[ORM\OneToOne(targetEntity: Media::class, cascade: ["persist", "remove"])]
     private ?Media $cover_image = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updated_at = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -260,6 +263,18 @@ class Trick
     public function setCoverImage(?Media $cover_image): self
     {
         $this->cover_image = $cover_image;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updated_at): self
+    {
+        $this->updated_at = $updated_at;
 
         return $this;
     }

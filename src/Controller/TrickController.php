@@ -13,6 +13,8 @@ use App\Repository\MediaRepository;
 use App\Repository\TrickRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserMessageRepository;
+use DateTime;
+use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -215,6 +217,7 @@ class TrickController extends AbstractController
                     $entityManager->persist($trick);
                     $entityManager->flush();
                 }
+                $trick->setUpdatedAt(new DateTimeImmutable());
                 $trickRepository->add($trick, true);
     
                 $this->addFlash('success', "Trick successfully updated.");

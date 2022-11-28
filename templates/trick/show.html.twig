@@ -72,14 +72,14 @@
 					{% if media.type is same as("Image") %}
 						<div class="item">
 							<button type="button" class="popImage">
-								<img data-id="{{ media.id }}" class="trick__img carousel__img" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}">
+								<img data-id="{{ media.id }}" class="trick__img carousel__img" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}" style="{{ trick.medias|length < 3 ? 'width: 50%;' : 'width: 100%;'}}">
 							</button>
 						</div>
 					{% else %}
-						<div class="item-video">
+						<div class="item-video text-center">
 							<iframe class="trick__video" src="{{ media.url }}" frameborder="0"></iframe>
 							<button type="button" class="popVideo">
-								<iframe class="trick__video d-none" src="{{ media.url }}" frameborder="0"></iframe>
+								<iframe class="trick__video d-none" src="{{ media.url }}" frameborder="0" style="{{ trick.medias|length < 3 ? 'width: 50%;' : 'width: 100%;'}}"></iframe>
 							</button>
 						</div>
 					{% endif %}
@@ -112,12 +112,12 @@
 			</div>
 
 			<div class="trick__groups text-center">
-				<span class="badge rounded-pill text-bg-warning">Created at:
-					{{trick.createdAt|date('d-m-Y')}}</span>
+				<span class="badge rounded-pill text-bg-warning">Created:
+					{{trick.createdAt|date('\\t\\h\\e d-m-Y \\a\\t H:i:s')}}</span>
 				<span class="badge rounded-pill text-bg-primary">Group:
 					{{trick.trickGroup.name}}</span>
 				<span class="badge rounded-pill text-bg-info">Last update:
-					{{trick.createdAt|date('d-m-Y')}}</span>
+					{{trick.updatedAt|date('\\t\\h\\e d-m-Y \\a\\t H:i:s')}}</span>
 			</div>
 			{% include('trick/_comment.html.twig') %}
 			{% if app.user %}
