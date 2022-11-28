@@ -10,7 +10,6 @@
         tricks.forEach(trick => {
             const trickCoverImage = getTrickCoverImage(trick);
             const trickImage = trickCoverImage.trickCoverImageFileName ? '/uploads/' + trickCoverImage.trickCoverImageFileName : '/assets/images/empty.jpg'
-            console.log(trick)
             let trickImageAlt = trickCoverImage.trickCoverImageAlt ? trickCoverImage.trickCoverImageAlt : 'no picture to show'
 
             const $trickEl = $(`
@@ -77,7 +76,12 @@
         let currentPage = 2;
         $("#loadMore").on("click", function (event) {
             $.get("/ajax/trick?page=" + currentPage).then(resp => {
+                console.log(resp);
                 if (resp.tricks.length < 6) {
+                    currentPage++;
+                    addTrickItem(resp);
+                    deactivateButton();
+                } else if (resp.tricks.length + 6 === resp.total) {
                     currentPage++;
                     addTrickItem(resp);
                     deactivateButton();

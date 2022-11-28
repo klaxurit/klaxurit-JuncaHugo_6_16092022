@@ -41,7 +41,6 @@ class Carousel {
                 this.prev()
             }
         })
-        this.pouette()
     }
 
     setStyle () {

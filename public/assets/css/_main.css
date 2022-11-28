@@ -8,6 +8,11 @@
     font-family: 'Coiny', cursive;
 }
 
+.snow__text-button {
+    font-size: 0.8em;
+    font-family: 'Coiny', cursive;
+}
+
 .snow__title {
     font-family: 'Coiny', cursive;
     color: #00BBF0;
@@ -240,7 +245,7 @@ hr.rounded {
 
 .cover__image {
     min-width: 30vw;
-    max-width: 60vw;
+    max-width: 35vw;
     height: 50vh;
     object-fit: cover;
     object-position: 50% 50%;
@@ -259,7 +264,7 @@ hr.rounded {
 .trick__cover-image-edit {
     position: absolute;
     top: 10%;
-    right: 25%;
+    right: 33%;
     background-color: #00BBF0;
     border: 2px solid white;
 }

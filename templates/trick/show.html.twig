@@ -46,9 +46,6 @@
 		</div>
 		{% endif %}
 		<div class="trick__cover-image my-5">
-		{# <pre>
-			{{ dump(trick.coverImage) }}
-		</pre> #}
 		{% if trick.coverImage %}
 			<img class="cover__image" src="{{asset('/uploads/' ~ trick.coverImage)}}" alt="{{ trick.coverImage.alt }}">
 		{% else %}
@@ -60,8 +57,8 @@
 		{% endif %}
 			<h1 class="trick__cover-image-name snow__title">{{trick.name}}</h1>
 			{% if app.user and trick.medias|filter(media=> media.type is same as("Image"))|length >= 2 %}
-				<button type="button" class="btn btn-m btn-primary trick__cover-image-edit popModal">
-					<span class="snow__text"></span> 
+				<button type="button" class="btn btn-sm btn-primary trick__cover-image-edit popModal">
+					<span class="snow__text-button"></span> 
 				</button>
 			{% endif %}
 		</div>
@@ -116,8 +113,11 @@
 					{{trick.createdAt|date('\\t\\h\\e d-m-Y \\a\\t H:i:s')}}</span>
 				<span class="badge rounded-pill text-bg-primary">Group:
 					{{trick.trickGroup.name}}</span>
-				<span class="badge rounded-pill text-bg-info">Last update:
-					{{trick.updatedAt|date('\\t\\h\\e d-m-Y \\a\\t H:i:s')}}</span>
+					{% if trick.updatedAt %}
+						<span class="badge rounded-pill text-bg-info">
+							Last update: {{trick.updatedAt|date('\\t\\h\\e d-m-Y \\a\\t H:i:s')}}
+						</span>
+					{% endif %}
 			</div>
 			{% include('trick/_comment.html.twig') %}
 			{% if app.user %}

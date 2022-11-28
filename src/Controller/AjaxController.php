@@ -35,10 +35,13 @@ class AjaxController extends AbstractController
             $userId = "";
         }
 
+        $total = $trickRepository->getTotalTricks();
+
         $encoders = [new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
         $serializer = new Serializer($normalizers, $encoders);
         $jsonObject = $serializer->serialize([
+            'total' => $total,
             'tricks' => $tricks,
             'current_user' => $userId
         ], 'json', [
