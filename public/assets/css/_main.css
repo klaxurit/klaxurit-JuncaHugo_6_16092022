@@ -126,7 +126,6 @@ hr.rounded {
 
 
 .trick__img {
-
     padding: 5%;
     border-radius: 15%;
     width: 100%;
@@ -144,6 +143,17 @@ hr.rounded {
     object-fit: cover;
     object-position: 50% 50%;
 }
+
+.trick__cover-image-edit span::after {
+    content: 'Change the cover image';
+}
+
+@media screen and (max-width: 767px) {
+    .trick__cover-image-edit span::after {
+        content: url(../images/pencil-fill.svg);
+    }
+}
+
 
 .carousel {
     position: relative;
@@ -230,7 +240,7 @@ hr.rounded {
 
 .cover__image {
     width: 60%;
-    border-radius: 5%;
+    border-radius: 3%;
 }
 
 .trick__cover-image-name {

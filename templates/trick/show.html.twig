@@ -59,9 +59,9 @@
 			{% endfor %}
 		{% endif %}
 			<h1 class="trick__cover-image-name snow__title">{{trick.name}}</h1>
-			{% if app.user %}
-				<button type="button" class="btn btn-m btn-primary trick__cover-image-edit  popModal">
-					<span class="snow__text">Change the cover image</span> 
+			{% if app.user and trick.medias|filter(media=> media.type is same as("Image"))|length >= 2 %}
+				<button type="button" class="btn btn-m btn-primary trick__cover-image-edit popModal">
+					<span class="snow__text"></span> 
 				</button>
 			{% endif %}
 		</div>
@@ -72,7 +72,7 @@
 					{% if media.type is same as("Image") %}
 						<div class="item">
 							<button type="button" class="popImage">
-								<img data-id="{{ media.id }}" class="trick__img" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}">
+								<img data-id="{{ media.id }}" class="trick__img carousel__img" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}">
 							</button>
 						</div>
 					{% else %}

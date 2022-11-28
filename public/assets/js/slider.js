@@ -38,6 +38,7 @@ class Carousel {
                 this.prev()
             }
         })
+        this.pouette()
     }
 
     setStyle () {
@@ -125,6 +126,10 @@ class Carousel {
 
     get slidesVisible() {
         return this.isMobile ? 1 : this.options.slidesVisible
+    }
+
+    get slidesVisible() {
+        return this.items.length < 3 ? 1 : this.options.slidesVisible
     }
 }
 
