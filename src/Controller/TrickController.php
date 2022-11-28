@@ -101,6 +101,7 @@ class TrickController extends AbstractController
         Request $request, 
         UserMessageRepository $userMessage, 
         EntityManagerInterface $entityManager,
+        MediaRepository $mediaRepository,
         UserInterface $user = null,
         ): Response
     {
@@ -132,11 +133,11 @@ class TrickController extends AbstractController
             $this->addFlash('success', 'Your comment has been successfully submitted!');
             return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
         }
-
-        if(!$trick->getCoverImage()) {
+        $mediaImages = $mediaRepository->findAllMediaImageOfATrick($trick->getId());
+        if(!$mediaImages) {
             $this->addFlash('warning', 'To have a cover image on this trick, you must first <a href="/trick/' . $trick->getId() . '/edit">upload images</a>.');
         }
-
+        
         $form = $this->createForm(UpdateCoverImageType::class, $trick);
         $form->handleRequest($request);
 

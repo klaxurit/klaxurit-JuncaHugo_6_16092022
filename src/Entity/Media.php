@@ -34,7 +34,10 @@ class Media
 
     public function __toString()
     {
-        return $this->fileName;
+        if($this->getType() === "Image"){
+            return $this->fileName;
+        }
+        return "";
     }
 
     public function getId(): int

@@ -25,7 +25,7 @@ class UpdateCoverImageType extends AbstractType
         $builder
             ->add('cover_image', EntityType::class, [
                 'class'        => Media::class,
-                'choices'      => $this->mediaRepository->findAllMediaOfATrick($trickId),
+                'choices'      => $this->mediaRepository->findAllMediaImageOfATrick($trickId),
                 'multiple'     => false,
                 'expanded'     => true,
             ])

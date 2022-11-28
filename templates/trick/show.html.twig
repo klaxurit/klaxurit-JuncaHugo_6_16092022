@@ -34,9 +34,11 @@
 
 	<div class="container main my-5">
 		<div class="text-end">
+			{% if app.user %}
 			<a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="btn btn-m btn-primary">
 				<i class="bi bi-pencil-fill"></i>
 			</a>
+			{% endif %}
 		</div>
 		{% if is_granted("trick_delete", trick) %}
 		<div class="text-end">
@@ -57,7 +59,7 @@
 			{% endfor %}
 		{% endif %}
 			<h1 class="trick__cover-image-name snow__title">{{trick.name}}</h1>
-			{% if trick.coverImage %}
+			{% if app.user %}
 				<button type="button" class="btn btn-m btn-primary trick__cover-image-edit  popModal">
 					<span class="snow__text">Change the cover image</span> 
 				</button>
@@ -147,6 +149,10 @@
 					{{ form_widget(trickForm._token) }}
 					<div id="carousel2" class="d-flex justify-content-center">
 						{% for child in trickForm.cover_image.children %}
+						{# {% if condition %}{% endif %} #}
+						<pre>
+							{{ dump(child.vars) }}
+						</pre>
 						<div class="item">
 							<img src="{{asset('/uploads/' ~ child.vars.label)}}" width="300vw;" alt="" class="trick__img" />
 							{{ form_widget(child) }}
