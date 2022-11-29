@@ -149,10 +149,6 @@
 					{{ form_widget(trickForm._token) }}
 					<div id="carousel2" class="d-flex justify-content-center">
 						{% for child in trickForm.cover_image.children %}
-						{# {% if condition %}{% endif %} #}
-						<pre>
-							{{ dump(child.vars) }}
-						</pre>
 						<div class="item">
 							<img src="{{asset('/uploads/' ~ child.vars.label)}}" width="300vw;" alt="" class="trick__img" />
 							{{ form_widget(child) }}

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Service;
 
 use DateTimeImmutable;
@@ -8,10 +9,10 @@ class JWTService
     // generate a token
     public function generate(array $header, array $payload, string $secret, int $validity = 10800): string
     {
-        if($validity > 0){
+        if ($validity > 0) {
             $now = new DateTimeImmutable();
             $exp = $now->getTimestamp() + $validity;
-    
+
             $payload['iat'] = $now->getTimestamp();
             $payload['exp'] = $exp;
         }

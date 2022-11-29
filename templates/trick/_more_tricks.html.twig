@@ -27,13 +27,23 @@
                                 <h4 class="snow__text">${trick.name}</h4>
                             </div>
                             <div class="trick__actions">
-                                <a href="/trick/${trick.id}/edit" class="trick__actions-button"><i class="bi bi-pencil-fill"></i></a>
                             </div>
                         </div>
                     </div>
                 </div>
             `)
             $('#trick__card').append($trickEl)
+
+            if (current_user) {
+                const $editBtn = $('<a></a>')
+                $editBtn.attr({
+                    href: `/trick/${trick.id}/edit`,
+                })
+                $editBtn.addClass("trick__actions-button")
+                $editBtn.append('<i class="bi bi-pencil-fill"></i>')
+                
+                $trickEl.find(".trick__actions").append($editBtn)
+            }
             
             if (trick.user.id === current_user) {
                 const $deleteBtn = $('<a></a>')

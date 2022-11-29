@@ -22,7 +22,7 @@ class UploaderHelper
         $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
         $newFilename = $safeFilename.'-'.uniqid().'.'.$uploadedFile->guessExtension();
-        
+
         try {
             // copy file in uploads folder
             $uploadedFile->move($this->getTargetDirectory(), $newFilename);
