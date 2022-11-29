@@ -12,7 +12,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 #[Route('/admin', name: 'admin_')]
 class AdminController extends AbstractController
 {
-
     #[Route('/', name: 'index')]
     public function index(): Response
     {
@@ -29,7 +28,6 @@ class AdminController extends AbstractController
     #[Route('/comments', name: 'comments')]
     public function manageComments(UserMessageRepository $comments): Response
     {
-        
         return $this->render('admin/comments.html.twig', [
             'comments' => $comments->findAll(),
             'controller_name' => 'AdminController',
@@ -60,7 +58,7 @@ class AdminController extends AbstractController
             $userMessageRepository->remove($comment, true);
             $this->addFlash('success', "Comment deleted");
             return $this->redirectToRoute('admin_comments', [], Response::HTTP_SEE_OTHER);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             $this->addFlash('danger', "You are not allowed to perform this action.");
             return $this->redirectToRoute('admin_comments', [], Response::HTTP_SEE_OTHER);
         }

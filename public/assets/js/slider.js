@@ -9,6 +9,7 @@ class Carousel {
         }, options)
         let children = [].slice.call(element.children)
         this.isMobile = false;
+        this.isLaptop = false;
         this.currentItem = 0
         this.moveCallbacks = []
 
@@ -31,6 +32,8 @@ class Carousel {
         this.moveCallbacks.forEach(cb => cb(0))
         this.onWindowResize()
         window.addEventListener('resize', this.onWindowResize.bind(this))
+        this.onWindowResize2()
+        window.addEventListener('resize', this.onWindowResize2.bind(this))
         this.root.addEventListener('keyup', (e) => {
             if (e.key == 'ArrowRight' || e.key === 'Right') {
                 this.next()
@@ -112,6 +115,15 @@ class Carousel {
         }
     }
 
+    onWindowResize2 () {
+        let laptop = window.innerWidth < 1200
+        if (laptop !== this.isLaptop) {
+            this.isLaptop = laptop
+            this.setStyle()
+            this.moveCallbacks.forEach(cb => cb(this.currentItem))
+        }
+    }
+
     //param String return HTMLElement
     createDivWithClass (className) {
         let div = document.createElement('div')
@@ -124,7 +136,12 @@ class Carousel {
     }
 
     get slidesVisible() {
-        return this.isMobile ? 1 : this.options.slidesVisible
+        if (this.isMobile || this.items.length < 3){
+            return 1
+        } else if (this.isLaptop){
+            return 2
+        }
+        return this.options.slidesVisible
     }
 }
 
@@ -135,3 +152,12 @@ document.addEventListener('DOMContentLoaded', function () {
         loop: false
     })
 })
+
+document.addEventListener('DOMContentLoaded', function () {
+    new Carousel(document.querySelector('#carousel2'), {
+        slidesToScroll: 1,
+        slidesVisible: 1,
+        loop: false
+    })
+})
+// au moment du slide on coche le bouton radio

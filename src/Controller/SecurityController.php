@@ -37,23 +37,22 @@ class SecurityController extends AbstractController
 
     #[Route(path: '/forget-pass', name:'app_forgotten_password')]
     public function forgottenPaswword(
-        Request $request, 
+        Request $request,
         UserRepository $userRepository,
         TokenGeneratorInterface $tokenGeneratorInterface,
         EntityManagerInterface $entityManagerInterface,
         SendMailService $mail
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(ResetPasswordRequestType::class);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             // get the user by email
             $user = $userRepository->findOneByEmail($form->get('email')->getData());
-            
+
             // check if we have an user
-            if($user) {
+            if ($user) {
                 // generate reset password token
                 $token = $tokenGeneratorInterface->generateToken();
                 $user->setResetToken($token);
@@ -88,7 +87,6 @@ class SecurityController extends AbstractController
 
                 $this->addFlash('success', 'Email sent!');
                 return $this->redirectToRoute('app_login');
-
             }
             // $user = null
             $this->addFlash('danger', 'A problem has occurred.');
@@ -102,18 +100,17 @@ class SecurityController extends AbstractController
 
     #[Route(path: '/resend-email-verif', name:'app_resend_email_verif')]
     public function resendEmailVerif(
-        Request $request, 
+        Request $request,
         UserRepository $userRepository,
         EntityManagerInterface $entityManagerInterface,
         JWTService $jwt,
         SendMailService $mail
-    ): Response
-    {
+    ): Response {
         $form = $this->createForm(ResendEmailVerifRequestType::class);
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if ($form->isSubmitted() && $form->isValid()) {
             // get the user by email
             $user = $userRepository->findOneByEmail($form->get('email')->getData());
 
@@ -121,8 +118,8 @@ class SecurityController extends AbstractController
                 $this->addFlash('danger', 'This account is already activated.');
                 return $this->redirectToRoute('app_home');
             }
-            
-            if($user) {
+
+            if ($user) {
                 // create header
                 $header = [
                     'typ' => 'JWT',
@@ -167,17 +164,16 @@ class SecurityController extends AbstractController
         UserRepository $userRepository,
         EntityManagerInterface $entityManagerInterface,
         UserPasswordHasherInterface $userPasswordHasherInterface
-    ): Response
-    {
+    ): Response {
         // check if we have token in db
         $user = $userRepository->findOneByResetToken($token);
 
-        if($user){
+        if ($user) {
             $form = $this->createForm(ResetPasswordType::class);
 
             $form->handleRequest($request);
 
-            if($form->isSubmitted() && $form->isValid()){
+            if ($form->isSubmitted() && $form->isValid()) {
                 // delete token
                 $user->setResetToken('');
                 $user->setPassword(

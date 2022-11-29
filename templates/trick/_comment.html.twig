@@ -22,5 +22,7 @@
 	</ul>
 </div>
 <div class="col-12 text-center my-4">
-	{% include "trick/_more_comments.html.twig" %}
+	{% if comments %}
+		{% include "trick/_more_comments.html.twig" %}
+	{% endif %}
 </div>

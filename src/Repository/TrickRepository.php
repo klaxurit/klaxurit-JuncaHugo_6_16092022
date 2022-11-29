@@ -40,34 +40,35 @@ class TrickRepository extends ServiceEntityRepository
         }
     }
 
-    private function getTrickQueryBuilder(){
+    private function getTrickQueryBuilder()
+    {
         $queryBuilder = $this->createQueryBuilder('t');
 
         return $queryBuilder;
     }
 
 
-    public function getTricks($page){
+    public function getTricks($page)
+    {
         $pageSize = 6;
-		$firstResult = ($page - 1) * $pageSize;
+        $firstResult = ($page - 1) * $pageSize;
 
-		$queryBuilder = $this->getTrickQueryBuilder();
-		
-		// Set the returned page
-		$queryBuilder->setFirstResult($firstResult);
-		$queryBuilder->setMaxResults($pageSize);
-		
-		// Generate the Query
-		$query = $queryBuilder->getQuery();
+        $queryBuilder = $this->getTrickQueryBuilder();
+
+        // Set the returned page
+        $queryBuilder->setFirstResult($firstResult);
+        $queryBuilder->setMaxResults($pageSize);
+
+        // Generate the Query
+        $query = $queryBuilder->getQuery();
         $total = $this->getTotalTricks();
-        // dd($total);
 
         //Generate the Paginator
         $paginator = new Paginator($query, true);
         return $paginator;
     }
 
-        
+
     /**
      * getPaginatedTricks
      *
@@ -82,9 +83,9 @@ class TrickRepository extends ServiceEntityRepository
             ->setFirstResult(($page * $limit) - $limit)
             ->setMaxResults($limit);
 
-            return $query->getQuery()->getResult();
+        return $query->getQuery()->getResult();
     }
-    
+
     /**
      * Return number of tricks
      *

@@ -34,9 +34,11 @@
 
 	<div class="container main my-5">
 		<div class="text-end">
+			{% if app.user %}
 			<a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="btn btn-m btn-primary">
 				<i class="bi bi-pencil-fill"></i>
 			</a>
+			{% endif %}
 		</div>
 		{% if is_granted("trick_delete", trick) %}
 		<div class="text-end">
@@ -44,32 +46,37 @@
 		</div>
 		{% endif %}
 		<div class="trick__cover-image my-5">
-		{% for media in trick.medias|filter(media=> media.type is same as("Image"))|slice(0, 1) %}
-			<img class="cover__image" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}">
+		{% if trick.coverImage %}
+			<img class="cover__image" src="{{asset('/uploads/' ~ trick.coverImage)}}" alt="{{ trick.coverImage.alt }}">
 		{% else %}
-			<img class="cover__image" src="/assets/images/empty.jpg" alt="no image to show">
-		{% endfor %}
+			{% for media in trick.medias|filter(media=> media.type is same as("Image"))|slice(0, 1) %}
+				<img class="cover__image" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}">
+			{% else %}
+				<img class="cover__image" src="/assets/images/empty.jpg" alt="no image to show">
+			{% endfor %}
+		{% endif %}
 			<h1 class="trick__cover-image-name snow__title">{{trick.name}}</h1>
-			<a href="{{ path('app_trick_edit_cover_image', {'id': trick.id}) }}" class="btn btn-m btn-primary trick__cover-image-edit">
-				<i class="bi bi-pencil-fill"></i>
-			</a>
+			{% if app.user and trick.medias|filter(media=> media.type is same as("Image"))|length >= 2 %}
+				<button type="button" class="btn btn-sm btn-primary trick__cover-image-edit popModal">
+					<span class="snow__text-button"></span> 
+				</button>
+			{% endif %}
 		</div>
 
 		<div class="d-flex flex-column justify-content-center">
-
 			<div id="carousel" class="d-flex justify-content-center">
 				{% for media in trick.medias %}
 					{% if media.type is same as("Image") %}
 						<div class="item">
 							<button type="button" class="popImage">
-								<img data-id="{{ media.id }}" class="trick__img" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}">
+								<img data-id="{{ media.id }}" class="trick__img carousel__img" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}" style="{{ trick.medias|length < 3 ? 'width: 50%;' : 'width: 100%;'}}">
 							</button>
 						</div>
 					{% else %}
-						<div class="item-video">
+						<div class="item-video text-center">
 							<iframe class="trick__video" src="{{ media.url }}" frameborder="0"></iframe>
 							<button type="button" class="popVideo">
-								<iframe class="trick__video d-none" src="{{ media.url }}" frameborder="0"></iframe>
+								<iframe class="trick__video d-none" src="{{ media.url }}" frameborder="0" style="{{ trick.medias|length < 3 ? 'width: 50%;' : 'width: 100%;'}}"></iframe>
 							</button>
 						</div>
 					{% endif %}
@@ -102,12 +109,15 @@
 			</div>
 
 			<div class="trick__groups text-center">
-				<span class="badge rounded-pill text-bg-warning">Created at:
-					{{trick.createdAt|date('d-m-Y')}}</span>
+				<span class="badge rounded-pill text-bg-warning">Created:
+					{{trick.createdAt|date('\\t\\h\\e d-m-Y \\a\\t H:i:s')}}</span>
 				<span class="badge rounded-pill text-bg-primary">Group:
 					{{trick.trickGroup.name}}</span>
-				<span class="badge rounded-pill text-bg-info">Last update:
-					{{trick.createdAt|date('d-m-Y')}}</span>
+					{% if trick.updatedAt %}
+						<span class="badge rounded-pill text-bg-info">
+							Last update: {{trick.updatedAt|date('\\t\\h\\e d-m-Y \\a\\t H:i:s')}}
+						</span>
+					{% endif %}
 			</div>
 			{% include('trick/_comment.html.twig') %}
 			{% if app.user %}
@@ -121,6 +131,40 @@
 			<a href="{{ path('app_home') }}" class="btn btn-m btn-secondary">Back to list</a>
 
 		</div>
+
+	<div
+		class="modal fade"
+		tabindex="-1"
+		aria-hidden="true"
+		id="coverImage"
+	>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Edit cover image</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					{{ form_start(trickForm) }}
+					{{ form_widget(trickForm._token) }}
+					<div id="carousel2" class="d-flex justify-content-center">
+						{% for child in trickForm.cover_image.children %}
+						{# {% if condition %}{% endif %} #}
+						<pre>
+							{{ dump(child.vars) }}
+						</pre>
+						<div class="item">
+							<img src="{{asset('/uploads/' ~ child.vars.label)}}" width="300vw;" alt="" class="trick__img" />
+							{{ form_widget(child) }}
+						</div>
+						{% endfor %}
+					</div>
+					<button type="submit" class="btn btn-primary my-3">Save</button>
+					{{ form_end(trickForm, { render_rest: false }) }}
+				</div>
+			</div>
+		</div>
+	</div>
 
 
 	{% endblock %}
@@ -143,6 +187,12 @@
 				$("#videomodal").on('hide.bs.modal', function () {
 					$(".embed-responsive-item").attr('src', '');
 				});
+			});
+		});
+		$(function () {
+			$('.popModal').on('click', function () {
+				//$('.imagepreview').attr('src', $(this).find('img').attr('src'));
+				$('#coverImage').modal('show');
 			});
 		});
 		</script>

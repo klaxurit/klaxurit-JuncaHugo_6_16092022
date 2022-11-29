@@ -4,6 +4,8 @@ namespace App\Form;
 
 use App\Entity\Media;
 use App\Entity\Trick;
+use App\Repository\MediaRepository;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -11,28 +13,19 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UpdateCoverImageType extends AbstractType
 {
+    private $mediaRepository;
+    public function __construct(MediaRepository $mediaRepository)
+    {
+        $this->mediaRepository = $mediaRepository;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $trickId = $builder->getData()->getId();
         $builder
             ->add('cover_image', EntityType::class, [
-                'class'        => Trick::class,
-                // 'choices'      => function (Trick $trick) {
-                //     $medias = $trick->getMedias();
-                //     $images = $medias->getValues()->getFileName();
-                //     dd($images);
-                //     return $trick->getMedias();
-                // },
-                'choice_label' => function (Trick $trick) {
-                    $images = $trick->getMedias();
-                    // dd($images->getValues());
-                    foreach ($images->getValues() as $image) {
-                        $trickImages["filename"] = $image->getFileName();
-                        // dd($trickImages["filename"]);
-                    }
-                    return $trickImages["filename"];
-                },
-                // 'choice_label' => 'fileName',
-                // 'by_reference' => false,
+                'class'        => Media::class,
+                'choices'      => $this->mediaRepository->findAllMediaImageOfATrick($trickId),
                 'multiple'     => false,
                 'expanded'     => true,
             ])

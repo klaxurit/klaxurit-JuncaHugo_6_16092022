@@ -17,7 +17,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AjaxController extends AbstractController
 {
-
     #[Route('/ajax/trick', name: 'app_ajax_trick')]
     public function ajaxAction(
         Request $request,
@@ -29,16 +28,19 @@ class AjaxController extends AbstractController
 
         $tricks = $trickRepository->getTricks($page);
 
-        if($user){
+        if ($user) {
             $userId = $user->getId();
         } else {
             $userId = "";
         }
 
+        $total = $trickRepository->getTotalTricks();
+
         $encoders = [new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
         $serializer = new Serializer($normalizers, $encoders);
         $jsonObject = $serializer->serialize([
+            'total' => $total,
             'tricks' => $tricks,
             'current_user' => $userId
         ], 'json', [

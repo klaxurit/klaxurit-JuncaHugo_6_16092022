@@ -39,6 +39,27 @@ class MediaRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllMediaOfATrick(int $trickId)
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.trick = :trickId')
+            ->setParameter('trickId', $trickId)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function findAllMediaImageOfATrick(int $trickId)
+    {
+        $value = "Image";
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.trick = :trickId')
+            ->andWhere('m.type = :val')
+            ->setParameter('trickId', $trickId)
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Media[] Returns an array of Media objects
 //     */

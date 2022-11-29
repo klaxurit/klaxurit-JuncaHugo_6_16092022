@@ -45,8 +45,11 @@ class Trick
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'trick_contribution')]
     private Collection $contributors;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(targetEntity: Media::class, cascade: ["persist", "remove"])]
     private ?Media $cover_image = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updated_at = null;
 
     public function __construct()
     {
@@ -56,7 +59,8 @@ class Trick
         $this->contributors = new ArrayCollection();
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         return $this->name;
     }
 
@@ -260,6 +264,18 @@ class Trick
     public function setCoverImage(?Media $cover_image): self
     {
         $this->cover_image = $cover_image;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updated_at;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updated_at): self
+    {
+        $this->updated_at = $updated_at;
 
         return $this;
     }

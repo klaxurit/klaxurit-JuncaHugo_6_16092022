@@ -71,7 +71,6 @@ window.onload = () => {
             //block navigation
             e.preventDefault()
             const elParent = e.currentTarget.closest('.mediasPreview')
-            console.log(elParent)
 
             // ask for confirmation
             if(confirm("Did you really want to delete this image ?")){
@@ -80,7 +79,7 @@ window.onload = () => {
                     method: 'DELETE',
                     headers: {
                         'X-Requested-With': "XMLHttpRequest",
-                        'Content-Type': "applicadtion/json"
+                        'Content-Type': "application/json"
                     },
                     body: JSON.stringify({'_token': this.dataset.token})
                 }).then(
