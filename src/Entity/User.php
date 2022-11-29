@@ -95,7 +95,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return (string) $this->username;
     }
 
-    
+
     /**
      * @see UserInterface
      */
@@ -104,17 +104,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-        
+
         return array_unique($roles);
     }
-    
+
     public function setRoles(array $roles): self
     {
         $this->roles = $roles;
-        
+
         return $this;
     }
-    
+
     /**
      * @see PasswordAuthenticatedUserInterface
      */
@@ -122,14 +122,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->password;
     }
-    
+
     public function setPassword(string $password): self
     {
         $this->password = $password;
-        
+
         return $this;
     }
-    
+
     /**
      * Returning a salt is only needed, if you are not using a modern
      * hashing algorithm (e.g. bcrypt or sodium) in your security.yaml.
@@ -140,7 +140,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return null;
     }
-    
+
     /**
      * @see UserInterface
      */
@@ -149,7 +149,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
-    
+
     /**
      * @return Collection<int, UserMessage>
      */
@@ -157,17 +157,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->messages;
     }
-    
+
     public function addMessage(UserMessage $message): self
     {
         if (!$this->messages->contains($message)) {
             $this->messages->add($message);
             $message->setUser($this);
         }
-        
+
         return $this;
     }
-    
+
     public function removeMessage(UserMessage $message): self
     {
         if ($this->messages->removeElement($message)) {
@@ -176,19 +176,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $message->setUser(null);
             }
         }
-        
+
         return $this;
     }
-    
+
     public function getIsVerified(): ?bool
     {
         return $this->is_verified;
     }
-    
+
     public function setIsVerified(bool $is_verified): self
     {
         $this->is_verified = $is_verified;
-        
+
         return $this;
     }
 
@@ -196,11 +196,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return (string) $this->username;
     }
-    
+
     public function setUsername(string $username): self
     {
         $this->username = $username;
-        
+
         return $this;
     }
 

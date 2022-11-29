@@ -137,10 +137,8 @@ class Carousel {
 
     get slidesVisible() {
         if (this.isMobile || this.items.length < 3){
-            console.log("mobile")
             return 1
         } else if (this.isLaptop){
-            console.log("laptop")
             return 2
         }
         return this.options.slidesVisible

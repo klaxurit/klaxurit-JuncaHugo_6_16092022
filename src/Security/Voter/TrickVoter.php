@@ -11,8 +11,8 @@ use Symfony\Component\Security\Core\Security;
 
 class TrickVoter extends Voter
 {
-    const TRICK_VIEW = 'trick_view';
-    const TRICK_DELETE = 'trick_delete';
+    public const TRICK_VIEW = 'trick_view';
+    public const TRICK_DELETE = 'trick_delete';
 
     private $security;
 
@@ -38,8 +38,10 @@ class TrickVoter extends Voter
         }
 
         // check if user isAdmin
-        if($this->security->isGranted('ROLE_ADMIN')) return true;
-        
+        if ($this->security->isGranted('ROLE_ADMIN')) {
+            return true;
+        }
+
         if ($attribute === self::TRICK_DELETE) {
             // logic to determine if the user can DELETE
             // return true or false
@@ -48,8 +50,8 @@ class TrickVoter extends Voter
         return false;
     }
 
-    private function canDelete(Trick $trick, User $user){
-        // dd($user, $trick->getUser(), $user->getRoles());
+    private function canDelete(Trick $trick, User $user)
+    {
         // the trick's owner or admin can delete
         return $user === $trick->getUser() || in_array($user->getRoles(), ['ROLE_ADMIN']);
     }

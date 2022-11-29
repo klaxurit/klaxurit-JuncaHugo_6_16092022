@@ -1,5 +1,7 @@
 <?php
+
 namespace App\EventSubscriber;
+
 use App\Entity\User;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -18,7 +20,7 @@ class CheckVerifiedUserSubscriber implements EventSubscriberInterface
     {
         $this->router = $router;
     }
-    
+
     public function onCheckPassport(CheckPassportEvent $event)
     {
         $passport = $event->getPassport();
@@ -49,7 +51,7 @@ class CheckVerifiedUserSubscriber implements EventSubscriberInterface
         );
         $event->setResponse($response);
     }
-    
+
     public static function getSubscribedEvents()
     {
         return [

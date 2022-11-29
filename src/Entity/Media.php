@@ -34,7 +34,7 @@ class Media
 
     public function __toString()
     {
-        if($this->getType() === "Image"){
+        if ($this->getType() === "Image") {
             return $this->fileName;
         }
         return "";

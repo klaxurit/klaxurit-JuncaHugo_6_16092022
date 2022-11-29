@@ -20,32 +20,38 @@ class TrickType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name', TextType::class,
-            [
-                'required' => true,
-                'constraints' => [
-                    new NotBlank(
-                        [
-                            'message' => 'Trick\'s name field cannot be blank. Please enter a valid name for your trick.'
-                        ]
-                    )
-                ],
-            ])
-            ->add('description', TextareaType::class,
-            [
-                'required' => true,
-                'constraints' => [
-                    new NotBlank(
-                        [
-                            'message' => 'Description field cannot be blank. Please enter a valid description for your trick.'
-                        ]
-                    )
-                ],
-            ])
+            ->add(
+                'name',
+                TextType::class,
+                [
+                    'required' => true,
+                    'constraints' => [
+                        new NotBlank(
+                            [
+                                'message' => 'Trick\'s name field cannot be blank. Please enter a valid name for your trick.'
+                            ]
+                        )
+                    ],
+                ]
+            )
+            ->add(
+                'description',
+                TextareaType::class,
+                [
+                    'required' => true,
+                    'constraints' => [
+                        new NotBlank(
+                            [
+                                'message' => 'Description field cannot be blank. Please enter a valid description for your trick.'
+                            ]
+                        )
+                    ],
+                ]
+            )
             ->add('medias', CollectionType::class, [
                 'entry_type'   => MediaType::class,
                 'constraints' => [
-                    new Valid()
+                        new Valid()
                 ],
                 'mapped' => false,
                 'by_reference' => false,
@@ -60,11 +66,11 @@ class TrickType extends AbstractType
                 'expanded'     => true,
                 'required'     => true,
                 'constraints' => [
-                    new NotBlank(
-                        [
-                            'message' => 'Please select a group for your trick.'
-                        ]
-                    )
+                        new NotBlank(
+                            [
+                                'message' => 'Please select a group for your trick.'
+                            ]
+                        )
                 ],
             ])
             ->getForm();

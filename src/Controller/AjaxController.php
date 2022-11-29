@@ -17,7 +17,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AjaxController extends AbstractController
 {
-
     #[Route('/ajax/trick', name: 'app_ajax_trick')]
     public function ajaxAction(
         Request $request,

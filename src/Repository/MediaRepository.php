@@ -39,7 +39,8 @@ class MediaRepository extends ServiceEntityRepository
         }
     }
 
-    public function findAllMediaOfATrick(int $trickId) {
+    public function findAllMediaOfATrick(int $trickId)
+    {
         return $this->createQueryBuilder('m')
             ->andWhere('m.trick = :trickId')
             ->setParameter('trickId', $trickId)
@@ -47,7 +48,8 @@ class MediaRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findAllMediaImageOfATrick(int $trickId) {
+    public function findAllMediaImageOfATrick(int $trickId)
+    {
         $value = "Image";
         return $this->createQueryBuilder('m')
             ->andWhere('m.trick = :trickId')

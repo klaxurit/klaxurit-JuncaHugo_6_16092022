@@ -71,7 +71,6 @@ window.onload = () => {
             //block navigation
             e.preventDefault()
             const elParent = e.currentTarget.closest('.mediasPreview')
-            console.log(elParent)
 
             // ask for confirmation
             if(confirm("Did you really want to delete this image ?")){

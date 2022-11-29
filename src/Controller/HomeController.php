@@ -18,7 +18,7 @@ class HomeController extends AbstractController
 
         // get page number
         $page = (int)$request->query->get("page", 1);
-        
+
         // get tricks of page
         $tricks = $trickRepository->getPaginatedTricks($page, $limit);
 
