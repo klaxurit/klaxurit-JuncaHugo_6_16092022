@@ -8,27 +8,45 @@ use App\Service\UploaderHelper;
 use App\Service\SendMailService;
 use App\Form\RegistrationFormType;
 use App\Repository\UserRepository;
-use App\Security\UserAuthenticator;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Security\Http\Authentication\UserAuthenticatorInterface;
 
 class RegistrationController extends AbstractController
 {
+    private array $header;
+    private object $jwt;
+
+    public function __construct()
+    {
+        $this->header = [
+            'typ' => 'JWT',
+            'alg' => 'HS256'
+        ];
+        $this->jwt = new JWTService;
+    }
+
     #[Route('/register', name: 'app_register')]
+    /**
+     * Register an user
+     *
+     * @param Request $request
+     * @param UserPasswordHasherInterface $userPasswordHasher
+     * @param EntityManagerInterface $entityManager
+     * @param SendMailService $mail
+     * @param UploaderHelper $uploadedFile
+     * @return Response
+     */
     public function register(
         Request $request,
         UserPasswordHasherInterface $userPasswordHasher,
-        UserAuthenticatorInterface $userAuthenticator,
-        UserAuthenticator $authenticator,
         EntityManagerInterface $entityManager,
         SendMailService $mail,
-        JWTService $jwt,
         UploaderHelper $uploadedFile
     ): Response {
         $user = new User();
@@ -42,49 +60,56 @@ class RegistrationController extends AbstractController
                     $form->get('plainPassword')->getData()
                 )
             );
-
-            $avatar = $form->get('avatar')->getData();
-
-            try {
-                $filePath = $uploadedFile->uploadTrickImage($avatar);
-                // get the array form the class
-            } catch (FileException $e) {
-                $this->addFlash('danger', "Error on uploading file");
-            }
-
-            $user->setAvatar($filePath);
+            $this->addAvatar($form->get('avatar')->getData(), $user, $uploadedFile);
 
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // create header
-            $header = [
-                'typ' => 'JWT',
-                'alg' => 'HS256'
-            ];
-            // create payload
-            $payload = [
-                'user_id' => $user->getId()
-            ];
-            // generate user's JWT
-            $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
-
-            // send email verification
-            $mail->send(
-                'no-reply@snowtrick.net',
-                $user->getEmail(),
-                'Email verification from snowtrick\'s account',
-                'register',
-                compact('user', 'token')
-            );
-
+            $this->sendMail($user, $mail);
             $this->addFlash('success', 'Verification email sent, please check your email box.');
             return $this->redirectToRoute('app_home');
         }
-
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
         ]);
+    }
+
+    /**
+     * Add avatar to user
+     *
+     * @param UploadedFile $avatar
+     * @param User $user
+     * @param UploaderHelper $uploadedFile
+     * @return void
+     */
+    public function addAvatar(UploadedFile $avatar, User $user, UploaderHelper $uploadedFile) {
+        try {
+            $filePath = $uploadedFile->uploadTrickImage($avatar);
+            // get the array form the class
+        } catch (FileException $e) {
+            $this->addFlash('danger', "Error on uploading file");
+        }
+        $user->setAvatar($filePath);
+    }
+
+    /**
+     * Send verification mail to user
+     *
+     * @param User $user
+     * @param SendMailService $mail
+     * @return void
+     */
+    public function sendMail(User $user, SendMailService $mail) {
+        // generate user's JWT
+        $token = $this->jwt->generate($this->header, ['user_id' => $user->getId()], $this->getParameter('app.jwtsecret'));
+        // send email verification
+        $mail->send(
+            'no-reply@snowtrick.net',
+            $user->getEmail(),
+            'Email verification from snowtrick\'s account',
+            'register',
+            compact('user', 'token')
+        );
     }
 
     #[Route('/verif/{token}', name: 'verify_user')]
@@ -111,43 +136,45 @@ class RegistrationController extends AbstractController
         return $this->redirectToRoute('app_login');
     }
 
-    #[Route('resendverif', name: 'resend_verif')]
-    public function resendVerif(JWTService $jwt, SendMailService $mail, UserRepository $userRepository): Response
-    {
-        $user = $this->getUser();
 
-        if (!$user) {
-            $this->addFlash('danger', 'You have to be logged to access this page.');
-            return $this->redirectToRoute('app_login');
-        }
 
-        if ($user->getIsVerified()) {
-            $this->addFlash('danger', 'This account is already activated.');
-            return $this->redirectToRoute('app_home');
-        }
+    // #[Route('resendverif', name: 'resend_verif')]
+    // public function resendVerif(JWTService $jwt, SendMailService $mail, UserRepository $userRepository): Response
+    // {
+    //     $user = $this->getUser();
 
-        // create header
-        $header = [
-            'typ' => 'JWT',
-            'alg' => 'HS256'
-        ];
-        // create payload
-        $payload = [
-            'user_id' => $user->getId()
-        ];
-        // generate user's JWT
-        $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
+    //     if (!$user) {
+    //         $this->addFlash('danger', 'You have to be logged to access this page.');
+    //         return $this->redirectToRoute('app_login');
+    //     }
 
-        // send email verification
-        $mail->send(
-            'no-reply@snowtrick.net',
-            $user->getEmail(),
-            'Email verification from snowtrick\'s account',
-            'register',
-            compact('user', 'token')
-        );
+    //     if ($user->getIsVerified()) {
+    //         $this->addFlash('danger', 'This account is already activated.');
+    //         return $this->redirectToRoute('app_home');
+    //     }
 
-        $this->addFlash('success', 'Verification email sent.');
-        return $this->redirectToRoute('app_login');
-    }
+    //     // create header
+    //     $header = [
+    //         'typ' => 'JWT',
+    //         'alg' => 'HS256'
+    //     ];
+    //     // create payload
+    //     $payload = [
+    //         'user_id' => $user->getId()
+    //     ];
+    //     // generate user's JWT
+    //     $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
+
+    //     // send email verification
+    //     $mail->send(
+    //         'no-reply@snowtrick.net',
+    //         $user->getEmail(),
+    //         'Email verification from snowtrick\'s account',
+    //         'register',
+    //         compact('user', 'token')
+    //     );
+
+    //     $this->addFlash('success', 'Verification email sent.');
+    //     return $this->redirectToRoute('app_login');
+    // }
 }

@@ -13,6 +13,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class AdminController extends AbstractController
 {
     #[Route('/', name: 'index')]
+    /**
+     * Return admin home template
+     *
+     * @return Response
+     */
     public function index(): Response
     {
         return $this->render('admin/index.html.twig', [
@@ -20,12 +25,14 @@ class AdminController extends AbstractController
         ]);
     }
 
+
+    #[Route('/comments', name: 'comments')]
     /**
-     * manageComments
+     * Return comments index template with all comments
      *
+     * @param UserMessageRepository $comments
      * @return Response
      */
-    #[Route('/comments', name: 'comments')]
     public function manageComments(UserMessageRepository $comments): Response
     {
         return $this->render('admin/comments.html.twig', [
@@ -35,6 +42,14 @@ class AdminController extends AbstractController
     }
 
     #[Route('/comments/switch/{id}', name: 'comment_switch_status', methods: ['GET'])]
+    /**
+     * Switch status of a comment to moderate it
+     *
+     * @param UserMessageRepository $comments
+     * @param EntityManagerInterface $entityManager
+     * @param integer $id
+     * @return Response
+     */
     public function switchStatus(UserMessageRepository $comments, EntityManagerInterface $entityManager, int $id): Response
     {
         $comment = $comments->findOneById($id);
@@ -52,6 +67,13 @@ class AdminController extends AbstractController
     }
 
     #[Route('/comments/delete/{id}', name: 'comment_delete', methods: ['DELETE', 'GET'])]
+    /**
+     * Delete a comment
+     *
+     * @param UserMessageRepository $userMessageRepository
+     * @param UserMessage $comment
+     * @return Response
+     */
     public function deleteComment(UserMessageRepository $userMessageRepository, UserMessage $comment): Response
     {
         try {

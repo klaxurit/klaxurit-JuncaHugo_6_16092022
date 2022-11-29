@@ -55,8 +55,8 @@ class CheckVerifiedUserSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
+            LoginFailureEvent::class => ['onLoginFailure', 0],
             CheckPassportEvent::class => ['onCheckPassport', -10],
-            LoginFailureEvent::class => 'onLoginFailure',
         ];
     }
 }

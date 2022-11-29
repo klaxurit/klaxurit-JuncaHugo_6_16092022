@@ -17,23 +17,24 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class AjaxController extends AbstractController
 {
-    #[Route('/ajax/trick', name: 'app_ajax_trick')]
+    #[Route('/ajax/trick', name: 'app_ajax_trick')]       
+    /**
+     * Create jsonObject from requested data
+     *
+     * @param Request $request
+     * @param TrickRepository $trickRepository
+     * @param UserInterface|null $user
+     * @return Response
+     */
     public function ajaxAction(
         Request $request,
         TrickRepository $trickRepository,
         UserInterface $user = null
     ): Response {
-        // get page number
+        
         $page = (int)$request->query->get("page");
-
         $tricks = $trickRepository->getTricks($page);
-
-        if ($user) {
-            $userId = $user->getId();
-        } else {
-            $userId = "";
-        }
-
+        $userId = $user ? $user->getId() : "";
         $total = $trickRepository->getTotalTricks();
 
         $encoders = [new JsonEncoder()];
@@ -48,11 +49,18 @@ class AjaxController extends AbstractController
                 return $object->getId();
             },
         ]);
-
         return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
     }
 
-    #[Route('/ajax/comment', name: 'app_ajax_comment')]
+    #[Route('/ajax/comment', name: 'app_ajax_comment')]    
+    /**
+     * Create jsonObject from requested data
+     *
+     * @param Request $request
+     * @param UserMessageRepository $userMessage
+     * @param TrickRepository $trickRepository
+     * @return Response
+     */
     public function ajaxCommentAction(
         Request $request,
         UserMessageRepository $userMessage,
@@ -78,6 +86,12 @@ class AjaxController extends AbstractController
         return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
     }
 
+    /**
+     * Using TrickVoter to check if current user is trick's owner
+     *
+     * @param Trick $trick
+     * @return boolean
+     */
     public function isOwner(Trick $trick)
     {
         if (!$this->denyAccessUnlessGranted(TrickVoter::TRICK_DELETE, $trick)) {
