@@ -65,9 +65,14 @@ class RegistrationController extends AbstractController
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->sendMail($user, $mail);
-            $this->addFlash('success', 'Verification email sent, please check your email box.');
-            return $this->redirectToRoute('app_home');
+            try {
+                $this->sendVerifMail($user, $mail);
+                $this->addFlash('success', 'Verification email sent, please check your email box.');
+                return $this->redirectToRoute('app_home');
+            } catch(\Exception $e) {
+                $this->addFlash('danger', 'A problem has occurred during email sending.');
+                return $this->redirectToRoute('app_login');
+            }
         }
         return $this->render('registration/register.html.twig', [
             'registrationForm' => $form->createView(),
@@ -99,7 +104,7 @@ class RegistrationController extends AbstractController
      * @param SendMailService $mail
      * @return void
      */
-    public function sendMail(User $user, SendMailService $mail) {
+    public function sendVerifMail(User $user, SendMailService $mail) {
         // generate user's JWT
         $token = $this->jwt->generate($this->header, ['user_id' => $user->getId()], $this->getParameter('app.jwtsecret'));
         // send email verification
@@ -113,7 +118,16 @@ class RegistrationController extends AbstractController
     }
 
     #[Route('/verif/{token}', name: 'verify_user')]
-    public function verifyUser($token, JWTService $jwt, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
+    /**
+     * Verify user's account with token
+     *
+     * @param string $token
+     * @param JWTService $jwt
+     * @param UserRepository $userRepository
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
+    public function verifyUser(string $token, JWTService $jwt, UserRepository $userRepository, EntityManagerInterface $entityManager): Response
     {
         // check is token is valid, not expired and not modified
         if ($jwt->isValid($token) && !$jwt->isExpired($token) && $jwt->check($token, $this->getParameter('app.jwtsecret'))) {
@@ -135,46 +149,4 @@ class RegistrationController extends AbstractController
         $this->addFlash('danger', 'Invalid token or expired');
         return $this->redirectToRoute('app_login');
     }
-
-
-
-    // #[Route('resendverif', name: 'resend_verif')]
-    // public function resendVerif(JWTService $jwt, SendMailService $mail, UserRepository $userRepository): Response
-    // {
-    //     $user = $this->getUser();
-
-    //     if (!$user) {
-    //         $this->addFlash('danger', 'You have to be logged to access this page.');
-    //         return $this->redirectToRoute('app_login');
-    //     }
-
-    //     if ($user->getIsVerified()) {
-    //         $this->addFlash('danger', 'This account is already activated.');
-    //         return $this->redirectToRoute('app_home');
-    //     }
-
-    //     // create header
-    //     $header = [
-    //         'typ' => 'JWT',
-    //         'alg' => 'HS256'
-    //     ];
-    //     // create payload
-    //     $payload = [
-    //         'user_id' => $user->getId()
-    //     ];
-    //     // generate user's JWT
-    //     $token = $jwt->generate($header, $payload, $this->getParameter('app.jwtsecret'));
-
-    //     // send email verification
-    //     $mail->send(
-    //         'no-reply@snowtrick.net',
-    //         $user->getEmail(),
-    //         'Email verification from snowtrick\'s account',
-    //         'register',
-    //         compact('user', 'token')
-    //     );
-
-    //     $this->addFlash('success', 'Verification email sent.');
-    //     return $this->redirectToRoute('app_login');
-    // }
 }

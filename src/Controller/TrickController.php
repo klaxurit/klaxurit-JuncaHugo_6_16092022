@@ -135,7 +135,8 @@ class TrickController extends AbstractController
             return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
         }
         $mediaImages = $mediaRepository->findAllMediaImageOfATrick($trick->getId());
-        if (!$mediaImages) {
+
+        if (!$mediaImages && $user) {
             $this->addFlash('warning', 'To have a cover image on this trick, you must first <a href="/trick/' . $trick->getId() . '/edit">upload images</a>.');
         }
 
@@ -220,7 +221,7 @@ class TrickController extends AbstractController
                 $trickRepository->add($trick, true);
 
                 $this->addFlash('success', "Trick successfully updated.");
-                return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()], Response::HTTP_SEE_OTHER);
             }
             return $this->render('trick/edit.html.twig', [
                 'trickForm' => $form->createView(),
@@ -263,7 +264,6 @@ class TrickController extends AbstractController
 
                 return new JsonResponse(['success' => 1]);
             } elseif ($media->getId() === $media->getTrick()->getCoverImage()->getId()) {
-                // dd("coverimage");
                 $mediaName = $media->getFileName();
                 // delete image
                 unlink($this->getParameter('images_directory') . '/' . $mediaName);
@@ -274,7 +274,6 @@ class TrickController extends AbstractController
 
                 return new JsonResponse(['success' => 1]);
             } else {
-                dd("image");
                 $mediaName = $media->getFileName();
                 // delete image
                 unlink($this->getParameter('images_directory') . '/' . $mediaName);
