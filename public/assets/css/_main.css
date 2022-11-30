@@ -244,7 +244,7 @@ hr.rounded {
 }
 
 .cover__image {
-    min-width: 30vw;
+    min-width: 70vw;
     max-width: 35vw;
     height: 50vh;
     object-fit: cover;
@@ -264,7 +264,7 @@ hr.rounded {
 .trick__cover-image-edit {
     position: absolute;
     top: 10%;
-    right: 33%;
+    right: 15%;
     background-color: #00BBF0;
     border: 2px solid white;
 }

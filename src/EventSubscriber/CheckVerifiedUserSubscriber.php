@@ -21,7 +21,7 @@ class CheckVerifiedUserSubscriber implements EventSubscriberInterface
         $this->router = $router;
     }
 
-    public function onCheckPassport(CheckPassportEvent $event)
+    public function onCheckPassport(CheckPassportEvent $event): void
     {
         $passport = $event->getPassport();
         if (!$passport instanceof UserPassportInterface) {
@@ -37,7 +37,7 @@ class CheckVerifiedUserSubscriber implements EventSubscriberInterface
         }
     }
 
-    public function onLoginFailure(LoginFailureEvent $event)
+    public function onLoginFailure(LoginFailureEvent $event): void
     {
         if (!$event->getException() instanceof AccountNotVerifiedAuthenticationException) {
             return;
@@ -52,7 +52,7 @@ class CheckVerifiedUserSubscriber implements EventSubscriberInterface
         $event->setResponse($response);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             LoginFailureEvent::class => ['onLoginFailure', 0],

@@ -17,7 +17,7 @@ class UploaderHelper
         $this->slugger = $slugger;
     }
 
-    public function uploadTrickImage(UploadedFile $uploadedFile)
+    public function uploadTrickImage(UploadedFile $uploadedFile): string
     {
         $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
@@ -33,7 +33,7 @@ class UploaderHelper
         return $newFilename;
     }
 
-    public function getTargetDirectory()
+    public function getTargetDirectory(): string
     {
         return $this->targetDirectory;
     }
