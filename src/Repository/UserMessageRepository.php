@@ -5,7 +5,6 @@ namespace App\Repository;
 use App\Entity\Trick;
 use App\Entity\UserMessage;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
@@ -48,7 +47,7 @@ class UserMessageRepository extends ServiceEntityRepository
      * @param  mixed $limit
      * @return void
      */
-    public function getPaginatedComments($page, $limit, Trick $trick)
+    public function getPaginatedComments($page, $limit, Trick $trick): array
     {
         $query = $this->createQueryBuilder('c')
             ->orderBy('c.createdAt')
@@ -66,36 +65,11 @@ class UserMessageRepository extends ServiceEntityRepository
      *
      * @return void
      */
-    public function getTotalComments()
+    public function getTotalComments(): array
     {
         $query = $this->createQueryBuilder('c')
             ->select('COUNT(c)');
 
         return $query->getQuery()->getSingleScalarResult();
     }
-
-    //    /**
-    //     * @return UserMessage[] Returns an array of UserMessage objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?UserMessage
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
 }

@@ -39,7 +39,7 @@ class MediaRepository extends ServiceEntityRepository
         }
     }
 
-    public function findAllMediaOfATrick(int $trickId)
+    public function findAllMediaOfATrick(int $trickId): array
     {
         return $this->createQueryBuilder('m')
             ->andWhere('m.trick = :trickId')
@@ -48,7 +48,7 @@ class MediaRepository extends ServiceEntityRepository
             ->getResult();
     }
 
-    public function findAllMediaImageOfATrick(int $trickId)
+    public function findAllMediaImageOfATrick(int $trickId): array
     {
         $value = "Image";
         return $this->createQueryBuilder('m')
@@ -59,29 +59,4 @@ class MediaRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
-//    /**
-//     * @return Media[] Returns an array of Media objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('m.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Media
-//    {
-//        return $this->createQueryBuilder('m')
-//            ->andWhere('m.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

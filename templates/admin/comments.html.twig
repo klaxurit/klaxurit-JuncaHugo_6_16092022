@@ -1,46 +1,50 @@
 {% extends 'base.html.twig' %}
-{% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/css/_main.css') }}">{% endblock %}
+{% block stylesheets %}<link rel="stylesheet" href="{{ asset('assets/css/_main.css') }}">
+{% endblock %}
 
-{% block title %}Manage comments{% endblock %}
+{% block title %}Manage comments
+{% endblock %}
 
 {% block main %}
-<div class="container main">
-    <h1>Comments</h1>
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Content</th>
-                    <th>Author</th>
-                    <th>CreatedAt</th>
-                    <th>Moderate</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for comment in comments %}
-                <tr>
-                    <td>{{ comment.id }}</td>
-                    <td>{{ comment.content|u.truncate(20, '...') }}</td>
-                    <td>{{ comment.user.username }}</td>
-                    <td>{{ comment.createdAt|date('Y-m-d H:i:s') }}</td>
-                    <td>
-                    {% if comment.isStatus is same as(false) %}
-                        <a href="{{ path('admin_comment_switch_status', {'id': comment.id}) }}" class="btn btn-success btn-sm">Publish</a>
-                    {% else %}
-                        <a href="{{ path('admin_comment_switch_status', {'id': comment.id}) }}" class="btn btn-danger btn-sm">Moderate</a>
-                    {% endif %}
-                    </td>
-                    <td><a href="{{ path('admin_comment_delete', {'id': comment.id}) }}" class="btn btn-danger btn-sm">Delete</a></td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="9">no records found</td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
+	<div class="container main">
+		<h1>Comments</h1>
+		<div class="table-responsive">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Id</th>
+						<th>Content</th>
+						<th>Author</th>
+						<th>CreatedAt</th>
+						<th>Moderate</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for comment in comments %}
+						<tr>
+							<td>{{ comment.id }}</td>
+							<td>{{ comment.content|u.truncate(20, '...') }}</td>
+							<td>{{ comment.user.username }}</td>
+							<td>{{ comment.createdAt|date('Y-m-d H:i:s') }}</td>
+							<td>
+								{% if comment.isStatus is same as(false) %}
+									<a href="{{ path('admin_comment_switch_status', {'id': comment.id}) }}" class="btn btn-success btn-sm">Publish</a>
+								{% else %}
+									<a href="{{ path('admin_comment_switch_status', {'id': comment.id}) }}" class="btn btn-danger btn-sm">Moderate</a>
+								{% endif %}
+							</td>
+							<td>
+								<a href="{{ path('admin_comment_delete', {'id': comment.id}) }}" class="btn btn-danger btn-sm">Delete</a>
+							</td>
+						</tr>
+					{% else %}
+						<tr>
+							<td colspan="9">no records found</td>
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
 {% endblock %}

@@ -92,7 +92,7 @@ class AjaxController extends AbstractController
      * @param Trick $trick
      * @return boolean
      */
-    public function isOwner(Trick $trick)
+    public function isOwner(Trick $trick): bool
     {
         if (!$this->denyAccessUnlessGranted(TrickVoter::TRICK_DELETE, $trick)) {
             return true;

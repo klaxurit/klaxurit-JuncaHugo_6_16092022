@@ -87,7 +87,8 @@ class RegistrationController extends AbstractController
      * @param UploaderHelper $uploadedFile
      * @return void
      */
-    public function addAvatar(UploadedFile $avatar, User $user, UploaderHelper $uploadedFile) {
+    public function addAvatar(UploadedFile $avatar, User $user, UploaderHelper $uploadedFile): void
+    {
         try {
             $filePath = $uploadedFile->uploadTrickImage($avatar);
             // get the array form the class
@@ -104,7 +105,8 @@ class RegistrationController extends AbstractController
      * @param SendMailService $mail
      * @return void
      */
-    public function sendVerifMail(User $user, SendMailService $mail) {
+    public function sendVerifMail(User $user, SendMailService $mail): void 
+    {
         // generate user's JWT
         $token = $this->jwt->generate($this->header, ['user_id' => $user->getId()], $this->getParameter('app.jwtsecret'));
         // send email verification

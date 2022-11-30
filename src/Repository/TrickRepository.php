@@ -40,7 +40,7 @@ class TrickRepository extends ServiceEntityRepository
         }
     }
 
-    private function getTrickQueryBuilder()
+    private function getTrickQueryBuilder(): object
     {
         $queryBuilder = $this->createQueryBuilder('t');
 
@@ -48,7 +48,7 @@ class TrickRepository extends ServiceEntityRepository
     }
 
 
-    public function getTricks($page)
+    public function getTricks(int $page): object
     {
         $pageSize = 6;
         $firstResult = ($page - 1) * $pageSize;
@@ -76,7 +76,7 @@ class TrickRepository extends ServiceEntityRepository
      * @param  mixed $limit
      * @return void
      */
-    public function getPaginatedTricks($page, $limit)
+    public function getPaginatedTricks($page, $limit): array
     {
         $query = $this->createQueryBuilder('t')
             ->orderBy('t.createdAt')
@@ -91,36 +91,11 @@ class TrickRepository extends ServiceEntityRepository
      *
      * @return void
      */
-    public function getTotalTricks()
+    public function getTotalTricks(): array
     {
         $query = $this->createQueryBuilder('t')
             ->select('COUNT(t)');
 
         return $query->getQuery()->getSingleScalarResult();
     }
-
-//    /**
-//     * @return Trick[] Returns an array of Trick objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('t.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?Trick
-//    {
-//        return $this->createQueryBuilder('t')
-//            ->andWhere('t.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
 }

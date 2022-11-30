@@ -117,7 +117,7 @@ class SecurityController extends AbstractController
      * @param SendMailService $mail
      * @return void
      */
-    public function sendResetPassMail(string $token, User $user, SendMailService $mail)
+    public function sendResetPassMail(string $token, User $user, SendMailService $mail): Response
     {
         // generate reset password link
         $url = $this->generateUrl('app_reset_pass', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
@@ -170,7 +170,8 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    public function reSendVerifMail(User $user, SendMailService $mail) {
+    public function reSendVerifMail(User $user, SendMailService $mail): Response
+    {
         // generate user's JWT
         $token = $this->jwt->generate($this->header, ['user_id' => $user->getId()], $this->getParameter('app.jwtsecret'));
         try {
@@ -189,6 +190,16 @@ class SecurityController extends AbstractController
     }
 
     #[Route('/forget-pass/{token}', name: 'app_reset_pass')]
+    /**
+     * Render reset password form
+     *
+     * @param string $token
+     * @param Request $request
+     * @param UserRepository $userRepository
+     * @param EntityManagerInterface $entityManagerInterface
+     * @param UserPasswordHasherInterface $userPasswordHasherInterface
+     * @return Response
+     */
     public function resetPass(
         string $token,
         Request $request,
@@ -198,11 +209,9 @@ class SecurityController extends AbstractController
     ): Response {
         // check if we have token in db
         $user = $userRepository->findOneByResetToken($token);
-
         if ($user) {
             $form = $this->createForm(ResetPasswordType::class);
             $form->handleRequest($request);
-
             if ($form->isSubmitted() && $form->isValid()) {
                 // delete token
                 $user->setResetToken('');
@@ -218,7 +227,6 @@ class SecurityController extends AbstractController
                 $this->addFlash('success', 'The password has been successfully reset');
                 return $this->redirectToRoute('app_login');
             }
-
             return $this->render('security/reset_password.html.twig', [
                 'passForm' => $form->createView()
             ]);
@@ -227,7 +235,7 @@ class SecurityController extends AbstractController
         return $this->redirectToRoute('app_login');
     }
 
-    public function clearSession()
+    public function clearSession(): void
     {
         $session = new Session();
         $session->clear();

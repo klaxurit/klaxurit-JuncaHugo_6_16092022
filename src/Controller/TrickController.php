@@ -39,10 +39,10 @@ class TrickController extends AbstractController
     #[Route('/new', name: 'app_trick_new', methods: ['GET', 'POST'])]
     public function new(
         Request $request,
-        EntityManagerInterface $entityManager,
         UserInterface $user = null,
         SluggerInterface $slugger,
         UploaderHelper $uploadedFile,
+        EntityManagerInterface $entityManager
     ): Response {
         if ($this->getUser()) {
             $trick = new Trick();
@@ -55,36 +55,9 @@ class TrickController extends AbstractController
                 $trick->setUser($user);
 
                 if ($form->get('medias')) {
-                    // get media
-                    foreach ($form->get('medias') as $mediaForm) {
-                        if ($mediaForm->get('type')->getData() === "Image") {
-                            $trickImg = $mediaForm->get('image')->getData();
-
-                            try {
-                                $filePath = $uploadedFile->uploadTrickImage($trickImg);
-                                // get the array form the class
-                            } catch (FileException $e) {
-                                $this->addFlash('danger', "Error on uploading file");
-                            }
-
-                            // stock file name in db
-                            $media = new Media();
-                            $media->setType("Image");
-                            $media->setFileName($filePath);
-                            $media->setAlt($mediaForm->get('alt')->getData());
-                            $trick->addMedia($media);
-                        } else {
-                            $media = new Media();
-                            $media->setType("Video");
-                            $media->setUrl($mediaForm->get('url')->getData());
-                            $trick->addMedia($media);
-                        }
-                    }
-                    $trick->setTrickGroup($form->get('trickGroup')->getData());
-                    $entityManager->persist($trick);
-                    $entityManager->flush();
+                    $this->mediaTrickManager($form, $trick, $uploadedFile, $entityManager);
+                    
                 }
-                // $trickRepository->add($trick, true);
                 return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
             }
 
@@ -188,34 +161,7 @@ class TrickController extends AbstractController
                 }
 
                 if ($form->get('medias')) {
-                    // get media
-                    foreach ($form->get('medias') as $mediaForm) {
-                        if ($mediaForm->get('type')->getData() === "Image") {
-                            $trickImg = $mediaForm->get('image')->getData();
-
-                            try {
-                                $filePath = $uploadedFile->uploadTrickImage($trickImg);
-                                // get the array form the class
-                            } catch (FileException $e) {
-                                $this->addFlash('danger', "Error on uploading file");
-                            }
-
-                            // stock file name in db
-                            $media = new Media();
-                            $media->setType("Image");
-                            $media->setFileName($filePath);
-                            $media->setAlt($mediaForm->get('alt')->getData());
-                            $trick->addMedia($media);
-                        } else {
-                            $media = new Media();
-                            $media->setType("Video");
-                            $media->setUrl($mediaForm->get('url')->getData());
-                            $trick->addMedia($media);
-                        }
-                    }
-                    $trick->setTrickGroup($form->get('trickGroup')->getData());
-                    $entityManager->persist($trick);
-                    $entityManager->flush();
+                    $this->mediaTrickManager($form, $trick, $uploadedFile, $entityManager);
                 }
                 $trick->setUpdatedAt(new DateTimeImmutable());
                 $trickRepository->add($trick, true);
@@ -250,7 +196,7 @@ class TrickController extends AbstractController
     }
 
     #[Route('/delete/media/{id}', name: 'app_trick_delete_media', methods: ['DELETE'])]
-    public function deleteMedia(Media $media, Request $request, MediaRepository $mediaRepository)
+    public function deleteMedia(Media $media, Request $request, MediaRepository $mediaRepository): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
@@ -285,5 +231,36 @@ class TrickController extends AbstractController
         } else {
             return new JsonResponse(['error' => 'Token Invalid'], 400);
         }
+    }
+
+    public function mediaTrickManager($form, $trick, $uploadedFile, EntityManagerInterface $entityManager): void
+    {
+        foreach ($form->get('medias') as $mediaForm) {
+            if ($mediaForm->get('type')->getData() === "Image") {
+                $trickImg = $mediaForm->get('image')->getData();
+
+                try {
+                    $filePath = $uploadedFile->uploadTrickImage($trickImg);
+                    // get the array form the class
+                } catch (FileException $e) {
+                    $this->addFlash('danger', "Error on uploading file");
+                }
+
+                // stock file name in db
+                $media = new Media();
+                $media->setType("Image");
+                $media->setFileName($filePath);
+                $media->setAlt($mediaForm->get('alt')->getData());
+                $trick->addMedia($media);
+            } else {
+                $media = new Media();
+                $media->setType("Video");
+                $media->setUrl($mediaForm->get('url')->getData());
+                $trick->addMedia($media);
+            }
+        }
+        $trick->setTrickGroup($form->get('trickGroup')->getData());
+        $entityManager->persist($trick);
+        $entityManager->flush();
     }
 }

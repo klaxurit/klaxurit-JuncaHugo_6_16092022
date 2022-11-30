@@ -117,36 +117,6 @@ class Trick
         return $this;
     }
 
-    // /**
-    //  * @return Collection<int, Media>
-    //  */
-    // public function getMedias(): Collection
-    // {
-    //     return $this->medias;
-    // }
-
-    // public function addMedia(Media $media): self
-    // {
-    //     if (!$this->medias->contains($media)) {
-    //         $this->medias->add($media);
-    //         $media->setTrick($this);
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function removeMedia(Media $media): self
-    // {
-    //     if ($this->medias->removeElement($media)) {
-    //         // set the owning side to null (unless already changed)
-    //         if ($media->getTrick() === $this) {
-    //             $media->setTrick(null);
-    //         }
-    //     }
-
-    //     return $this;
-    // }
-
     /**
      * @return Collection<int, Media>
      */
