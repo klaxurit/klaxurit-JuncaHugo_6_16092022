@@ -45,7 +45,7 @@ class AjaxController extends AbstractController
             'tricks' => $tricks,
             'current_user' => $userId
         ], 'json', [
-            'circular_reference_handler' => function ($object) {
+            'circular_reference_handler' => function (object $object) {
                 return $object->getId();
             },
         ]);
@@ -78,25 +78,11 @@ class AjaxController extends AbstractController
         $serializer = new Serializer($normalizers, $encoders);
 
         $jsonObject = $serializer->serialize($comments, 'json', [
-            'circular_reference_handler' => function ($object) {
+            'circular_reference_handler' => function (object $object) {
                 return $object->getId();
             },
         ]);
 
         return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
-    }
-
-    /**
-     * Using TrickVoter to check if current user is trick's owner
-     *
-     * @param Trick $trick
-     * @return boolean
-     */
-    public function isOwner(Trick $trick): bool
-    {
-        if (!$this->denyAccessUnlessGranted(TrickVoter::TRICK_DELETE, $trick)) {
-            return true;
-        }
-        return false;
     }
 }

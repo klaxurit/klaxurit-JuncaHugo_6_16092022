@@ -201,11 +201,11 @@ class TrickController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         // check if token is valid
-        if ($this->isCsrfTokenValid('delete' . $media->getId(), $data['_token'])) {
+        $mediaID = $media->getId();
+        if ($this->isCsrfTokenValid('delete' . $mediaID, $data['_token'])) {
             // get image name or url
             if ($media->getType() === Media::VIDEO) {
                 $mediaName = $media->getUrl();
-
                 $mediaRepository->remove($media, true);
 
                 return new JsonResponse(['success' => 1]);
@@ -233,7 +233,12 @@ class TrickController extends AbstractController
         }
     }
 
-    public function mediaTrickManager($form, $trick, $uploadedFile, EntityManagerInterface $entityManager): void
+    public function mediaTrickManager(
+        object $form, 
+        Trick $trick, 
+        UploaderHelper $uploadedFile, 
+        EntityManagerInterface $entityManager
+        ): void
     {
         foreach ($form->get('medias') as $mediaForm) {
             if ($mediaForm->get('type')->getData() === "Image") {

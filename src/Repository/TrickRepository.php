@@ -91,7 +91,7 @@ class TrickRepository extends ServiceEntityRepository
      *
      * @return void
      */
-    public function getTotalTricks(): array
+    public function getTotalTricks(): int
     {
         $query = $this->createQueryBuilder('t')
             ->select('COUNT(t)');

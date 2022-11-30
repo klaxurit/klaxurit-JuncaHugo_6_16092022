@@ -65,11 +65,11 @@ class UserMessageRepository extends ServiceEntityRepository
      *
      * @return void
      */
-    public function getTotalComments(): array
+    public function getTotalComments(): int
     {
         $query = $this->createQueryBuilder('c')
             ->select('COUNT(c)');
-
+            
         return $query->getQuery()->getSingleScalarResult();
     }
 }
