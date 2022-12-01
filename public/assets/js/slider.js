@@ -32,8 +32,6 @@ class Carousel {
         this.moveCallbacks.forEach(cb => cb(0))
         this.onWindowResize()
         window.addEventListener('resize', this.onWindowResize.bind(this))
-        this.onWindowResize2()
-        window.addEventListener('resize', this.onWindowResize2.bind(this))
         this.root.addEventListener('keyup', (e) => {
             if (e.key == 'ArrowRight' || e.key === 'Right') {
                 this.next()
@@ -108,16 +106,12 @@ class Carousel {
 
     onWindowResize () {
         let mobile = window.innerWidth < 800
+        let laptop = window.innerWidth < 1200
         if (mobile !== this.isMobile) {
             this.isMobile = mobile
             this.setStyle()
             this.moveCallbacks.forEach(cb => cb(this.currentItem))
-        }
-    }
-
-    onWindowResize2 () {
-        let laptop = window.innerWidth < 1200
-        if (laptop !== this.isLaptop) {
+        } else if (laptop !== this.isLaptop) {
             this.isLaptop = laptop
             this.setStyle()
             this.moveCallbacks.forEach(cb => cb(this.currentItem))
@@ -150,10 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
         slidesToScroll: 1,
         slidesVisible: 3,
         loop: false
-    })
-})
-
-document.addEventListener('DOMContentLoaded', function () {
+    });
     new Carousel(document.querySelector('#carousel2'), {
         slidesToScroll: 1,
         slidesVisible: 1,
