@@ -13,7 +13,6 @@ use App\Repository\MediaRepository;
 use App\Repository\TrickRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserMessageRepository;
-use DateTime;
 use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -56,7 +55,6 @@ class TrickController extends AbstractController
 
                 if ($form->get('medias')) {
                     $this->mediaTrickManager($form, $trick, $uploadedFile, $entityManager);
-                    
                 }
                 return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
             }
@@ -81,13 +79,10 @@ class TrickController extends AbstractController
     ): Response {
         // define number of comments on page
         $limit = 3;
-
         // get page number
         $page = (int)$request->query->get("page", 1);
-
         // get comments of page
         $comments = $userMessage->getPaginatedComments($page, $limit, $trick);
-
         // get total number of comments
         $total = $userMessage->getTotalComments();
 
@@ -95,35 +90,19 @@ class TrickController extends AbstractController
         $comment = new UserMessage();
         $commentForm = $this->createForm(UserMessageType::class, $comment);
         $commentForm->handleRequest($request);
-
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
-            $comment->setTrick($trick);
-            $comment->setStatus(false);
-            $comment->setUser($user);
-
-            $entityManager->persist($comment);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Your comment has been successfully submitted!');
-            return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
+            $this->commentTrickManager($comment, $trick, $entityManager, $user);
         }
-        $mediaImages = $mediaRepository->findAllMediaImageOfATrick($trick->getId());
 
+        $mediaImages = $mediaRepository->findAllMediaImageOfATrick($trick->getId());
         if (!$mediaImages && $user) {
             $this->addFlash('warning', 'To have a cover image on this trick, you must first <a href="/trick/' . $trick->getId() . '/edit">upload images</a>.');
         }
 
         $form = $this->createForm(UpdateCoverImageType::class, $trick);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
-            $trickCoverImage = $form->get('cover_image')->getData();
-            $trick->setCoverImage($trickCoverImage);
-            $entityManager->persist($trick);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'Cover image successfully updated!');
-            return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
+            $this->coverImageTrickManager($form, $trick, $entityManager);
         }
 
         return $this->render('trick/show.html.twig', [
@@ -234,12 +213,11 @@ class TrickController extends AbstractController
     }
 
     public function mediaTrickManager(
-        object $form, 
-        Trick $trick, 
-        UploaderHelper $uploadedFile, 
+        object $form,
+        Trick $trick,
+        UploaderHelper $uploadedFile,
         EntityManagerInterface $entityManager
-        ): void
-    {
+    ): void {
         foreach ($form->get('medias') as $mediaForm) {
             if ($mediaForm->get('type')->getData() === "Image") {
                 $trickImg = $mediaForm->get('image')->getData();
@@ -267,5 +245,36 @@ class TrickController extends AbstractController
         $trick->setTrickGroup($form->get('trickGroup')->getData());
         $entityManager->persist($trick);
         $entityManager->flush();
+    }
+
+    public function commentTrickManager(
+        UserMessage $comment,
+        Trick $trick,
+        EntityManagerInterface $entityManager,
+        UserInterface $user = null,
+    ): Response {
+        $comment->setTrick($trick);
+        $comment->setStatus(false);
+        $comment->setUser($user);
+
+        $entityManager->persist($comment);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Your comment has been successfully submitted!');
+        return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
+    }
+
+    public function coverImageTrickManager(
+        object $form,
+        Trick $trick,
+        EntityManagerInterface $entityManager
+    ): Response {
+        $trickCoverImage = $form->get('cover_image')->getData();
+        $trick->setCoverImage($trickCoverImage);
+        $entityManager->persist($trick);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Cover image successfully updated!');
+        return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
     }
 }

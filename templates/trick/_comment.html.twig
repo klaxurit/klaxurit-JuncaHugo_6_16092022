@@ -12,8 +12,9 @@
 				<a class="avatar" href="#">
 				{% if comment.user.avatar %}
 					<img src="{{ asset('/uploads/' ~ comment.user.avatar) }}" width="35" alt="Profile Avatar"/>
-				{% endif %}
+				{% else %}
 					<img src="{{ asset('assets/images/avatar.png') }}" width="35" alt="Profile Avatar"/>
+				{% endif %}
 				</a>
 				<p>{{ comment.content }}</p>
 			</li>

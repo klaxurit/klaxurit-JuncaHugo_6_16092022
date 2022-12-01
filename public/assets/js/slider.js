@@ -73,6 +73,19 @@ class Carousel {
 
     next () {
         this.goToItem(this.currentItem + this.slidesToScroll)
+        // var radios = document.querySelectorAll('input[name="update_cover_image[cover_image]"]');
+        // console.log(radios)
+        // radios.forEach(radio => radio.addEventListener('change', () => console.log(radio.checked)));
+        // if(this.options.slidesVisible === 1) {
+        //     const radioButtons = document.querySelectorAll('input[name="update_cover_image[cover_image]"]');
+        //     for (const radioButton of radioButtons) {
+        //         radioButton.checked
+        //         console.log(this.currentItem.)
+        //         // console.log(radioButton.checked)
+        //     }
+            // console.log(radioButtons)
+            // document.getElementsByClassName("form-check-input").checked = true;
+        // }
     }
 
     prev () {
@@ -133,10 +146,12 @@ class Carousel {
     }
 
     get slidesVisible() {
-        if (this.isMobile || this.items.length < 3){
-            return 1
-        } else if (this.isLaptop){
-            return 2
+        if(this.options.slidesVisible > 1){
+            if (this.isMobile || this.items.length < 3){
+                return 1
+            } else if (this.isLaptop){
+                return 2
+            }
         }
         return this.options.slidesVisible
     }
