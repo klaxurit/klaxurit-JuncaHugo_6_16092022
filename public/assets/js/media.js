@@ -1,29 +1,21 @@
 window.onload = () => {
     const initMediaTypeSelector = (item) => {
         const selectors = item.querySelectorAll('.btn-type')
+        const imageUpload = item.querySelector('#image-upload')
+        const imageAlt = item.querySelector('#image-alt')
+        const videoUrl = item.querySelector('#video-url')
         selectors.forEach(selector => {
             selector.addEventListener('change', (e) => {
                 if (e.currentTarget.value === 'Image') {
-                    item.querySelector('#image-upload').classList.remove('d-none')
-                    item.querySelector('#image-alt').classList.remove('d-none')
-                    item.querySelector('#video-url').classList.add('d-none') 
+                    imageUpload.classList.remove('d-none')
+                    imageAlt.classList.remove('d-none')
+                    videoUrl.classList.add('d-none') 
                 } else if (e.currentTarget.value === 'Video') {
-                    item.querySelector('#video-url').classList.remove('d-none')
-                    item.querySelector('#image-upload').classList.add('d-none')
-                    item.querySelector('#image-alt').classList.add('d-none')
+                    videoUrl.classList.remove('d-none')
+                    imageUpload.classList.add('d-none')
+                    imageAlt.classList.add('d-none')
                 }
             })
-
-            if (selector.value === 'Image' && selector.checked) {
-                item.querySelector('#image-upload').classList.remove('d-none')
-                item.querySelector('#image-alt').classList.remove('d-none')
-                item.querySelector('#video-url').classList.add('d-none') 
-            } else if (selector.value === 'Video' && selector.checked) {
-                item.querySelector('#video-url').classList.remove('d-none')
-                item.querySelector('#image-upload').classList.add('d-none')
-                item.querySelector('#image-alt').classList.add('d-none')
-            }
-            
         })
     }
 
