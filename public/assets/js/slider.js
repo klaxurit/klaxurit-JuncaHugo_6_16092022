@@ -109,13 +109,16 @@ class Carousel {
         let laptop = window.innerWidth < 1200
         if (mobile !== this.isMobile) {
             this.isMobile = mobile
-            this.setStyle()
-            this.moveCallbacks.forEach(cb => cb(this.currentItem))
+            this.resizeWindow()
         } else if (laptop !== this.isLaptop) {
             this.isLaptop = laptop
-            this.setStyle()
-            this.moveCallbacks.forEach(cb => cb(this.currentItem))
+            this.resizeWindow()
         }
+    }
+
+    resizeWindow() {
+        this.setStyle()
+        this.moveCallbacks.forEach(cb => cb(this.currentItem))
     }
 
     //param String return HTMLElement
