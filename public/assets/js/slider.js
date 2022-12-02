@@ -73,19 +73,6 @@ class Carousel {
 
     next () {
         this.goToItem(this.currentItem + this.slidesToScroll)
-        // var radios = document.querySelectorAll('input[name="update_cover_image[cover_image]"]');
-        // console.log(radios)
-        // radios.forEach(radio => radio.addEventListener('change', () => console.log(radio.checked)));
-        // if(this.options.slidesVisible === 1) {
-        //     const radioButtons = document.querySelectorAll('input[name="update_cover_image[cover_image]"]');
-        //     for (const radioButton of radioButtons) {
-        //         radioButton.checked
-        //         console.log(this.currentItem.)
-        //         // console.log(radioButton.checked)
-        //     }
-            // console.log(radioButtons)
-            // document.getElementsByClassName("form-check-input").checked = true;
-        // }
     }
 
     prev () {
@@ -111,6 +98,10 @@ class Carousel {
         this.container.style.transform = 'translate3d(' + translateX + '%, 0, 0)'
         this.currentItem = index
         this.moveCallbacks.forEach(cb => cb(index))
+        if (this.options.slidesVisible === 1) {
+            this.items[index].querySelector('input[name="update_cover_image[cover_image]"]').checked = true
+        }
+        // console.log(this.items[index])
     }
 
     onMove (cb) {

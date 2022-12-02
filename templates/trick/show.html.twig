@@ -9,7 +9,6 @@
 
 {% block body %}
 
-
 	<div class="modal fade modal-lg" id="videomodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -35,8 +34,8 @@
 	<div class="container main my-5">
 		<div class="text-end">
 			{% if app.user %}
-			<a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="btn btn-m btn-primary">
-				<i class="bi bi-pencil-fill"></i>
+			<a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="btn btn-md btn-primary snow__text">
+				Edit
 			</a>
 			{% endif %}
 		</div>
@@ -103,7 +102,6 @@
 				</div>
 			</div>
 
-
 			<div class="trick__separator my-3">
 				<hr class="rounded">
 			</div>
@@ -127,9 +125,7 @@
 					</div>
 			{% endif %}
 			</div>
-
-			<a href="{{ path('app_home') }}" class="btn btn-m btn-secondary">Back to list</a>
-
+			<a href="{{ path('app_home') }}" class="btn snow__text btn-secondary">Back to list</a>
 		</div>
 
 	<div
@@ -188,6 +184,8 @@
 		$(function () {
 			$('.popModal').on('click', function () {
 				//$('.imagepreview').attr('src', $(this).find('img').attr('src'));
+				$('.form-check-label').hide()
+				$('.form-check-input').hide()
 				$('#coverImage').modal('show');
 			});
 		});
