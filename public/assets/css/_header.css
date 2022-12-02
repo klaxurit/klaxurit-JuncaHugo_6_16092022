@@ -17,3 +17,9 @@ header {
     letter-spacing: 0.1em;
     font-size: 4vw;
 }
+
+.header__snowtricks-lead-error {
+    margin-top: .5em;
+    letter-spacing: 0.1em;
+    font-size: 4vw;
+}

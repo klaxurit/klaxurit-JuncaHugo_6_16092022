@@ -43,32 +43,33 @@ class TrickController extends AbstractController
         UploaderHelper $uploadedFile,
         EntityManagerInterface $entityManager
     ): Response {
-        if ($this->getUser()) {
-            $trick = new Trick();
-            $form = $this->createForm(TrickType::class, $trick);
-            $form->handleRequest($request);
+        // if ($this->getUser()) {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        $trick = new Trick();
+        $form = $this->createForm(TrickType::class, $trick);
+        $form->handleRequest($request);
 
-            if ($form->isSubmitted() && $form->isValid()) {
-                $trickSlug = $slugger->slug($form->get('name')->getData());
-                $trick->setSlug($trickSlug);
-                $trick->setUser($user);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $trickSlug = $slugger->slug($form->get('name')->getData());
+            $trick->setSlug($trickSlug);
+            $trick->setUser($user);
 
-                if ($form->get('medias')) {
-                    $this->mediaTrickManager($form, $trick, $uploadedFile, $entityManager);
-                }
-                return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+            if ($form->get('medias')) {
+                $this->mediaTrickManager($form, $trick, $uploadedFile, $entityManager);
             }
-
-            return $this->render('trick/new.html.twig', [
-                'trickForm' => $form->createView(),
-                'controller_name' => 'TrickController'
-            ]);
+            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
-        $this->addFlash('danger', "Access denied, you must login to add a new trick.");
-        return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+
+        return $this->render('trick/new.html.twig', [
+            'trickForm' => $form->createView(),
+            'controller_name' => 'TrickController'
+        ]);
+        // }
+        // $this->addFlash('danger', "Access denied, you must login to add a new trick.");
+        // return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
     }
 
-    #[Route('/{id}', name: 'app_trick_show', methods: ['GET', 'POST'])]
+    #[Route('/{slug}', name: 'app_trick_show', methods: ['GET', 'POST'])]
     public function show(
         Trick $trick,
         Request $request,
@@ -78,7 +79,7 @@ class TrickController extends AbstractController
         UserInterface $user = null,
     ): Response {
         // define number of comments on page
-        $limit = 3;
+        $limit = 10;
         // get page number
         $page = (int)$request->query->get("page", 1);
         // get comments of page
@@ -116,7 +117,7 @@ class TrickController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
+    #[Route('/{slug}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
     public function edit(
         Request $request,
         Trick $trick,
@@ -126,41 +127,39 @@ class TrickController extends AbstractController
         SluggerInterface $slugger,
         UserInterface $user = null,
     ): Response {
-        if ($this->getUser()) {
-            $form = $this->createForm(TrickType::class, $trick);
-            $form->handleRequest($request);
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        $form = $this->createForm(TrickType::class, $trick);
+        $form->handleRequest($request);
 
-            if ($form->isSubmitted() && $form->isValid()) {
-                $trickSlug = $slugger->slug($form->get('name')->getData());
-                $trick->setSlug($trickSlug);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $trickSlug = $slugger->slug($form->get('name')->getData());
+            $trick->setSlug($trickSlug);
 
-                // if trick modified by author dont add contributor
-                if ($trick->getUser()->getId() !== $user->getId()) {
-                    $trick->addContributor($user);
-                }
-
-                if ($form->get('medias')) {
-                    $this->mediaTrickManager($form, $trick, $uploadedFile, $entityManager);
-                }
-                $trick->setUpdatedAt(new DateTimeImmutable());
-                $trickRepository->add($trick, true);
-
-                $this->addFlash('success', "Trick successfully updated.");
-                return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()], Response::HTTP_SEE_OTHER);
+            // if trick modified by author dont add contributor
+            if ($trick->getUser()->getId() !== $user->getId()) {
+                $trick->addContributor($user);
             }
-            return $this->render('trick/edit.html.twig', [
-                'trickForm' => $form->createView(),
-                'trick' => $trick,
-                'controller_name' => 'TrickController',
-            ]);
+
+            if ($form->get('medias')) {
+                $this->mediaTrickManager($form, $trick, $uploadedFile, $entityManager);
+            }
+            $trick->setUpdatedAt(new DateTimeImmutable());
+            $trickRepository->add($trick, true);
+
+            $this->addFlash('success', "Trick successfully updated.");
+            return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()], Response::HTTP_SEE_OTHER);
         }
-        $this->addFlash('danger', "Access denied, you cannot acces to this page.");
-        return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+        return $this->render('trick/edit.html.twig', [
+            'trickForm' => $form->createView(),
+            'trick' => $trick,
+            'controller_name' => 'TrickController',
+        ]);
     }
 
     #[Route('/delete/{id}', name: 'app_trick_delete', methods: ['DELETE', 'GET'])]
     public function delete(Trick $trick, TrickRepository $trickRepository): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         try {
             $this->denyAccessUnlessGranted('trick_delete', $trick);
             $trickRepository->remove($trick, true);
@@ -177,6 +176,7 @@ class TrickController extends AbstractController
     #[Route('/delete/media/{id}', name: 'app_trick_delete_media', methods: ['DELETE'])]
     public function deleteMedia(Media $media, Request $request, MediaRepository $mediaRepository): JsonResponse
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         $data = json_decode($request->getContent(), true);
 
         // check if token is valid
@@ -261,7 +261,7 @@ class TrickController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Your comment has been successfully submitted!');
-        return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
+        return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
     }
 
     public function coverImageTrickManager(
@@ -275,6 +275,6 @@ class TrickController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'Cover image successfully updated!');
-        return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
+        return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
     }
 }

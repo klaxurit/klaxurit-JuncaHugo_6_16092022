@@ -34,7 +34,7 @@
 	<div class="container main my-5">
 		<div class="text-end">
 			{% if app.user %}
-			<a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="btn btn-md btn-primary snow__text">
+			<a href="{{ path('app_trick_edit', {'slug': trick.slug}) }}" class="btn btn-md btn-primary snow__text">
 				Edit
 			</a>
 			{% endif %}
@@ -140,6 +140,9 @@
 					<h5 class="modal-title">Edit cover image</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
+				<div class="alert alert-info d-block" role="alert">
+					For new cover image use <a href="{{ path('app_trick_edit', {'slug': trick.slug}) }}" class="cover__edit_link snow__text">the edit form.</a>
+				</div>
 				<div class="modal-body">
 					{{ form_start(trickForm) }}
 					{{ form_widget(trickForm._token) }}
@@ -151,7 +154,7 @@
 						</div>
 						{% endfor %}
 					</div>
-					<button type="submit" class="btn btn-primary my-3">Save</button>
+					<button type="submit" class="btn btn-primary snow__text my-3">Save</button>
 					{{ form_end(trickForm, { render_rest: false }) }}
 				</div>
 			</div>

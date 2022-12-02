@@ -268,3 +268,13 @@ hr.rounded {
     background-color: #00BBF0;
     border: 2px solid white;
 }
+
+.broken__board {
+    filter: invert(100%);
+    -webkit-filter: invert(100%);
+    width: 15vw;
+}
+
+.cover__edit_link:hover {
+    color: #005792;
+}
