@@ -43,7 +43,6 @@ class TrickController extends AbstractController
         UploaderHelper $uploadedFile,
         EntityManagerInterface $entityManager
     ): Response {
-        // if ($this->getUser()) {
         $this->denyAccessUnlessGranted('ROLE_USER');
         $trick = new Trick();
         $form = $this->createForm(TrickType::class, $trick);
@@ -64,9 +63,6 @@ class TrickController extends AbstractController
             'trickForm' => $form->createView(),
             'controller_name' => 'TrickController'
         ]);
-        // }
-        // $this->addFlash('danger', "Access denied, you must login to add a new trick.");
-        // return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
     }
 
     #[Route('/{slug}', name: 'app_trick_show', methods: ['GET', 'POST'])]
@@ -94,6 +90,8 @@ class TrickController extends AbstractController
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
             $this->commentTrickManager($comment, $trick, $entityManager, $user);
         }
+        // $this->addFlash('success', 'Your comment has been successfully submitted!');
+        // return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
 
         $mediaImages = $mediaRepository->findAllMediaImageOfATrick($trick->getId());
         if (!$mediaImages && $user) {
@@ -224,7 +222,7 @@ class TrickController extends AbstractController
 
                 try {
                     $filePath = $uploadedFile->uploadTrickImage($trickImg);
-                    // get the array form the class
+                    // get the array from the class
                 } catch (FileException $e) {
                     $this->addFlash('danger', "Error on uploading file");
                 }
