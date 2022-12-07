@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\UserMessageRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserMessageRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserMessageRepository::class)]
 class UserMessage
@@ -24,6 +25,7 @@ class UserMessage
     private ?User $user = null;
 
     #[ORM\Column]
+    #[Groups("trick:read")]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'userMessages')]

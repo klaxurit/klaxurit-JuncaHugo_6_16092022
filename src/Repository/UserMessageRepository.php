@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Trick;
 use App\Entity\UserMessage;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
@@ -61,6 +62,19 @@ class UserMessageRepository extends ServiceEntityRepository
     }
 
     /**
+     * Return all comments order by created at DESC
+     *
+     * @return array
+     */
+    public function findAllOrderByCreatedAt(): array
+    {
+        $query = $this->createQueryBuilder('c')
+        ->orderBy('c.createdAt', 'DESC');
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
      * Return number of comments
      *
      * @return void
@@ -71,5 +85,27 @@ class UserMessageRepository extends ServiceEntityRepository
             ->select('COUNT(c)');
             
         return $query->getQuery()->getSingleScalarResult();
+    }
+
+    public function getCommentsOfATrick(int $page, int $trickId): object
+    {
+        $pageSize = 3;
+        $firstResult = (($page - 1) * $pageSize) + 7;
+
+        $queryBuilder = $this->createQueryBuilder('c')
+        ->andWhere('c.trick = :trickId')
+        ->setParameter('trickId', $trickId);
+
+        // Set the returned page
+        $queryBuilder->setFirstResult($firstResult);
+        $queryBuilder->setMaxResults($pageSize);
+
+        // Generate the Query
+        $query = $queryBuilder->getQuery();
+
+        //Generate the Paginator
+        $paginator = new Paginator($query, true);
+        // dd($paginator);
+        return $paginator;
     }
 }

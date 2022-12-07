@@ -38,7 +38,7 @@ class AdminController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
         return $this->render('admin/comments.html.twig', [
-            'comments' => $comments->findAll(),
+            'comments' => $comments->findAllOrderByCreatedAt(),
             'controller_name' => 'AdminController',
         ]);
     }

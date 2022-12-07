@@ -86,6 +86,7 @@
         let currentPage = 2;
         $("#loadMore").on("click", function (event) {
             $.get("/ajax/trick?page=" + currentPage).then(resp => {
+            console.log(resp.tricks)
                 if (resp.tricks.length < 6) {
                     currentPage++;
                     addTrickItem(resp);

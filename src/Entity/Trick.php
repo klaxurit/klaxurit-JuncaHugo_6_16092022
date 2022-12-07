@@ -8,6 +8,7 @@ use App\Repository\TrickRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TrickRepository::class)]
 #[UniqueEntity(
@@ -20,41 +21,53 @@ class Trick
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("trick:read")]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("trick:read")]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups("trick:read")]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("trick:read")]
     private ?string $slug = null;
 
     #[ORM\Column]
+    #[Groups("trick:read")]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, orphanRemoval: true, cascade:['persist'])]
+    #[Groups("trick:read")]
     private Collection $medias;
 
     #[ORM\ManyToOne(inversedBy: 'trick')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups("trick:read")]
     private ?Group $trickGroup = null;
 
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: UserMessage::class, orphanRemoval: true, cascade:['persist'])]
+    #[Groups("trick:read")]
     private Collection $userMessages;
 
     #[ORM\ManyToOne(inversedBy: 'tricks')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups("trick:read")]
     private ?User $user = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'trick_contribution')]
+    #[Groups("trick:read")]
     private Collection $contributors;
 
     #[ORM\OneToOne(targetEntity: Media::class, cascade: ["persist", "remove"])]
+    #[Groups("trick:read")]
     private ?Media $cover_image = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups("trick:read")]
     private ?\DateTimeImmutable $updated_at = null;
 
     public function __construct()
