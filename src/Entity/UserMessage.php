@@ -13,23 +13,28 @@ class UserMessage
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("comment:read")]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups("comment:read")]
     private ?string $content = null;
 
     #[ORM\Column]
+    #[Groups("comment:read")]
     private ?bool $status = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[Groups("comment:read")]
     private ?User $user = null;
 
     #[ORM\Column]
-    #[Groups("trick:read")]
+    #[Groups("comment:read")]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'userMessages')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups("comment:read")]
     private ?Trick $trick = null;
 
     public function __construct()

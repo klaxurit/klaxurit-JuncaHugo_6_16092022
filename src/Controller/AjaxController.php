@@ -50,24 +50,9 @@ class AjaxController extends AbstractController
         Request $request,
         UserMessageRepository $userMessage,
     ): Response {
-        $page = (int)$request->query->get("page");
-        $trickId = (int)$request->query->get("trickid");
-        $comments = $userMessage->getCommentsOfATrick($page, $trickId);
-        $total = $userMessage->getTotalComments();
-
-        $encoders = [new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
-        $serializer = new Serializer($normalizers, $encoders);
-
-        $jsonObject = $serializer->serialize([
-            'comments' => $comments,
-            'total' => $total
-        ], 'json', [
-            'circular_reference_handler' => function (object $object) {
-                return $object->getId();
-            },
-        ]);
-
-        return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
+        return $this->json([
+            'comments' => $userMessage->getCommentsOfATrick((int)$request->query->get("page"), (int)$request->query->get("trickid")),
+            'total' => $userMessage->getTotalComments()
+        ], 200, [], ['groups' => 'comment:read']);
     }
 }

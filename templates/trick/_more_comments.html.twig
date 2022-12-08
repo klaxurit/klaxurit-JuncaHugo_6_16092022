@@ -7,7 +7,7 @@
     const addCommentItem = function({comments, total}) {
 
         comments.forEach(comment => {
-            let formatedCreatedAt = moment.unix(comment.createdAt.timestamp).format("YYYY-MM-DD HH:mm:ss")
+            let formatedCreatedAt = moment(comment.createdAt).format("YYYY-MM-DD HH:mm:ss")
             let avatar = comment.user.avatar ? '/uploads/' + comment.user.avatar : '/assets/images/avatar.png'
             $('#comment-section').append(
                 `

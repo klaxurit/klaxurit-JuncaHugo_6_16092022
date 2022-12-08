@@ -49,6 +49,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $is_verified = false;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Groups("comment:read")]
     private string $username;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -58,6 +59,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $tricks;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("comment:read")]
     private ?string $avatar = null;
 
     #[ORM\ManyToMany(targetEntity: Trick::class, mappedBy: 'contributors')]
