@@ -89,8 +89,8 @@ class UserMessageRepository extends ServiceEntityRepository
 
     public function getCommentsOfATrick(int $page, int $trickId): object
     {
-        $pageSize = 3;
-        $firstResult = (($page - 1) * $pageSize) + 7;
+        $pageSize = 10;
+        $firstResult = (($page - 1) * $pageSize);
 
         $queryBuilder = $this->createQueryBuilder('c')
         ->andWhere('c.trick = :trickId')

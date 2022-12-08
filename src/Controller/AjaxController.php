@@ -34,7 +34,7 @@ class AjaxController extends AbstractController
         return $this->json([
             'total' => $trickRepository->getTotalTricks(),
             'tricks' => $trickRepository->getTricks((int)$request->query->get("page")),
-            'current_user' => $user ? $user->getId() : "",
+            'current_user' => $user ? $user : "",
         ], 200, [], ['groups' => 'trick:read']);
     }
 

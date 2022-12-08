@@ -31,18 +31,18 @@
         const trickId = document.querySelector('#loadMore').dataset.trickid
         $("#loadMore").on("click", function(event){
             $.get("/ajax/comment?page=" + currentPage + "&trickid=" + trickId)
-            .then(comments => {
-                if (comments.length < 10){
+            .then(resp => {
+                if (resp.comments.length < 10){
                     currentPage++;
-                    addCommentItem(comments);
+                    addCommentItem(resp);
                     deactivateButton();
-                } else if (comments.length + 10 === comments.total){
+                } else if (resp.comments.length + 10 === comments.total){
                     currentPage++;
-                    addCommentItem(comments);
+                    addCommentItem(resp);
                     deactivateButton();
                 } else {
                     currentPage++;
-                    addCommentItem(comments);
+                    addCommentItem(resp);
                 }
             })
         });

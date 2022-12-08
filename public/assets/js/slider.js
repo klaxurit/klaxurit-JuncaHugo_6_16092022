@@ -101,7 +101,6 @@ class Carousel {
         if (this.options.slidesVisible === 1) {
             this.items[index].querySelector('input[name="update_cover_image[cover_image]"]').checked = true
         }
-        // console.log(this.items[index])
     }
 
     onMove (cb) {

@@ -8,6 +8,7 @@
 	<script language="javascript">
 	const addTrickItem = function ({tricks, current_user}) {
         tricks.forEach(trick => {
+            console.log(current_user.roles.includes("ROLE_ADMIN"), trick.user)
             const trickCoverImage = getTrickCoverImage(trick);
             const trickImage = trickCoverImage.trickCoverImageFileName ? '/uploads/' + trickCoverImage.trickCoverImageFileName : '/assets/images/empty.jpg'
             let trickImageAlt = trickCoverImage.trickCoverImageAlt ? trickCoverImage.trickCoverImageAlt : 'no picture to show'
@@ -45,7 +46,7 @@
                 $trickEl.find(".trick__actions").append($editBtn)
             }
             
-            if (trick.user.id === current_user) {
+            if (trick.user.id === current_user.id || current_user.roles.includes("ROLE_ADMIN")) {
                 const $deleteBtn = $('<a></a>')
                 $deleteBtn.attr({
                     href: "#delete__modal",
@@ -86,7 +87,6 @@
         let currentPage = 2;
         $("#loadMore").on("click", function (event) {
             $.get("/ajax/trick?page=" + currentPage).then(resp => {
-            console.log(resp.tricks)
                 if (resp.tricks.length < 6) {
                     currentPage++;
                     addTrickItem(resp);
