@@ -66,10 +66,12 @@ class UserMessageRepository extends ServiceEntityRepository
      *
      * @return array
      */
-    public function findAllOrderByCreatedAt(): array
+    public function findAllOrderByCreatedAt(int $page, int $limit): array
     {
         $query = $this->createQueryBuilder('c')
-        ->orderBy('c.createdAt', 'DESC');
+        ->orderBy('c.createdAt', 'DESC')
+        ->setFirstResult(($page * $limit) - $limit)
+        ->setMaxResults($limit);
 
         return $query->getQuery()->getResult();
     }
@@ -94,6 +96,7 @@ class UserMessageRepository extends ServiceEntityRepository
 
         $queryBuilder = $this->createQueryBuilder('c')
         ->andWhere('c.trick = :trickId')
+        ->andWhere('c.status = 1')
         ->setParameter('trickId', $trickId);
 
         // Set the returned page

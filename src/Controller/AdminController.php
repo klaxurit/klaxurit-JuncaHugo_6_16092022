@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\UserMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserMessageRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,11 +35,18 @@ class AdminController extends AbstractController
      * @param UserMessageRepository $comments
      * @return Response
      */
-    public function manageComments(UserMessageRepository $comments): Response
+    public function manageComments(UserMessageRepository $comments, Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_ADMIN');
+        $limit = 10;
+        $page = (int)$request->query->get("page", 1);
+        $total = $comments->getTotalComments();
+
         return $this->render('admin/comments.html.twig', [
-            'comments' => $comments->findAllOrderByCreatedAt(),
+            'comments' => $comments->findAllOrderByCreatedAt($page, $limit),
+            'total' => $total,
+            'limit' => $limit,
+            'page' => $page,
             'controller_name' => 'AdminController',
         ]);
     }

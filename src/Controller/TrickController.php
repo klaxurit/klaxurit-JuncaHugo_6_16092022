@@ -101,6 +101,7 @@ class TrickController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->coverImageTrickManager($form, $trick, $entityManager);
+            return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
         }
 
         return $this->render('trick/show.html.twig', [
@@ -263,13 +264,13 @@ class TrickController extends AbstractController
         object $form,
         Trick $trick,
         EntityManagerInterface $entityManager
-    ): Response {
+    ): void {
         $trickCoverImage = $form->get('cover_image')->getData();
         $trick->setCoverImage($trickCoverImage);
         $entityManager->persist($trick);
         $entityManager->flush();
 
         $this->addFlash('success', 'Cover image successfully updated!');
-        return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
+        
     }
 }
