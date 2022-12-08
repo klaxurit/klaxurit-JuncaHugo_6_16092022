@@ -89,9 +89,8 @@ class TrickController extends AbstractController
         $commentForm->handleRequest($request);
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
             $this->commentTrickManager($comment, $trick, $entityManager, $user);
+            return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
         }
-        // $this->addFlash('success', 'Your comment has been successfully submitted!');
-        // return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
 
         $mediaImages = $mediaRepository->findAllMediaImageOfATrick($trick->getId());
         if (!$mediaImages && $user) {
@@ -250,16 +249,14 @@ class TrickController extends AbstractController
         Trick $trick,
         EntityManagerInterface $entityManager,
         UserInterface $user = null,
-    ): Response {
+    ): void {
         $comment->setTrick($trick);
         $comment->setStatus(false);
         $comment->setUser($user);
 
         $entityManager->persist($comment);
         $entityManager->flush();
-
         $this->addFlash('success', 'Your comment has been successfully submitted!');
-        return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
     }
 
     public function coverImageTrickManager(
