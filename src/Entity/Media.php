@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\MediaRepository;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: MediaRepository::class)]
@@ -18,15 +19,18 @@ class Media
     private int $id;
 
     #[ORM\Column(length: 255)]
+    #[Groups("trick:read")]
     private ?string $type = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("trick:read")]
     private ?string $alt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $url = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("trick:read")]
     private ?string $fileName = null;
 
     #[ORM\ManyToOne(inversedBy: 'medias')]
