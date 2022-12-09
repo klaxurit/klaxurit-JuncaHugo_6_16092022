@@ -29,14 +29,17 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class TrickController extends AbstractController
 {
     private object $trickManager;
+    private object $entityManager;
     private object $slugger;
     public const NUMBER_OF_TRICK_PER_PAGE = 10;
 
-    public function __construct(TrickManager $trickManager, SluggerInterface $slugger,)
+    public function __construct(TrickManager $trickManager, SluggerInterface $slugger, EntityManagerInterface $entityManager)
     {
         $this->trickManager = $trickManager;
+        $this->entityManager = $entityManager;
         $this->slugger = $slugger;
     }
+    
     #[Route('/', name: 'app_trick_index', methods: ['GET'])]
     public function index(TrickRepository $trickRepository): Response
     {
@@ -50,7 +53,6 @@ class TrickController extends AbstractController
         Request $request,
         UserInterface $user = null,
         UploaderHelper $uploadedFile,
-        EntityManagerInterface $entityManager
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
         $trick = new Trick();
@@ -63,7 +65,7 @@ class TrickController extends AbstractController
             $trick->setUser($user);
 
             if ($form->get('medias')) {
-                $this->mediaTrickManager($form, $trick, $uploadedFile, $entityManager);
+                $this->mediaTrickManager($form, $trick, $uploadedFile, $this->entityManager);
             }
             return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
@@ -123,7 +125,6 @@ class TrickController extends AbstractController
     public function edit(
         Request $request,
         Trick $trick,
-        EntityManagerInterface $entityManager,
         TrickRepository $trickRepository,
         UploaderHelper $uploadedFile,
         UserInterface $user = null,
@@ -142,7 +143,7 @@ class TrickController extends AbstractController
             }
 
             if ($form->get('medias')) {
-                $this->mediaTrickManager($form, $trick, $uploadedFile, $entityManager);
+                $this->mediaTrickManager($form, $trick, $uploadedFile, $this->entityManager);
             }
             $trick->setUpdatedAt(new DateTimeImmutable());
             $trickRepository->add($trick, true);
@@ -177,6 +178,7 @@ class TrickController extends AbstractController
     #[Route('/delete/media/{id}', name: 'app_trick_delete_media', methods: ['DELETE'])]
     public function deleteMedia(Media $media, Request $request, MediaRepository $mediaRepository): JsonResponse
     {
+        // dd("ICI");
         $this->denyAccessUnlessGranted('ROLE_USER');
         $data = json_decode($request->getContent(), true);
 
@@ -189,7 +191,7 @@ class TrickController extends AbstractController
                 $mediaRepository->remove($media, true);
 
                 return new JsonResponse(['success' => 1]);
-            } elseif ($media->getId() === $media->getTrick()->getCoverImage()->getId()) {
+            } elseif ($media->getTrick()->getCoverImage() && $media->getId() === $media->getTrick()->getCoverImage()->getId()) {
                 $mediaName = $media->getFileName();
                 // delete image
                 unlink($this->getParameter('images_directory') . '/' . $mediaName);
@@ -217,7 +219,6 @@ class TrickController extends AbstractController
         object $form,
         Trick $trick,
         UploaderHelper $uploadedFile,
-        EntityManagerInterface $entityManager
     ): void {
         foreach ($form->get('medias') as $mediaForm) {
             if ($mediaForm->get('type')->getData() === "Image") {
@@ -244,7 +245,7 @@ class TrickController extends AbstractController
             }
         }
         $trick->setTrickGroup($form->get('trickGroup')->getData());
-        $entityManager->persist($trick);
-        $entityManager->flush();
+        $this->entityManager->persist($trick);
+        $this->entityManager->flush();
     }
 }

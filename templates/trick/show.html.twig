@@ -68,7 +68,7 @@
 					{% if media.type is same as("Image") %}
 						<div class="item">
 							<button type="button" class="popImage">
-								<img data-id="{{ media.id }}" class="trick__img carousel__img" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}" style="{{ trick.medias|length < 3 ? 'width: 50%;' : 'width: 100%;'}}">
+								<img data-id="{{ media.id }}" class="trick__img carousel__img" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}" >
 							</button>
 						</div>
 					{% else %}
