@@ -2,87 +2,56 @@
 
 namespace App\Controller;
 
-use App\Entity\Trick;
 use App\Repository\TrickRepository;
 use App\Repository\UserMessageRepository;
-use App\Security\Voter\TrickVoter;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 class AjaxController extends AbstractController
 {
     #[Route('/ajax/trick', name: 'app_ajax_trick')]
+    /**
+     * Create jsonObject from requested data
+     *
+     * @param Request $request
+     * @param TrickRepository $trickRepository
+     * @param UserInterface|null $user
+     * @return Response
+     */
     public function ajaxAction(
         Request $request,
         TrickRepository $trickRepository,
         UserInterface $user = null
-    ): Response {
-        // get page number
-        $page = (int)$request->query->get("page");
-
-        $tricks = $trickRepository->getTricks($page);
-
-        if ($user) {
-            $userId = $user->getId();
-        } else {
-            $userId = "";
-        }
-
-        $total = $trickRepository->getTotalTricks();
-
-        $encoders = [new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
-        $serializer = new Serializer($normalizers, $encoders);
-        $jsonObject = $serializer->serialize([
-            'total' => $total,
-            'tricks' => $tricks,
-            'current_user' => $userId
-        ], 'json', [
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            },
-        ]);
-
-        return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
+    ): JsonResponse {
+        return $this->json([
+            'total' => $trickRepository->getTotalTricks(),
+            'tricks' => $trickRepository->getTricks((int)$request->query->get("page")),
+            'current_user' => $user ? $user : "",
+        ], 200, [], ['groups' => 'trick:read']);
     }
 
     #[Route('/ajax/comment', name: 'app_ajax_comment')]
+    /**
+     * Create jsonObject from requested data
+     *
+     * @param Request $request
+     * @param UserMessageRepository $userMessage
+     * @return Response
+     */
     public function ajaxCommentAction(
         Request $request,
         UserMessageRepository $userMessage,
-        TrickRepository $trickRepository,
     ): Response {
-        $limit = 3;
-        // get page number
-        $page = (int)$request->query->get("page");
-        $trickId = (int)$request->query->get("trickid");
-        $trick = $trickRepository->findOneById($trickId);
-        $comments = $userMessage->getPaginatedComments($page, $limit, $trick);
-
-        $encoders = [new JsonEncoder()];
-        $normalizers = [new ObjectNormalizer()];
-        $serializer = new Serializer($normalizers, $encoders);
-
-        $jsonObject = $serializer->serialize($comments, 'json', [
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            },
-        ]);
-
-        return new Response($jsonObject, 200, ['Content-Type' => 'application/json']);
-    }
-
-    public function isOwner(Trick $trick)
-    {
-        if (!$this->denyAccessUnlessGranted(TrickVoter::TRICK_DELETE, $trick)) {
-            return true;
-        }
-        return false;
+        return $this->json([
+            'comments' => $userMessage->getCommentsOfATrick((int)$request->query->get("page"), (int)$request->query->get("trickid")),
+            'total' => $userMessage->getTotalComments()
+        ], 200, [], ['groups' => 'comment:read']);
     }
 }

@@ -4,10 +4,10 @@
     <script language="javascript" src = "https://code.jquery.com/jquery-2.2.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script language="javascript">
-    const addCommentItem = function(comments) {
+    const addCommentItem = function({comments, total}) {
 
         comments.forEach(comment => {
-            let formatedCreatedAt = moment.unix(comment.createdAt.timestamp).format("YYYY-MM-DD HH:mm:ss")
+            let formatedCreatedAt = moment(comment.createdAt).format("YYYY-MM-DD HH:mm:ss")
             let avatar = comment.user.avatar ? '/uploads/' + comment.user.avatar : '/assets/images/avatar.png'
             $('#comment-section').append(
                 `
@@ -31,14 +31,18 @@
         const trickId = document.querySelector('#loadMore').dataset.trickid
         $("#loadMore").on("click", function(event){
             $.get("/ajax/comment?page=" + currentPage + "&trickid=" + trickId)
-            .then(comments => {
-                if (comments.length < 3){
+            .then(resp => {
+                if (resp.comments.length < 10){
                     currentPage++;
-                    addCommentItem(comments);
+                    addCommentItem(resp);
+                    deactivateButton();
+                } else if (resp.comments.length + 10 === comments.total){
+                    currentPage++;
+                    addCommentItem(resp);
                     deactivateButton();
                 } else {
                     currentPage++;
-                    addCommentItem(comments);
+                    addCommentItem(resp);
                 }
             })
         });

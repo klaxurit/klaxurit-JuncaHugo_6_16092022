@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+	<link rel="stylesheet" href="{{ asset('assets/css/_main.css') }}">
+	<link rel="stylesheet" href="{{ asset('assets/css/_header.css') }}">
+{% endblock %}
+
+{% block title %}SnowTricks - Error 403
+{% endblock %}
+
+{% block body %}
+	<!-- Header-->
+	<header class="bg-dark text-white py-5 bg-custom d-flex flex-column align-items-center">
+		<div class="container px-4 px-lg-5 my-3 text-center">
+			<h1 class="fw-bolder header__snowtricks-title">Welcome to <br><span class="header__snowtricks-font">SnowTricks</span></h1>
+			<p class="lead header__snowtricks-lead-error snow__text">Error Page - 403</p>
+			<img src="{{ asset("assets/images/broken.png") }}" class="broken__board mt-5" alt="broken board">
+		</div>
+	</header>
+	{% for message in app.flashes('verify_email_success') %}
+		<div class="alert alert-success" role="alert">{{ message }}</div>
+	{% endfor %}
+{% endblock %}

@@ -28,8 +28,8 @@
                 <td>{{ trick.slug }}</td>
                 <td>{{ trick.createdAt ? trick.createdAt|date('Y-m-d H:i:s') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_trick_show', {'id': trick.id}) }}"><i class="bi bi-eye-fill"></i></a>
-                    <a href="{{ path('app_trick_edit', {'id': trick.id}) }}"><i class="bi bi-pencil-fill"></i></a>
+                    <a href="{{ path('app_trick_show', {'slug': trick.slug}) }}"><i class="bi bi-eye-fill"></i></a>
+                    <a href="{{ path('app_trick_edit', {'slug': trick.slug}) }}"><i class="bi bi-pencil-fill"></i></a>
                 </td>
             </tr>
         {% else %}

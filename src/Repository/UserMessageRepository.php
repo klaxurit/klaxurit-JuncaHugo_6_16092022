@@ -48,7 +48,7 @@ class UserMessageRepository extends ServiceEntityRepository
      * @param  mixed $limit
      * @return void
      */
-    public function getPaginatedComments($page, $limit, Trick $trick)
+    public function getPaginatedComments($page, $limit, Trick $trick): array
     {
         $query = $this->createQueryBuilder('c')
             ->orderBy('c.createdAt')
@@ -62,40 +62,53 @@ class UserMessageRepository extends ServiceEntityRepository
     }
 
     /**
+     * Return all comments order by created at DESC
+     *
+     * @return array
+     */
+    public function findAllOrderByCreatedAt(int $page, int $limit): array
+    {
+        $query = $this->createQueryBuilder('c')
+        ->orderBy('c.createdAt', 'DESC')
+        ->setFirstResult(($page * $limit) - $limit)
+        ->setMaxResults($limit);
+
+        return $query->getQuery()->getResult();
+    }
+
+    /**
      * Return number of comments
      *
      * @return void
      */
-    public function getTotalComments()
+    public function getTotalComments(): int
     {
         $query = $this->createQueryBuilder('c')
             ->select('COUNT(c)');
-
+            
         return $query->getQuery()->getSingleScalarResult();
     }
 
-    //    /**
-    //     * @return UserMessage[] Returns an array of UserMessage objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('u.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    public function getCommentsOfATrick(int $page, int $trickId): object
+    {
+        $pageSize = 10;
+        $firstResult = (($page - 1) * $pageSize);
 
-    //    public function findOneBySomeField($value): ?UserMessage
-    //    {
-    //        return $this->createQueryBuilder('u')
-    //            ->andWhere('u.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        $queryBuilder = $this->createQueryBuilder('c')
+        ->andWhere('c.trick = :trickId')
+        ->andWhere('c.status = 1')
+        ->setParameter('trickId', $trickId);
+
+        // Set the returned page
+        $queryBuilder->setFirstResult($firstResult);
+        $queryBuilder->setMaxResults($pageSize);
+
+        // Generate the Query
+        $query = $queryBuilder->getQuery();
+
+        //Generate the Paginator
+        $paginator = new Paginator($query, true);
+        // dd($paginator);
+        return $paginator;
+    }
 }

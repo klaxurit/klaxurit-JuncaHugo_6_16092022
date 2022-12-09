@@ -4,7 +4,7 @@
 		<div
 			class="card h-100">
 			<!-- Trick image-->
-			<a href="{{ path('app_trick_show', {'id': trick.id}) }}">
+			<a href="{{ path('app_trick_show', {'slug': trick.slug}) }}">
 			{% if trick.coverImage %}
 				<img class="card-img-top" src="{{asset('/uploads/' ~ trick.coverImage)}}" alt="{{ trick.coverImage.alt }}"/>
 			{% else %}
@@ -24,7 +24,7 @@
 				</div>
 				<div class="trick__actions">
 					{% if app.user %}
-						<a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="trick__actions-button">
+						<a href="{{ path('app_trick_edit', {'slug': trick.slug}) }}" class="trick__actions-button">
 							<i class="bi bi-pencil-fill"></i>
 						</a>
 					{% endif %}

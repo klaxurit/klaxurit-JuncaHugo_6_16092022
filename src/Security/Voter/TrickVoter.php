@@ -50,7 +50,7 @@ class TrickVoter extends Voter
         return false;
     }
 
-    private function canDelete(Trick $trick, User $user)
+    private function canDelete(Trick $trick, User $user): bool
     {
         // the trick's owner or admin can delete
         return $user === $trick->getUser() || in_array($user->getRoles(), ['ROLE_ADMIN']);

@@ -11,18 +11,18 @@ class UploaderHelper
     private $targetDirectory;
     private $slugger;
 
-    public function __construct($targetDirectory, SluggerInterface $slugger)
+    public function __construct(string $targetDirectory, SluggerInterface $slugger)
     {
         $this->targetDirectory = $targetDirectory;
         $this->slugger = $slugger;
     }
 
-    public function uploadTrickImage(UploadedFile $uploadedFile)
+    public function uploadTrickImage(UploadedFile $uploadedFile): string
     {
         $originalFilename = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
         $safeFilename = $this->slugger->slug($originalFilename);
         $newFilename = $safeFilename.'-'.uniqid().'.'.$uploadedFile->guessExtension();
-        
+
         try {
             // copy file in uploads folder
             $uploadedFile->move($this->getTargetDirectory(), $newFilename);
@@ -33,7 +33,7 @@ class UploaderHelper
         return $newFilename;
     }
 
-    public function getTargetDirectory()
+    public function getTargetDirectory(): string
     {
         return $this->targetDirectory;
     }

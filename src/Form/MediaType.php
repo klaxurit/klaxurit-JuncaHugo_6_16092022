@@ -82,7 +82,6 @@ class MediaType extends AbstractType
                     'rows' => 5,
                 ],
             ])
-            // ->addEventSubscriber(new AddATrickFormSubscriber())
         ->getForm();
     }
 

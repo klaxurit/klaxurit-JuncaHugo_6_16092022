@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -19,6 +20,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("trick:read")]
     private int $id;
 
     #[Assert\Email(
@@ -28,6 +30,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private string $email;
 
     #[ORM\Column]
+    #[Groups("trick:read")]
     private array $roles = [];
 
     /**
@@ -47,6 +50,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $is_verified = false;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Groups("comment:read")]
     private string $username;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -56,6 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $tricks;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups("comment:read")]
     private ?string $avatar = null;
 
     #[ORM\ManyToMany(targetEntity: Trick::class, mappedBy: 'contributors')]
@@ -144,10 +149,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @see UserInterface
      */
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
     }
 
     /**

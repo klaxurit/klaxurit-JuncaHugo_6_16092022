@@ -9,7 +9,6 @@
 
 {% block body %}
 
-
 	<div class="modal fade modal-lg" id="videomodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -35,8 +34,8 @@
 	<div class="container main my-5">
 		<div class="text-end">
 			{% if app.user %}
-			<a href="{{ path('app_trick_edit', {'id': trick.id}) }}" class="btn btn-m btn-primary">
-				<i class="bi bi-pencil-fill"></i>
+			<a href="{{ path('app_trick_edit', {'slug': trick.slug}) }}" class="btn btn-md btn-primary snow__text">
+				Edit
 			</a>
 			{% endif %}
 		</div>
@@ -69,7 +68,7 @@
 					{% if media.type is same as("Image") %}
 						<div class="item">
 							<button type="button" class="popImage">
-								<img data-id="{{ media.id }}" class="trick__img carousel__img" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}" style="{{ trick.medias|length < 3 ? 'width: 50%;' : 'width: 100%;'}}">
+								<img data-id="{{ media.id }}" class="trick__img carousel__img" src="{{asset('/uploads/' ~ media.fileName)}}" alt="{{ media.alt }}" title="{{ media.alt }}" >
 							</button>
 						</div>
 					{% else %}
@@ -103,7 +102,6 @@
 				</div>
 			</div>
 
-
 			<div class="trick__separator my-3">
 				<hr class="rounded">
 			</div>
@@ -127,9 +125,7 @@
 					</div>
 			{% endif %}
 			</div>
-
-			<a href="{{ path('app_home') }}" class="btn btn-m btn-secondary">Back to list</a>
-
+			<a href="{{ path('app_home') }}" class="btn snow__text btn-secondary">Back to list</a>
 		</div>
 
 	<div
@@ -144,22 +140,21 @@
 					<h5 class="modal-title">Edit cover image</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
+				<div class="alert alert-info d-block" role="alert">
+					For new cover image use <a href="{{ path('app_trick_edit', {'slug': trick.slug}) }}" class="cover__edit_link snow__text">the edit form.</a>
+				</div>
 				<div class="modal-body">
 					{{ form_start(trickForm) }}
 					{{ form_widget(trickForm._token) }}
 					<div id="carousel2" class="d-flex justify-content-center">
 						{% for child in trickForm.cover_image.children %}
-						{# {% if condition %}{% endif %} #}
-						<pre>
-							{{ dump(child.vars) }}
-						</pre>
 						<div class="item">
 							<img src="{{asset('/uploads/' ~ child.vars.label)}}" width="300vw;" alt="" class="trick__img" />
 							{{ form_widget(child) }}
 						</div>
 						{% endfor %}
 					</div>
-					<button type="submit" class="btn btn-primary my-3">Save</button>
+					<button type="submit" class="btn btn-primary snow__text my-3">Save</button>
 					{{ form_end(trickForm, { render_rest: false }) }}
 				</div>
 			</div>
@@ -192,6 +187,8 @@
 		$(function () {
 			$('.popModal').on('click', function () {
 				//$('.imagepreview').attr('src', $(this).find('img').attr('src'));
+				$('.form-check-label').hide()
+				$('.form-check-input').hide()
 				$('#coverImage').modal('show');
 			});
 		});

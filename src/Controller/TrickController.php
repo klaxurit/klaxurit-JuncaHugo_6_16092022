@@ -4,17 +4,17 @@ namespace App\Controller;
 
 use App\Entity\Media;
 use App\Entity\Trick;
+use DateTimeImmutable;
 use App\Form\TrickType;
 use App\Entity\UserMessage;
-use App\Form\UpdateCoverImageType;
 use App\Form\UserMessageType;
+use App\Service\TrickManager;
 use App\Service\UploaderHelper;
+use App\Form\UpdateCoverImageType;
 use App\Repository\MediaRepository;
 use App\Repository\TrickRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserMessageRepository;
-use DateTime;
-use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,6 +28,18 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 #[Route('/trick')]
 class TrickController extends AbstractController
 {
+    private object $trickManager;
+    private object $entityManager;
+    private object $slugger;
+    public const NUMBER_OF_TRICK_PER_PAGE = 10;
+
+    public function __construct(TrickManager $trickManager, SluggerInterface $slugger, EntityManagerInterface $entityManager)
+    {
+        $this->trickManager = $trickManager;
+        $this->entityManager = $entityManager;
+        $this->slugger = $slugger;
+    }
+    
     #[Route('/', name: 'app_trick_index', methods: ['GET'])]
     public function index(TrickRepository $trickRepository): Response
     {
@@ -39,202 +51,117 @@ class TrickController extends AbstractController
     #[Route('/new', name: 'app_trick_new', methods: ['GET', 'POST'])]
     public function new(
         Request $request,
-        EntityManagerInterface $entityManager,
         UserInterface $user = null,
-        SluggerInterface $slugger,
         UploaderHelper $uploadedFile,
     ): Response {
-        if ($this->getUser()) {
-            $trick = new Trick();
-            $form = $this->createForm(TrickType::class, $trick);
-            $form->handleRequest($request);
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        $trick = new Trick();
+        $form = $this->createForm(TrickType::class, $trick);
+        $form->handleRequest($request);
 
-            if ($form->isSubmitted() && $form->isValid()) {
-                $trickSlug = $slugger->slug($form->get('name')->getData());
-                $trick->setSlug($trickSlug);
-                $trick->setUser($user);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $trickSlug = $this->slugger->slug($form->get('name')->getData());
+            $trick->setSlug($trickSlug);
+            $trick->setUser($user);
 
-                if ($form->get('medias')) {
-                    // get media
-                    foreach ($form->get('medias') as $mediaForm) {
-                        if ($mediaForm->get('type')->getData() === "Image") {
-                            $trickImg = $mediaForm->get('image')->getData();
-
-                            try {
-                                $filePath = $uploadedFile->uploadTrickImage($trickImg);
-                                // get the array form the class
-                            } catch (FileException $e) {
-                                $this->addFlash('danger', "Error on uploading file");
-                            }
-
-                            // stock file name in db
-                            $media = new Media();
-                            $media->setType("Image");
-                            $media->setFileName($filePath);
-                            $media->setAlt($mediaForm->get('alt')->getData());
-                            $trick->addMedia($media);
-                        } else {
-                            $media = new Media();
-                            $media->setType("Video");
-                            $media->setUrl($mediaForm->get('url')->getData());
-                            $trick->addMedia($media);
-                        }
-                    }
-                    $trick->setTrickGroup($form->get('trickGroup')->getData());
-                    $entityManager->persist($trick);
-                    $entityManager->flush();
-                }
-                // $trickRepository->add($trick, true);
-                return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+            if ($form->get('medias')) {
+                $this->mediaTrickManager($form, $trick, $uploadedFile, $this->entityManager);
             }
-
-            return $this->render('trick/new.html.twig', [
-                'trickForm' => $form->createView(),
-                'controller_name' => 'TrickController'
-            ]);
+            return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
         }
-        $this->addFlash('danger', "Access denied, you must login to add a new trick.");
-        return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+
+        return $this->render('trick/new.html.twig', [
+            'trickForm' => $form->createView(),
+            'controller_name' => 'TrickController'
+        ]);
     }
 
-    #[Route('/{id}', name: 'app_trick_show', methods: ['GET', 'POST'])]
+    #[Route('/{slug}', name: 'app_trick_show', methods: ['GET', 'POST'])]
     public function show(
         Trick $trick,
         Request $request,
         UserMessageRepository $userMessage,
-        EntityManagerInterface $entityManager,
         MediaRepository $mediaRepository,
-        UserInterface $user = null,
+        UserInterface $user = null
     ): Response {
-        // define number of comments on page
-        $limit = 3;
-
-        // get page number
-        $page = (int)$request->query->get("page", 1);
-
         // get comments of page
-        $comments = $userMessage->getPaginatedComments($page, $limit, $trick);
-
-        // get total number of comments
-        $total = $userMessage->getTotalComments();
+        $comments = $userMessage->getPaginatedComments((int)$request->query->get("page", 1), TrickController::NUMBER_OF_TRICK_PER_PAGE, $trick);
 
         // comments parts
         $comment = new UserMessage();
         $commentForm = $this->createForm(UserMessageType::class, $comment);
         $commentForm->handleRequest($request);
-
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
-            $comment->setTrick($trick);
-            $comment->setStatus(false);
-            $comment->setUser($user);
-
-            $entityManager->persist($comment);
-            $entityManager->flush();
-
+            $this->trickManager->commentTrickManager($comment, $user, $trick);
             $this->addFlash('success', 'Your comment has been successfully submitted!');
-            return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
+            return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
         }
+
         $mediaImages = $mediaRepository->findAllMediaImageOfATrick($trick->getId());
-        if (!$mediaImages) {
+        if (!$mediaImages && $user) {
             $this->addFlash('warning', 'To have a cover image on this trick, you must first <a href="/trick/' . $trick->getId() . '/edit">upload images</a>.');
         }
 
         $form = $this->createForm(UpdateCoverImageType::class, $trick);
         $form->handleRequest($request);
-
         if ($form->isSubmitted() && $form->isValid()) {
-            $trickCoverImage = $form->get('cover_image')->getData();
-            $trick->setCoverImage($trickCoverImage);
-            $entityManager->persist($trick);
-            $entityManager->flush();
-
+            $this->trickManager->coverImageTrickManager($trick, $form, );
             $this->addFlash('success', 'Cover image successfully updated!');
-            return $this->redirectToRoute('app_trick_show', ['id' => $trick->getId()]);
+            return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
         }
 
         return $this->render('trick/show.html.twig', [
             'trick' => $trick,
-            'total' => $total,
-            'limit' => $limit,
-            'page'  => $page,
+            'total' => $userMessage->getTotalComments(),
+            'limit' => TrickController::NUMBER_OF_TRICK_PER_PAGE,
+            'page'  => (int)$request->query->get("page", 1),
             'comments'  => $comments,
             'commentForm'   => $commentForm->createView(),
             'trickForm' => $form->createView(),
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
+    #[Route('/{slug}/edit', name: 'app_trick_edit', methods: ['GET', 'POST'])]
     public function edit(
         Request $request,
         Trick $trick,
-        EntityManagerInterface $entityManager,
         TrickRepository $trickRepository,
         UploaderHelper $uploadedFile,
-        SluggerInterface $slugger,
         UserInterface $user = null,
     ): Response {
-        if ($this->getUser()) {
-            $form = $this->createForm(TrickType::class, $trick);
-            $form->handleRequest($request);
+        $this->denyAccessUnlessGranted('ROLE_USER');
+        $form = $this->createForm(TrickType::class, $trick);
+        $form->handleRequest($request);
 
-            if ($form->isSubmitted() && $form->isValid()) {
-                $trickSlug = $slugger->slug($form->get('name')->getData());
-                $trick->setSlug($trickSlug);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $trickSlug = $this->slugger->slug($form->get('name')->getData());
+            $trick->setSlug($trickSlug);
 
-                // if trick modified by author dont add contributor
-                if ($trick->getUser()->getId() !== $user->getId()) {
-                    $trick->addContributor($user);
-                }
-
-                if ($form->get('medias')) {
-                    // get media
-                    foreach ($form->get('medias') as $mediaForm) {
-                        if ($mediaForm->get('type')->getData() === "Image") {
-                            $trickImg = $mediaForm->get('image')->getData();
-
-                            try {
-                                $filePath = $uploadedFile->uploadTrickImage($trickImg);
-                                // get the array form the class
-                            } catch (FileException $e) {
-                                $this->addFlash('danger', "Error on uploading file");
-                            }
-
-                            // stock file name in db
-                            $media = new Media();
-                            $media->setType("Image");
-                            $media->setFileName($filePath);
-                            $media->setAlt($mediaForm->get('alt')->getData());
-                            $trick->addMedia($media);
-                        } else {
-                            $media = new Media();
-                            $media->setType("Video");
-                            $media->setUrl($mediaForm->get('url')->getData());
-                            $trick->addMedia($media);
-                        }
-                    }
-                    $trick->setTrickGroup($form->get('trickGroup')->getData());
-                    $entityManager->persist($trick);
-                    $entityManager->flush();
-                }
-                $trick->setUpdatedAt(new DateTimeImmutable());
-                $trickRepository->add($trick, true);
-
-                $this->addFlash('success', "Trick successfully updated.");
-                return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+            // if trick modified by author dont add contributor
+            if ($trick->getUser()->getId() !== $user->getId()) {
+                $trick->addContributor($user);
             }
-            return $this->render('trick/edit.html.twig', [
-                'trickForm' => $form->createView(),
-                'trick' => $trick,
-                'controller_name' => 'TrickController',
-            ]);
+
+            if ($form->get('medias')) {
+                $this->mediaTrickManager($form, $trick, $uploadedFile, $this->entityManager);
+            }
+            $trick->setUpdatedAt(new DateTimeImmutable());
+            $trickRepository->add($trick, true);
+
+            $this->addFlash('success', "Trick successfully updated.");
+            return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()], Response::HTTP_SEE_OTHER);
         }
-        $this->addFlash('danger', "Access denied, you cannot acces to this page.");
-        return $this->redirectToRoute('app_home', [], Response::HTTP_SEE_OTHER);
+        return $this->render('trick/edit.html.twig', [
+            'trickForm' => $form->createView(),
+            'trick' => $trick,
+            'controller_name' => 'TrickController',
+        ]);
     }
 
     #[Route('/delete/{id}', name: 'app_trick_delete', methods: ['DELETE', 'GET'])]
     public function delete(Trick $trick, TrickRepository $trickRepository): Response
     {
+        $this->denyAccessUnlessGranted('ROLE_USER');
         try {
             $this->denyAccessUnlessGranted('trick_delete', $trick);
             $trickRepository->remove($trick, true);
@@ -249,21 +176,22 @@ class TrickController extends AbstractController
     }
 
     #[Route('/delete/media/{id}', name: 'app_trick_delete_media', methods: ['DELETE'])]
-    public function deleteMedia(Media $media, Request $request, MediaRepository $mediaRepository)
+    public function deleteMedia(Media $media, Request $request, MediaRepository $mediaRepository): JsonResponse
     {
+        // dd("ICI");
+        $this->denyAccessUnlessGranted('ROLE_USER');
         $data = json_decode($request->getContent(), true);
 
         // check if token is valid
-        if ($this->isCsrfTokenValid('delete' . $media->getId(), $data['_token'])) {
+        $mediaID = $media->getId();
+        if ($this->isCsrfTokenValid('delete' . $mediaID, $data['_token'])) {
             // get image name or url
             if ($media->getType() === Media::VIDEO) {
                 $mediaName = $media->getUrl();
-
                 $mediaRepository->remove($media, true);
 
                 return new JsonResponse(['success' => 1]);
-            } elseif ($media->getId() === $media->getTrick()->getCoverImage()->getId()) {
-                // dd("coverimage");
+            } elseif ($media->getTrick()->getCoverImage() && $media->getId() === $media->getTrick()->getCoverImage()->getId()) {
                 $mediaName = $media->getFileName();
                 // delete image
                 unlink($this->getParameter('images_directory') . '/' . $mediaName);
@@ -274,7 +202,6 @@ class TrickController extends AbstractController
 
                 return new JsonResponse(['success' => 1]);
             } else {
-                dd("image");
                 $mediaName = $media->getFileName();
                 // delete image
                 unlink($this->getParameter('images_directory') . '/' . $mediaName);
@@ -286,5 +213,39 @@ class TrickController extends AbstractController
         } else {
             return new JsonResponse(['error' => 'Token Invalid'], 400);
         }
+    }
+
+    public function mediaTrickManager(
+        object $form,
+        Trick $trick,
+        UploaderHelper $uploadedFile,
+    ): void {
+        foreach ($form->get('medias') as $mediaForm) {
+            if ($mediaForm->get('type')->getData() === "Image") {
+                $trickImg = $mediaForm->get('image')->getData();
+
+                try {
+                    $filePath = $uploadedFile->uploadTrickImage($trickImg);
+                    // get the array from the class
+                } catch (FileException $e) {
+                    $this->addFlash('danger', "Error on uploading file");
+                }
+
+                // stock file name in db
+                $media = new Media();
+                $media->setType("Image");
+                $media->setFileName($filePath);
+                $media->setAlt($mediaForm->get('alt')->getData());
+                $trick->addMedia($media);
+            } else {
+                $media = new Media();
+                $media->setType("Video");
+                $media->setUrl($mediaForm->get('url')->getData());
+                $trick->addMedia($media);
+            }
+        }
+        $trick->setTrickGroup($form->get('trickGroup')->getData());
+        $this->entityManager->persist($trick);
+        $this->entityManager->flush();
     }
 }

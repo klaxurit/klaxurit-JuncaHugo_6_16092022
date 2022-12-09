@@ -32,6 +32,5 @@ class AccessDeniedListener implements EventSubscriberInterface
         $event->setResponse(new Response(null, 403));
 
         // or stop propagation (prevents the next exception listeners from being called)
-        //$event->stopPropagation();
     }
 }

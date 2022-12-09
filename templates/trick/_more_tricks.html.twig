@@ -9,17 +9,16 @@
 	const addTrickItem = function ({tricks, current_user}) {
         tricks.forEach(trick => {
             const trickCoverImage = getTrickCoverImage(trick);
-            const trickImage = trickCoverImage.trickCoverImageFileName ? '/uploads/' + trickCoverImage.trickCoverImageFileName : '/assets/images/empty.jpg'
+            let trickImage = trickCoverImage.trickCoverImageFileName ? '/uploads/' + trickCoverImage.trickCoverImageFileName : '/assets/images/empty.jpg'
             let trickImageAlt = trickCoverImage.trickCoverImageAlt ? trickCoverImage.trickCoverImageAlt : 'no picture to show'
 
             const $trickEl = $(`
                 <div class="col mb-5">
                     <div class="card h-100">
                         <!-- Trick image-->
-                        <a href="/trick/${trick.id}">
+                        <a href="/trick/${trick.slug}">
                             <img class="card-img-top" src="${trickImage}" alt="${trickImageAlt}">
                         </a>
-                    
                         <!-- Trick details-->
                         <div class="card-body p-3 d-flex flex-row align-items-center justify-content-between">
                             <div class="text-start m-0">
@@ -27,15 +26,27 @@
                                 <h4 class="snow__text">${trick.name}</h4>
                             </div>
                             <div class="trick__actions">
-                                <a href="/trick/${trick.id}/edit" class="trick__actions-button"><i class="bi bi-pencil-fill"></i></a>
                             </div>
                         </div>
                     </div>
                 </div>
             `)
             $('#trick__card').append($trickEl)
-            
-            if (trick.user.id === current_user) {
+
+            if (current_user) {
+                const $editBtn = $('<a></a>')
+                $editBtn.attr({
+                    href: `/trick/${trick.id}/edit`,
+                })
+                $editBtn.addClass("trick__actions-button")
+                $editBtn.append('<i class="bi bi-pencil-fill"></i>')
+
+                $trickEl.find(".trick__actions").append($editBtn)
+            }
+
+            let admin = current_user ? current_user.roles.includes("ROLE_ADMIN") : ""
+
+            if (trick.user.id === current_user.id || admin) {
                 const $deleteBtn = $('<a></a>')
                 $deleteBtn.attr({
                     href: "#delete__modal",

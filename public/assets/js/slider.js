@@ -32,8 +32,6 @@ class Carousel {
         this.moveCallbacks.forEach(cb => cb(0))
         this.onWindowResize()
         window.addEventListener('resize', this.onWindowResize.bind(this))
-        this.onWindowResize2()
-        window.addEventListener('resize', this.onWindowResize2.bind(this))
         this.root.addEventListener('keyup', (e) => {
             if (e.key == 'ArrowRight' || e.key === 'Right') {
                 this.next()
@@ -100,6 +98,9 @@ class Carousel {
         this.container.style.transform = 'translate3d(' + translateX + '%, 0, 0)'
         this.currentItem = index
         this.moveCallbacks.forEach(cb => cb(index))
+        if (this.options.slidesVisible === 1) {
+            this.items[index].querySelector('input[name="update_cover_image[cover_image]"]').checked = true
+        }
     }
 
     onMove (cb) {
@@ -108,20 +109,19 @@ class Carousel {
 
     onWindowResize () {
         let mobile = window.innerWidth < 800
+        let laptop = window.innerWidth < 1200
         if (mobile !== this.isMobile) {
             this.isMobile = mobile
-            this.setStyle()
-            this.moveCallbacks.forEach(cb => cb(this.currentItem))
+            this.resizeWindow()
+        } else if (laptop !== this.isLaptop) {
+            this.isLaptop = laptop
+            this.resizeWindow()
         }
     }
 
-    onWindowResize2 () {
-        let laptop = window.innerWidth < 1200
-        if (laptop !== this.isLaptop) {
-            this.isLaptop = laptop
-            this.setStyle()
-            this.moveCallbacks.forEach(cb => cb(this.currentItem))
-        }
+    resizeWindow() {
+        this.setStyle()
+        this.moveCallbacks.forEach(cb => cb(this.currentItem))
     }
 
     //param String return HTMLElement
@@ -136,10 +136,12 @@ class Carousel {
     }
 
     get slidesVisible() {
-        if (this.isMobile || this.items.length < 3){
-            return 1
-        } else if (this.isLaptop){
-            return 2
+        if(this.options.slidesVisible > 1){
+            if (this.isMobile || this.items.length < 3){
+                return 1
+            } else if (this.isLaptop){
+                return 2
+            }
         }
         return this.options.slidesVisible
     }
@@ -150,10 +152,7 @@ document.addEventListener('DOMContentLoaded', function () {
         slidesToScroll: 1,
         slidesVisible: 3,
         loop: false
-    })
-})
-
-document.addEventListener('DOMContentLoaded', function () {
+    });
     new Carousel(document.querySelector('#carousel2'), {
         slidesToScroll: 1,
         slidesVisible: 1,

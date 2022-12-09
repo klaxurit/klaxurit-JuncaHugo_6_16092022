@@ -7,48 +7,67 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\TrickRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: TrickRepository::class)]
+#[UniqueEntity(
+    fields: 'name',
+    errorPath: 'name',
+    message: 'This trick name is already use.',
+)]
 class Trick
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups("trick:read")]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("trick:read")]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Groups("trick:read")]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups("trick:read")]
     private ?string $slug = null;
 
     #[ORM\Column]
+    #[Groups("trick:read")]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, orphanRemoval: true, cascade:['persist'])]
+    #[Groups("trick:read")]
     private Collection $medias;
 
     #[ORM\ManyToOne(inversedBy: 'trick')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups("trick:read")]
     private ?Group $trickGroup = null;
 
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: UserMessage::class, orphanRemoval: true, cascade:['persist'])]
+    #[Groups("trick:read")]
     private Collection $userMessages;
 
     #[ORM\ManyToOne(inversedBy: 'tricks')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups("trick:read")]
     private ?User $user = null;
 
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'trick_contribution')]
+    #[Groups("trick:read")]
     private Collection $contributors;
 
     #[ORM\OneToOne(targetEntity: Media::class, cascade: ["persist", "remove"])]
+    #[Groups("trick:read")]
     private ?Media $cover_image = null;
 
     #[ORM\Column(nullable: true)]
+    #[Groups("trick:read")]
     private ?\DateTimeImmutable $updated_at = null;
 
     public function __construct()
@@ -116,36 +135,6 @@ class Trick
 
         return $this;
     }
-
-    // /**
-    //  * @return Collection<int, Media>
-    //  */
-    // public function getMedias(): Collection
-    // {
-    //     return $this->medias;
-    // }
-
-    // public function addMedia(Media $media): self
-    // {
-    //     if (!$this->medias->contains($media)) {
-    //         $this->medias->add($media);
-    //         $media->setTrick($this);
-    //     }
-
-    //     return $this;
-    // }
-
-    // public function removeMedia(Media $media): self
-    // {
-    //     if ($this->medias->removeElement($media)) {
-    //         // set the owning side to null (unless already changed)
-    //         if ($media->getTrick() === $this) {
-    //             $media->setTrick(null);
-    //         }
-    //     }
-
-    //     return $this;
-    // }
 
     /**
      * @return Collection<int, Media>

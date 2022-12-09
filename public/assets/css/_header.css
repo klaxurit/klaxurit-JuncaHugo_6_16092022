@@ -17,3 +17,25 @@ header {
     letter-spacing: 0.1em;
     font-size: 4vw;
 }
+
+.header__snowtricks-lead-error {
+    margin-top: .5em;
+    letter-spacing: 0.1em;
+    font-size: 4vw;
+}
+
+@media screen and (max-width: 767px) {
+    .header__snowtricks-title {
+        font-size: 2em;
+        margin-top: 4em;
+    }
+    .header__snowtricks-lead {
+        font-size: 1.5em;
+    }
+}
+
+@media screen and (max-width: 550px) {
+    .header__snowtricks-title {
+        margin-top: 6em;
+    }
+}
