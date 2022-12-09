@@ -21,7 +21,6 @@ class AdminController extends AbstractController
      */
     public function index(): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         return $this->render('admin/index.html.twig', [
             'controller_name' => 'AdminController',
         ]);
@@ -37,7 +36,6 @@ class AdminController extends AbstractController
      */
     public function manageComments(UserMessageRepository $comments, Request $request): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $limit = 10;
         $page = (int)$request->query->get("page", 1);
         $total = $comments->getTotalComments();
@@ -62,7 +60,6 @@ class AdminController extends AbstractController
      */
     public function switchStatus(UserMessageRepository $comments, EntityManagerInterface $entityManager, int $id): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         $comment = $comments->findOneById($id);
         if ($comment->isStatus() === false) {
             $comment->setStatus(true);
@@ -87,7 +84,6 @@ class AdminController extends AbstractController
      */
     public function deleteComment(UserMessageRepository $userMessageRepository, UserMessage $comment): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_ADMIN');
         try {
             $userMessageRepository->remove($comment, true);
             $this->addFlash('success', "Comment deleted");
