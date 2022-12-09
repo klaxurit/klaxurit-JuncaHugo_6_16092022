@@ -185,8 +185,8 @@ class SecurityController extends AbstractController
             );
         } catch (\Exception $e) {
             $this->addFlash('danger', 'A problem has occurred during email sending.');
-            return $this->redirectToRoute('app_login');
         }
+        return $this->redirectToRoute('app_login');
     }
 
     #[Route('/forget-pass/{token}', name: 'app_reset_pass')]
