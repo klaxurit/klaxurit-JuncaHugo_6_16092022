@@ -19,7 +19,7 @@ class HomeController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function index(TrickRepository $trickRepository,MediaRepository $mediaRepository, Request $request): Response
+    public function index(TrickRepository $trickRepository, MediaRepository $mediaRepository, Request $request): Response
     {
         // define number of trick on page
         $limit = 6;

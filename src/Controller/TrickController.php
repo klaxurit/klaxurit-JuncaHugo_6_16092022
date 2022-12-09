@@ -4,16 +4,17 @@ namespace App\Controller;
 
 use App\Entity\Media;
 use App\Entity\Trick;
+use DateTimeImmutable;
 use App\Form\TrickType;
 use App\Entity\UserMessage;
-use App\Form\UpdateCoverImageType;
 use App\Form\UserMessageType;
+use App\Service\TrickManager;
 use App\Service\UploaderHelper;
+use App\Form\UpdateCoverImageType;
 use App\Repository\MediaRepository;
 use App\Repository\TrickRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserMessageRepository;
-use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,6 +28,15 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 #[Route('/trick')]
 class TrickController extends AbstractController
 {
+    private object $trickManager;
+    private object $slugger;
+    public const NUMBER_OF_TRICK_PER_PAGE = 10;
+
+    public function __construct(TrickManager $trickManager, SluggerInterface $slugger,)
+    {
+        $this->trickManager = $trickManager;
+        $this->slugger = $slugger;
+    }
     #[Route('/', name: 'app_trick_index', methods: ['GET'])]
     public function index(TrickRepository $trickRepository): Response
     {
@@ -39,7 +49,6 @@ class TrickController extends AbstractController
     public function new(
         Request $request,
         UserInterface $user = null,
-        SluggerInterface $slugger,
         UploaderHelper $uploadedFile,
         EntityManagerInterface $entityManager
     ): Response {
@@ -49,7 +58,7 @@ class TrickController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $trickSlug = $slugger->slug($form->get('name')->getData());
+            $trickSlug = $this->slugger->slug($form->get('name')->getData());
             $trick->setSlug($trickSlug);
             $trick->setUser($user);
 
@@ -70,25 +79,19 @@ class TrickController extends AbstractController
         Trick $trick,
         Request $request,
         UserMessageRepository $userMessage,
-        EntityManagerInterface $entityManager,
         MediaRepository $mediaRepository,
-        UserInterface $user = null,
+        UserInterface $user = null
     ): Response {
-        // define number of comments on page
-        $limit = 10;
-        // get page number
-        $page = (int)$request->query->get("page", 1);
         // get comments of page
-        $comments = $userMessage->getPaginatedComments($page, $limit, $trick);
-        // get total number of comments
-        $total = $userMessage->getTotalComments();
+        $comments = $userMessage->getPaginatedComments((int)$request->query->get("page", 1), TrickController::NUMBER_OF_TRICK_PER_PAGE, $trick);
 
         // comments parts
         $comment = new UserMessage();
         $commentForm = $this->createForm(UserMessageType::class, $comment);
         $commentForm->handleRequest($request);
         if ($commentForm->isSubmitted() && $commentForm->isValid()) {
-            $this->commentTrickManager($comment, $trick, $entityManager, $user);
+            $this->trickManager->commentTrickManager($comment, $user, $trick);
+            $this->addFlash('success', 'Your comment has been successfully submitted!');
             return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
         }
 
@@ -100,15 +103,16 @@ class TrickController extends AbstractController
         $form = $this->createForm(UpdateCoverImageType::class, $trick);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->coverImageTrickManager($form, $trick, $entityManager);
+            $this->trickManager->coverImageTrickManager($trick, $form, );
+            $this->addFlash('success', 'Cover image successfully updated!');
             return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
         }
 
         return $this->render('trick/show.html.twig', [
             'trick' => $trick,
-            'total' => $total,
-            'limit' => $limit,
-            'page'  => $page,
+            'total' => $userMessage->getTotalComments(),
+            'limit' => TrickController::NUMBER_OF_TRICK_PER_PAGE,
+            'page'  => (int)$request->query->get("page", 1),
             'comments'  => $comments,
             'commentForm'   => $commentForm->createView(),
             'trickForm' => $form->createView(),
@@ -122,7 +126,6 @@ class TrickController extends AbstractController
         EntityManagerInterface $entityManager,
         TrickRepository $trickRepository,
         UploaderHelper $uploadedFile,
-        SluggerInterface $slugger,
         UserInterface $user = null,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
@@ -130,7 +133,7 @@ class TrickController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $trickSlug = $slugger->slug($form->get('name')->getData());
+            $trickSlug = $this->slugger->slug($form->get('name')->getData());
             $trick->setSlug($trickSlug);
 
             // if trick modified by author dont add contributor
@@ -243,34 +246,5 @@ class TrickController extends AbstractController
         $trick->setTrickGroup($form->get('trickGroup')->getData());
         $entityManager->persist($trick);
         $entityManager->flush();
-    }
-
-    public function commentTrickManager(
-        UserMessage $comment,
-        Trick $trick,
-        EntityManagerInterface $entityManager,
-        UserInterface $user = null,
-    ): void {
-        $comment->setTrick($trick);
-        $comment->setStatus(false);
-        $comment->setUser($user);
-
-        $entityManager->persist($comment);
-        $entityManager->flush();
-        $this->addFlash('success', 'Your comment has been successfully submitted!');
-    }
-
-    public function coverImageTrickManager(
-        object $form,
-        Trick $trick,
-        EntityManagerInterface $entityManager
-    ): void {
-        $trickCoverImage = $form->get('cover_image')->getData();
-        $trick->setCoverImage($trickCoverImage);
-        $entityManager->persist($trick);
-        $entityManager->flush();
-
-        $this->addFlash('success', 'Cover image successfully updated!');
-        
     }
 }

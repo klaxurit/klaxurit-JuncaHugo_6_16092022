@@ -28,7 +28,7 @@ class RegistrationController extends AbstractController
             'typ' => 'JWT',
             'alg' => 'HS256'
         ];
-        $this->jwt = new JWTService;
+        $this->jwt = new JWTService();
     }
 
     #[Route('/register', name: 'app_register')]
@@ -105,7 +105,7 @@ class RegistrationController extends AbstractController
      * @param SendMailService $mail
      * @return void
      */
-    public function sendVerifMail(User $user, SendMailService $mail): void 
+    public function sendVerifMail(User $user, SendMailService $mail): void
     {
         // generate user's JWT
         $token = $this->jwt->generate($this->header, ['user_id' => $user->getId()], $this->getParameter('app.jwtsecret'));

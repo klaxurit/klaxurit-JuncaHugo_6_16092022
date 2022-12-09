@@ -31,7 +31,7 @@ class SecurityController extends AbstractController
             'typ' => 'JWT',
             'alg' => 'HS256'
         ];
-        $this->jwt = new JWTService;
+        $this->jwt = new JWTService();
     }
 
 

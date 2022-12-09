@@ -16,7 +16,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AjaxController extends AbstractController
 {
-    
     #[Route('/ajax/trick', name: 'app_ajax_trick')]
     /**
      * Create jsonObject from requested data
