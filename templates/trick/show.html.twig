@@ -41,7 +41,7 @@
 		</div>
 		{% if is_granted("trick_delete", trick) %}
 		<div class="text-end">
-			{{ include('trick/_delete_form.html.twig') }}
+			{{ include('_parts/_delete_form.html.twig') }}
 		</div>
 		{% endif %}
 		<div class="trick__cover-image my-5">
@@ -117,7 +117,7 @@
 						</span>
 					{% endif %}
 			</div>
-			{% include('trick/_comment.html.twig') %}
+			{% include('_parts/_comment.html.twig') %}
 			{% if app.user %}
 				<div class="send__comment-section">
 					<h3 class="snow__title">Send comment</h3>

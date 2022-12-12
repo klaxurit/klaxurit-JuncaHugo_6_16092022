@@ -32,9 +32,9 @@
 		{% endif %}
 	{% endfor %}
 {% endif %}
-<div id="medias" class="mb-3" data-prototype="{{ include("trick/_media.html.twig", {form: trickForm.medias.vars.prototype})|e("html_attr") }}" data-index="{{ trickForm.medias|length > 0 ? trickForm.medias|last.vars.name + 1 : 0 }}">
+<div id="medias" class="mb-3" data-prototype="{{ include("_parts/_media.html.twig", {form: trickForm.medias.vars.prototype})|e("html_attr") }}" data-index="{{ trickForm.medias|length > 0 ? trickForm.medias|last.vars.name + 1 : 0 }}">
 	{% for media in trickForm.medias %}
-		{{ include("trick/_media.html.twig", {form: media}) }}
+		{{ include("_parts/_media.html.twig", {form: media}) }}
 	{% endfor %}
 </div>
 <button type="button" class="btn btn-primary btn-new mb-3" data-collection="#medias">New media</button>

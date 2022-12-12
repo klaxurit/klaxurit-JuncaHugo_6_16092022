@@ -130,6 +130,16 @@
     top: 18px;
 }
 
+@media screen and (max-width: 800px) {
+    .user-comment p:after{
+        display: none;
+    }
+    
+    .author-comment p:after{
+        display: none;
+    }
+}
+
 /* Comment form */
 
 .write-new{
