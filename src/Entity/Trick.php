@@ -40,8 +40,9 @@ class Trick
     #[Groups("trick:read")]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, orphanRemoval: true, cascade:['persist'])]
+    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Media::class, orphanRemoval: true, cascade:['persist', 'remove'])]
     #[Groups("trick:read")]
+    #[ORM\JoinColumn(onDelete: "CASCADE")]
     private Collection $medias;
 
     #[ORM\ManyToOne(inversedBy: 'trick')]

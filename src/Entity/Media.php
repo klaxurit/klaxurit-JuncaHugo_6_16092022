@@ -34,6 +34,7 @@ class Media
     private ?string $fileName = null;
 
     #[ORM\ManyToOne(inversedBy: 'medias')]
+    #[ORM\JoinColumn(onDelete: "CASCADE")]
     private ?Trick $trick = null;
 
     public function __toString()
