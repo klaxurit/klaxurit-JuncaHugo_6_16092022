@@ -45,6 +45,11 @@ php bin/console doctrine:migrations:migrate
 Exécutez le serveur local Symfony pour lancer l'application :
 php bin/console server:run
 Vous devriez maintenant pouvoir accéder à l'application en accédant à l'adresse `http://127.0.0.1:8000` dans votre navigateur.
+
+Pour chargez un jeux de donnée veuillez saisir cette commande dans votre terminal:
+
+php bin/console doctrine:fixtures:load
+
 Les différents comptes disponible sont:
 
 ### Administrateur
