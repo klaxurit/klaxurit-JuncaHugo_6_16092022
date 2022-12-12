@@ -34,9 +34,11 @@ twig/string-extra v3.4.0
 git clone https://github.com/klaxurit/klaxurit-JuncaHugo_6_16092022.git
 2. Installez les dépendances en utilisant Composer :
 composer install
-3. Configurez vos paramètres d\'application dans le fichier `.env` situé à la racine du projet.
-4. Créez la base de données en utilisant la commande Doctrine :
+3. Copiez le .env en .env.local et modifier les paramètres sql et email.
+4. Créez la base de données et effectuez les migrations en utilisant les commandes Doctrine :
 php bin/console doctrine:database:create
+php bin/console doctrine:migrations:migrate
+
 ```
 
 ## Exécution
@@ -44,6 +46,19 @@ php bin/console doctrine:database:create
 Exécutez le serveur local Symfony pour lancer l'application :
 php bin/console server:run
 Vous devriez maintenant pouvoir accéder à l'application en accédant à l'adresse `http://127.0.0.1:8000` dans votre navigateur.
+Les différents comptes disponible sont:
+
+### Administrateur
+identifiant: Admin
+Mot de passe: Admin_1234
+
+### Utilisateur
+identifiant: UserOne
+Mot de passe: Userone_1234
+
+identifiant: UserTwo
+Mot de passe: UserTwo_1234
+
 
 ## Autheur
 
