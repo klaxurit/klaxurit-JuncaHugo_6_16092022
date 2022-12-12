@@ -29,17 +29,16 @@ twig/string-extra v3.4.0
 
 ## Installation
 
-```sh
 1. Clonez le dépôt git :
 git clone https://github.com/klaxurit/klaxurit-JuncaHugo_6_16092022.git
 2. Installez les dépendances en utilisant Composer :
 composer install
-3. Copiez le .env en .env.local et modifier les paramètres sql et email.
+3. Copiez le .env en .env.local et modifier les paramètres sql, email.
+Ne pas oubliez d'installé MailHog pour recevoir les emails.(inscriptions, changement de mot de passe et verification d'email)
+Suivez les instructions sur: https://github.com/mailhog/MailHog
 4. Créez la base de données et effectuez les migrations en utilisant les commandes Doctrine :
 php bin/console doctrine:database:create
 php bin/console doctrine:migrations:migrate
-
-```
 
 ## Exécution
 
