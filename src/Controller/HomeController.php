@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Repository\MediaRepository;
 use App\Repository\TrickRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,7 +18,7 @@ class HomeController extends AbstractController
      * @param Request $request
      * @return Response
      */
-    public function index(TrickRepository $trickRepository, MediaRepository $mediaRepository, Request $request): Response
+    public function index(TrickRepository $trickRepository, Request $request): Response
     {
         // define number of trick on page
         $limit = 6;

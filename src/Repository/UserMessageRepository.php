@@ -85,10 +85,17 @@ class UserMessageRepository extends ServiceEntityRepository
     {
         $query = $this->createQueryBuilder('c')
             ->select('COUNT(c)');
-            
+
         return $query->getQuery()->getSingleScalarResult();
     }
 
+    /**
+     * get all modarated comments of a trick
+     *
+     * @param integer $page
+     * @param integer $trickId
+     * @return object
+     */
     public function getCommentsOfATrick(int $page, int $trickId): object
     {
         $pageSize = 10;
@@ -110,5 +117,20 @@ class UserMessageRepository extends ServiceEntityRepository
         $paginator = new Paginator($query, true);
         // dd($paginator);
         return $paginator;
+    }
+
+    /**
+     * get total comments of a trick
+     *
+     * @param integer $trickId
+     * @return array
+     */
+    public function getTotalCommentOfATrick(int $trickId): array
+    {
+        $query = $this->createQueryBuilder('c')
+        ->andWhere('c.trick = :trickId')
+        ->setParameter('trickId', $trickId);
+
+        return $query->getQuery()->getResult();
     }
 }

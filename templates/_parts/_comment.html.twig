@@ -23,7 +23,13 @@
 	</ul>
 </div>
 <div class="col-12 text-center my-4">
-	{% if comments %}
-		{% include "trick/_more_comments.html.twig" %}
+	{% set moderateComment = 0 %}
+	{% for comment in total %}
+		{% if comment.isStatus is same as(true) %}
+			{% set moderateComment = moderateComment + 1 %}
+		{% endif %}
+	{% endfor %}
+	{% if moderateComment > 10 %}
+		{% include "_parts/_more_comments.html.twig" %}
 	{% endif %}
 </div>

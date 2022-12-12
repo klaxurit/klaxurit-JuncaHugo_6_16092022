@@ -6,6 +6,7 @@ use App\Entity\Trick;
 use App\Entity\UserMessage;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class TrickManager
 {
@@ -32,6 +33,10 @@ class TrickManager
         $comment->setTrick($trick);
         $comment->setStatus(false);
         $comment->setUser($user);
+        $rolesArray = $user->getRoles();
+        if (in_array("ROLE_ADMIN", $rolesArray)){
+            $comment->setStatus(true);
+        }
 
         $this->entityManager->persist($comment);
         $this->entityManager->flush();

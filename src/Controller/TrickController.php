@@ -105,14 +105,14 @@ class TrickController extends AbstractController
         $form = $this->createForm(UpdateCoverImageType::class, $trick);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->trickManager->coverImageTrickManager($trick, $form, );
+            $this->trickManager->coverImageTrickManager($form, $trick);
             $this->addFlash('success', 'Cover image successfully updated!');
             return $this->redirectToRoute('app_trick_show', ['slug' => $trick->getSlug()]);
         }
 
         return $this->render('trick/show.html.twig', [
             'trick' => $trick,
-            'total' => $userMessage->getTotalComments(),
+            'total' => $userMessage->getTotalCommentOfATrick($trick->getId()),
             'limit' => TrickController::NUMBER_OF_TRICK_PER_PAGE,
             'page'  => (int)$request->query->get("page", 1),
             'comments'  => $comments,
@@ -178,7 +178,6 @@ class TrickController extends AbstractController
     #[Route('/delete/media/{id}', name: 'app_trick_delete_media', methods: ['DELETE'])]
     public function deleteMedia(Media $media, Request $request, MediaRepository $mediaRepository): JsonResponse
     {
-        // dd("ICI");
         $this->denyAccessUnlessGranted('ROLE_USER');
         $data = json_decode($request->getContent(), true);
 

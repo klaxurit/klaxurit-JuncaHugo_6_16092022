@@ -21,11 +21,11 @@
 			</div>
 		{% endif %}
 			<div id="trick__card" class="row gx-4 gx-lg-5 row-cols-1 row-cols-md-2 row-cols-xl-3 justify-content-center">
-				{% include "trick/_content.html.twig" %}
+				{% include "_parts/_content.html.twig" %}
 			</div>
 			{% if tricks|length > 5 %}
 				<div class="col-12 text-center my-4">
-					{% include "trick/_more_tricks.html.twig" %}
+					{% include "_parts/_more_tricks.html.twig" %}
 				</div>
 			{% endif %}
 		</div>
