@@ -12,9 +12,10 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class RegistrationController extends AbstractController
@@ -143,6 +144,7 @@ class RegistrationController extends AbstractController
             if ($user && !$user->getIsVerified()) {
                 $user->setIsVerified(true);
                 $entityManager->flush($user);
+                $this->clearSession();
                 $this->addFlash('success', 'User\'s acount activated !');
                 return $this->redirectToRoute('app_login');
             }
@@ -150,5 +152,16 @@ class RegistrationController extends AbstractController
         // token's problem
         $this->addFlash('danger', 'Invalid token or expired');
         return $this->redirectToRoute('app_login');
+    }
+
+    /**
+     * clear session
+     *
+     * @return void
+     */
+    public function clearSession(): void
+    {
+        $session = new Session();
+        $session->clear();
     }
 }
