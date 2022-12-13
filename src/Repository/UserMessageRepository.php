@@ -115,7 +115,6 @@ class UserMessageRepository extends ServiceEntityRepository
 
         //Generate the Paginator
         $paginator = new Paginator($query, true);
-        // dd($paginator);
         return $paginator;
     }
 
