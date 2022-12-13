@@ -21,10 +21,10 @@ SnowTricks Website @Symfony
 
 ## Paquet installé via composer
 
-symfony/mailer v5.4.12
-twig/twig v3.4.2
-twig/extra-bundle v3.1.0
-twig/string-extra v3.4.0
+- symfony/mailer v5.4.12
+- twig/twig v3.4.2
+- twig/extra-bundle v3.1.0
+- twig/string-extra v3.4.0
 
 
 ## Installation
