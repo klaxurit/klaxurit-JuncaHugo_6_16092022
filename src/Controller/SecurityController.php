@@ -137,6 +137,7 @@ class SecurityController extends AbstractController
             $this->addFlash('danger', 'A problem has occurred during email sending.');
             return $this->redirectToRoute('app_login');
         }
+        return $this->redirectToRoute('app_login');
     }
 
     #[Route(path: '/resend-email-verif', name: 'app_resend_email_verif')]

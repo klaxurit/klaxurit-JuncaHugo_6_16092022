@@ -23,11 +23,11 @@
 				<tbody>
 					{% for comment in comments %}
 						<tr>
-							<td>{{ comment.id }}</td>
-							<td>{{ comment.content|u.truncate(20, '...') }}</td>
-							<td>{{ comment.user.username }}</td>
-							<td>{{ comment.createdAt|date('Y-m-d H:i:s') }}</td>
-							<td>
+							<td >{{ comment.id }}</td>
+							<td class="admin__comment_table_td">{{ comment.content }}</td>
+							<td >{{ comment.user.username }}</td>
+							<td >{{ comment.createdAt|date('Y-m-d H:i:s') }}</td>
+							<td >
 								{% if comment.isStatus is same as(false) %}
 									<a href="{{ path('admin_comment_switch_status', {'id': comment.id}) }}" class="btn btn-success btn-sm">Publish</a>
 								{% else %}

@@ -1,5 +1,5 @@
 .main {
-    min-height: 65vh;
+    min-height: 68.7vh;
     color: #51565a;
 }
 
@@ -295,4 +295,10 @@ hr.rounded {
 
 .cover__edit_link:hover {
     color: #005792;
+}
+
+.admin__comment_table_td {
+    word-wrap: break-word;
+    min-width: 160px;
+    max-width: 160px;
 }

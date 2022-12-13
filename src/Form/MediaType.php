@@ -6,7 +6,6 @@ use App\Entity\Media;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\File;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
@@ -77,7 +76,7 @@ class MediaType extends AbstractType
                     )
                 ],
                 'attr' => [
-                    'placeholder' => 'Enter the video iframe',
+                    'placeholder' => 'Enter the embed link for video.',
                     'cols' => 30,
                     'rows' => 5,
                 ],
