@@ -3,6 +3,7 @@
 namespace App\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -26,10 +27,11 @@ class AccessDeniedListener implements EventSubscriberInterface
         if (!$exception instanceof AccessDeniedException) {
             return;
         }
-
         // ... perform some action (e.g. logging)
         // optionally set the custom response
-        $event->setResponse(new Response(null, 403));
+        $response = $this->templating->renderResponse('Access denied', 403);
+
+        $event->setResponse($response);
 
         // or stop propagation (prevents the next exception listeners from being called)
     }
