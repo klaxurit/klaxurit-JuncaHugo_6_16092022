@@ -30,7 +30,7 @@
         let currentPage = 2;
         const trickId = document.querySelector('#loadMore').dataset.trickid
         $("#loadMore").on("click", function(event){
-            $.get("/ajax/comment?page=" + currentPage + "&trickid=" + trickId)
+            $.get("/trick/ajax/comment?page=" + currentPage + "&trickid=" + trickId)
             .then(resp => {
                 if (resp.comments.length < 10){
                     currentPage++;
@@ -49,7 +49,7 @@
         const deactivateButton = () => {
             document.querySelector('#loadMore').classList.remove('btn-primary');
             document.querySelector('#loadMore').classList.add('btn-secondary');
-            document.querySelector('#loadMore').classList.add('disable');
+            document.querySelector('#loadMore').classList.add('disabled');
         }
     })
     </script>
