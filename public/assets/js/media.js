@@ -17,6 +17,13 @@ window.onload = () => {
                 }
             })
         })
+        if(videoUrl.querySelector('.invalid-feedback')){
+            videoUrl.classList.remove('d-none')
+        }
+        if(imageAlt.querySelector('.invalid-feedback') || imageUpload.querySelector('.invalid-feedback')){
+            imageUpload.classList.remove('d-none')
+            imageAlt.classList.remove('d-none')
+        }
     }
 
     const newItem = (e) => {
@@ -48,6 +55,7 @@ window.onload = () => {
     document
         .querySelectorAll('.form-media')
         .forEach(formCtrl => {
+            console.log(formCtrl)
             initMediaTypeSelector(formCtrl)
         })
 
